@@ -116,6 +116,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
   },
+  imageScroll: {
+    flexDirection: 'column',
+    alignContent: 'center',
+  },
+  imagePreview: {
+    width: '90%',
+    height: 200,
+    marginTop: 10,
+    borderRadius: 10,
+  },
 });
 
 export default styles;

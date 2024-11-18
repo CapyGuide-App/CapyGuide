@@ -8,6 +8,7 @@ const AddPostScreen: React.FC = ({ navigation }) => {
   const [postContent, setPostContent] = useState('');
   const [selectedVisibilityOption, setSelectedVisibilityOption] = useState('🌍 Công khai');
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<string[]>([]); // Mảng lưu trữ ảnh được chọn
 
   const visibilityOptions = [
     { id: '1', label: '🌍 Công khai' },
@@ -21,7 +22,14 @@ const AddPostScreen: React.FC = ({ navigation }) => {
       return;
     }
     console.log('Nội dung bài viết:', postContent);
+    console.log('Ảnh đã chọn:', selectedImages);
     navigation.goBack();
+  };
+
+  const addImage = (imageUri: string | null) => {
+    if (imageUri) {
+      setSelectedImages((prevImages) => [...prevImages, imageUri]); // Thêm ảnh mới vào danh sách
+    }
   };
 
   React.useLayoutEffect(() => {
@@ -81,8 +89,22 @@ const AddPostScreen: React.FC = ({ navigation }) => {
         onChangeText={setPostContent}
       />
 
+<ScrollView contentContainerStyle={{ alignItems: 'center' }} style={styles.imageScroll}>
+        {/* Hiển thị danh sách ảnh */}
+        {selectedImages.map((imageUri, index) => (
+          <Image
+            key={index}
+            source={{ uri: imageUri }}
+            style={styles.imagePreview} // Style cho từng ảnh
+          />
+        ))}
+      </ScrollView>
+
       <ScrollView>
-        <PostOptions />
+        {/* Truyền callback để nhận ảnh từ PostOptions */}
+        <PostOptions
+          onImagePicked={(imageUri) => addImage(imageUri)}
+        />
       </ScrollView>
 
       <VisibilityOptionModal
