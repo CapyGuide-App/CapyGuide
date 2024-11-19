@@ -5,6 +5,7 @@ import './i18n/i18n';
 import MainTabNavigator from './components/MainTabNavigator';
 import {createStackNavigator} from '@react-navigation/stack';
 import AddPostScreen from './screens/AddPostScreen';
+import DetailScreen from './components/DetailScreen';
 
 const Stack = createStackNavigator();
 
@@ -29,6 +30,11 @@ const MainContainer: React.FC = () => {
             headerTintColor: '#000',
             presentation: 'modal',
           }}
+        />
+        <Stack.Screen
+          name="Detail"
+          component={DetailScreen}
+          options={{title: 'Detail'}}
         />
       </Stack.Navigator>
     </NavigationContainer>
