@@ -11,7 +11,13 @@ import VisibilityOptionModal from '../components/VisibilityOptionModal';
 import PostOptions from '../components/PostOptions';
 import styles from '../styles/AddPostStyles';
 
-const AddPostScreen: React.FC = ({navigation}) => {
+import { NavigationProp } from '@react-navigation/native';
+
+interface AddPostScreenProps {
+  navigation: NavigationProp<any>;
+}
+
+const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   const [postContent, setPostContent] = useState('');
   const [selectedVisibilityOption, setSelectedVisibilityOption] =
     useState('🌍 Công khai');

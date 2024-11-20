@@ -5,6 +5,7 @@ import { useTheme } from '@rneui/themed';
 
 import HomeScreen from '../screens/HomeScreen';
 import ExploreScreen from '../screens/ExploreScreen';
+import BlogScreen from '../screens/BlogScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomTabBarButton from './CustomTabBarButton';
 
@@ -80,7 +81,7 @@ const MainTabNavigator: React.FC = () => {
                     })
                 }
             />
-            <Tab.Screen name={POST_NAME} component={HomeScreen} />
+            <Tab.Screen name={POST_NAME} component={BlogScreen} />
             <Tab.Screen name={PROFILE_NAME} component={HomeScreen} />
         </Tab.Navigator>
   );
