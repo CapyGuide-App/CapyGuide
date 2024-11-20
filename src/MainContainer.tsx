@@ -6,6 +6,8 @@ import MainTabNavigator from './components/MainTabNavigator';
 import {createStackNavigator} from '@react-navigation/stack';
 import AddPostScreen from './screens/AddPostScreen';
 import DetailScreen from './components/DetailScreen';
+import PostDetailScreen from './screens/PostDetailScreen';
+import ProfileScreen from './screens/ProfileScreen';
 
 const Stack = createStackNavigator();
 
@@ -35,6 +37,16 @@ const MainContainer: React.FC = () => {
           name="Detail"
           component={DetailScreen}
           options={{title: 'Detail'}}
+        />
+        <Stack.Screen
+          name="PostDetailScreen"
+          component={PostDetailScreen}
+          options={{ title: 'Chi tiết bài viết' }}
+        />
+        <Stack.Screen
+          name="ProfileScreen"
+          component={ProfileScreen}
+          options={{ title: 'Hồ sơ' }}
         />
       </Stack.Navigator>
     </NavigationContainer>
