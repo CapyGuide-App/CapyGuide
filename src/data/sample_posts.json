@@ -11,7 +11,9 @@
         "https://thanhnien.mediacdn.vn/uploaded/hoangnam/2019_08_19/f011_MXTR.jpg?width=500",
         "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/2b/cd/52/02/menu-ph-thin-qu-n-1-ph.jpg?w=1100&h=-1&s=1",
         "https://hotel84.com/hotel84-images/news/img1/pho-thin-day-du.jpg"
-      ]
+      ],
+      "reactions": { "like": 20, "love": 15 },
+      "commentsCount": 22
     },
     {
       "author": "Nguyễn Văn Phương",
@@ -22,7 +24,9 @@
       "images": [
         "https://static.vinwonders.com/production/banh-mi-sai-gon-2.jpg",
         "https://mms.img.susercontent.com/vn-11134513-7r98o-lsv8k31xzphgf6@resize_ss1242x600!@crop_w1242_h600_cT"
-      ]
+      ],
+      "reactions": { "like": 20, "love": 15 },
+      "commentsCount": 22
     },
     {
       "author": "Mẫn Thị Bích Lợi",
@@ -34,7 +38,9 @@
         "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg/1200px-C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg",
         "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYbc5sxnNQfo8RB3Tp6XxFUovD0zlQFzIYvA&s",
         "https://product.hstatic.net/200000523823/product/com_tam_suon_bi_1e02dda4630a4d9fa3db1ea70f65a4dd.jpg"
-      ]
+      ],
+      "reactions": { "like": 20, "love": 15 },
+      "commentsCount": 22
     },
     {
       "author": "Nguyễn Văn Sáng",
@@ -44,7 +50,9 @@
       "description": "Món chè ngọt mát với đủ loại màu sắc.",
       "images": [
         "https://cheori.vn/wp-content/uploads/2022/08/Che-buoi-hat-sen-scaled.jpg"
-      ]
+      ],
+      "reactions": { "like": 20, "love": 15 },
+      "commentsCount": 22
     },
     {
       "author": "Phạm Xuân Trung",
@@ -53,22 +61,26 @@
       "title": "Bún Chả",
       "description": "Bún chả Hà Nội với hương vị đậm đà truyền thống.",
       "images": [
-        "https://example.com/buncha1.jpg",
+        "https://static.vinwonders.com/production/bun-cha-cau-giay-1.jpg",
         "https://example.com/buncha2.jpg",
         "https://example.com/buncha3.jpg",
         "https://example.com/buncha4.jpg",
         "https://example.com/buncha5.jpg"
-      ]
+      ],
+      "reactions": { "like": 20, "love": 15 },
+      "commentsCount": 22
     },
     {
       "author": "Nguyễn Minh Hiển",
       "avatar":
         "https://scontent.fhan2-3.fna.fbcdn.net/v/t39.30808-6/460522419_2117933608600516_9220295292444476206_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeEHwAF1qGbsFbUMGX7zskDP8uDMMiTQdvHy4MwyJNB28eQZE11ijZvWKZa1DcSmOYdZpgSo-wEzV0q_aepliI9V&_nc_ohc=UR6Dxy5rl84Q7kNvgGOQp8V&_nc_zt=23&_nc_ht=scontent.fhan2-3.fna&_nc_gid=ACLbYq06F2s_7iBe030hECx&oh=00_AYDHcHW8PMYe396hXLopVLuAAzU1gSnQklPKiMCo5_pmJQ&oe=67415DB0",
-      "title": "Gỏi Cuốn Tôm Thịt",
-      "description": "Món gỏi cuốn tươi ngon, chấm cùng nước mắm chua ngọt.",
+      "title": "Xôi cốm",
+      "description": "https://tiki.vn/blog/wp-content/uploads/2023/04/cach-nau-xoi-com.jpg",
       "images": [
         "https://example.com/goicuon1.jpg",
         "https://example.com/goicuon2.jpg"
-      ]
+      ],
+      "reactions": { "like": 20, "love": 15 },
+      "commentsCount": 22
     }
   ]

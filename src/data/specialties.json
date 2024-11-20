@@ -1,0 +1,33 @@
+[
+    {
+      "id": "1",
+      "name": "Đặc sản 1",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1MnbUyOM0VlQHuAthhngmluLeES7bXrYMqw&s"
+    },
+    {
+      "id": "2",
+      "name": "Đặc sản 2",
+      "image": "https://nguyenninhhanoi.com/wp-content/uploads/2024/01/banh-phu-the.jpg"
+    },
+    {
+      "id": "3",
+      "name": "Đặc sản 3",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1MnbUyOM0VlQHuAthhngmluLeES7bXrYMqw&s"
+    },
+    {
+      "id": "4",
+      "name": "Đặc sản 4",
+      "image": "https://nguyenninhhanoi.com/wp-content/uploads/2024/01/banh-phu-the.jpg"
+    },
+    {
+      "id": "5",
+      "name": "Đặc sản 5",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ1MnbUyOM0VlQHuAthhngmluLeES7bXrYMqw&s"
+    },
+    {
+      "id": "6",
+      "name": "Đặc sản 6",
+      "image": "https://nguyenninhhanoi.com/wp-content/uploads/2024/01/banh-phu-the.jpg"
+    }
+  ]
+  

@@ -8,6 +8,7 @@ import ExploreScreen from '../screens/ExploreScreen';
 import BlogScreen from '../screens/BlogScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import CustomTabBarButton from './CustomTabBarButton';
+import SettingsScreen from '../screens/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -82,7 +83,7 @@ const MainTabNavigator: React.FC = () => {
                 }
             />
             <Tab.Screen name={POST_NAME} component={BlogScreen} />
-            <Tab.Screen name={PROFILE_NAME} component={HomeScreen} />
+            <Tab.Screen name={PROFILE_NAME} component={SettingsScreen} />
         </Tab.Navigator>
   );
 };
