@@ -1,82 +1,102 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import Modal from 'react-native-modal';
+import { View, TouchableOpacity, StyleSheet, Modal, Text } from 'react-native';
+import { Camera, Folder } from 'lucide-react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 interface CameraHandlerProps {
   onImageSelected: (imageUri: string) => void;
+  isVisible: boolean;
+  onClose: () => void;
 }
 
-const CameraHandler: React.FC<CameraHandlerProps> = ({ onImageSelected }) => {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
-  const handleCameraPress = () => {
-    setIsModalVisible(true);
-  };
-
+const CameraHandler: React.FC<CameraHandlerProps> = ({
+  onImageSelected,
+  isVisible,
+  onClose,
+}) => {
   const openCamera = async () => {
-    setIsModalVisible(false);
     const result = await launchCamera({
       mediaType: 'photo',
       saveToPhotos: true,
     });
-
     if (result.assets && result.assets[0].uri) {
       onImageSelected(result.assets[0].uri);
     }
+    onClose();
   };
 
   const openLibrary = async () => {
-    setIsModalVisible(false);
     const result = await launchImageLibrary({
       mediaType: 'photo',
       selectionLimit: 1,
     });
-
     if (result.assets && result.assets[0].uri) {
       onImageSelected(result.assets[0].uri);
     }
+    onClose();
   };
 
-  const closeModal = () => setIsModalVisible(false);
+  const cameraOptions = [
+    {
+      icon: <Camera size={24} color="#000" />,
+      label: 'Chụp ảnh',
+      action: openCamera,
+    },
+    {
+      icon: <Folder size={24} color="#000" />,
+      label: 'Thư viện',
+      action: openLibrary,
+    },
+  ];
 
   return (
-    <View>
-      <Modal isVisible={isModalVisible} onBackdropPress={closeModal}>
+    <Modal visible={isVisible} transparent animationType="fade">
+      <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Chọn tùy chọn</Text>
-          <TouchableOpacity style={styles.optionButton} onPress={openCamera}>
-            <Text style={styles.optionText}>📷 Chụp ảnh</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.optionButton} onPress={openLibrary}>
-            <Text style={styles.optionText}>📁 Thư viện</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.cancelButton} onPress={closeModal}>
-            <Text style={styles.cancelText}>Hủy</Text>
+          {cameraOptions.map((option, index) => (
+            <TouchableOpacity
+              key={index}
+              style={styles.modalButton}
+              onPress={option.action}
+            >
+              <View style={styles.modalOption}>
+                {option.icon}
+                <Text style={styles.modalButtonText}>{option.label}</Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+          <TouchableOpacity style={styles.modalCancel} onPress={onClose}>
+            <Text style={styles.modalCancelText}>Hủy</Text>
           </TouchableOpacity>
         </View>
-      </Modal>
-
-      {handleCameraPress && <View />}
-    </View>
+      </View>
+    </Modal>
   );
 };
 
 export default CameraHandler;
 
 const styles = StyleSheet.create({
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
   modalContainer: {
     backgroundColor: '#fff',
     padding: 20,
     borderRadius: 10,
     alignItems: 'center',
+    width: 300,
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
   },
-  optionButton: {
+  modalButton: {
     width: '100%',
     padding: 15,
     backgroundColor: '#F3F4F6',
@@ -84,14 +104,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 10,
   },
-  optionText: {
+  modalOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  modalButtonText: {
     fontSize: 16,
     color: '#333',
+    marginLeft: 10,
+    textAlign: 'center',
   },
-  cancelButton: {
+  modalCancel: {
     marginTop: 10,
   },
-  cancelText: {
+  modalCancelText: {
     fontSize: 16,
     color: '#FF3B30',
   },
