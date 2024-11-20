@@ -1,49 +1,42 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
-  Text,
   TextInput,
-  Image,
-  TouchableOpacity,
   ScrollView,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
 } from 'react-native';
-import VisibilityOptionModal from '../components/VisibilityOptionModal';
-import PostOptions from '../components/PostOptions';
-import styles from '../styles/AddPostStyles';
+import PostTaskBar from '../components/PostTaskBar';
 
-import { NavigationProp } from '@react-navigation/native';
-
-interface AddPostScreenProps {
-  navigation: NavigationProp<any>;
-}
-
-const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
+const AddPostScreen: React.FC = ({navigation}) => {
+  const [postTitle, setPostTitle] = useState('');
   const [postContent, setPostContent] = useState('');
-  const [selectedVisibilityOption, setSelectedVisibilityOption] =
-    useState('🌍 Công khai');
-  const [modalVisible, setModalVisible] = useState(false);
-  const [selectedImages, setSelectedImages] = useState<string[]>([]); // Mảng lưu trữ ảnh được chọn
+  const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
-  const visibilityOptions = [
-    {id: '1', label: '🌍 Công khai'},
-    {id: '2', label: '👥 Bạn bè'},
-    {id: '3', label: '🔒 Chỉ mình tôi'},
-    {id: '4', label: '🌟 Bạn thân'},
-  ];
+  const handleImageSelected = (imageUri: string) => {
+    setSelectedImages((prevImages) => [...prevImages, imageUri]);
+  };
+
+  const removeImage = (index: number) => {
+    setSelectedImages((prevImages) =>
+      prevImages.filter((_, imageIndex) => imageIndex !== index)
+    );
+  };
+
+  const checkValidPost = () => {
+    return (postContent.trim() !== '' || selectedImages.length > 0) && postTitle.trim() !== '';
+  }
 
   const handlePostSubmit = () => {
     if (postContent.trim() === '') {
       return;
     }
-    console.log('Nội dung bài viết:', postContent);
-    console.log('Ảnh đã chọn:', selectedImages);
+    console.log('Title:', postTitle);
+    console.log('Content:', postContent);
+    console.log('IMGs:', selectedImages);
     navigation.goBack();
-  };
-
-  const addImage = (imageUri: string | null) => {
-    if (imageUri) {
-      setSelectedImages(prevImages => [...prevImages, imageUri]); // Thêm ảnh mới vào danh sách
-    }
   };
 
   React.useLayoutEffect(() => {
@@ -69,66 +62,116 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <Image
-          source={{
-            uri: 'https://scontent.fhan20-1.fna.fbcdn.net/v/t39.30808-6/271731848_1860371254351185_7983418418645333699_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=6ee11a&_nc_eui2=AeHmgBV7HKmnmIFs7EB4DBicagPguRLKezpqA-C5Esp7OkSzJxGwFE6YoEwlgCHTsAw-vNfX8L76wFCjzYUhrGQb&_nc_ohc=hvjEMDS_a60Q7kNvgEhsf0N&_nc_zt=23&_nc_ht=scontent.fhan20-1.fna&_nc_gid=APpC2E-sJATzePD5qgENbWw&oh=00_AYCF1IkIf04Tubsg9TVECaFOoXXArJvt1-4xk2XZAvUgFQ&oe=673F93A9',
-          }}
-          style={styles.profilePic}
-        />
-        <View>
-          <Text style={styles.userName}>Mẫn Thị Bích Lợi</Text>
-          <View style={styles.quickOptionRow}>
-            <TouchableOpacity
-              style={styles.quickOption}
-              onPress={() => setModalVisible(true)}>
-              <Text style={styles.visibilityOptionText}>
-                {selectedVisibilityOption}
-              </Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.quickOption}>
-              <Text style={styles.quickOptionText}>+ Album</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
 
+            <TextInput
+        style={styles.titleInput}
+        placeholder="Add a title"
+        placeholderTextColor="#aaa"
+        value={postTitle}
+        onChangeText={setPostTitle}
+      />
+
+      <TouchableOpacity style={styles.addLocation}>
+        <Text style={styles.locationText}>📍 Add location</Text>
+      </TouchableOpacity>
+      
       <TextInput
-        style={styles.textInput}
-        placeholder="Tiên sinh muốn đăng gì?"
-        placeholderTextColor="#888"
+        style={styles.contentInput}
+        placeholder="Share your story here."
+        placeholderTextColor="#aaa"
         multiline
         value={postContent}
         onChangeText={setPostContent}
       />
 
       <ScrollView
-        contentContainerStyle={{alignItems: 'center'}}
-        style={styles.imageScroll}>
+        contentContainerStyle={{ alignItems: 'center' }}
+        style={styles.imageScroll}
+      >
         {selectedImages.map((imageUri, index) => (
-          <Image
-            key={index}
-            source={{uri: imageUri}}
-            style={styles.imagePreview}
-          />
+          <View key={index} style={styles.imageContainer}>
+            <Image source={{ uri: imageUri }} style={styles.imagePreview} />
+            <TouchableOpacity
+              style={styles.removeButton}
+              onPress={() => removeImage(index)}
+            >
+              <Text style={styles.removeButtonText}>X</Text>
+            </TouchableOpacity>
+          </View>
         ))}
       </ScrollView>
 
-      <ScrollView>
-        <PostOptions onImagePicked={imageUri => addImage(imageUri)} />
-      </ScrollView>
-
-      <VisibilityOptionModal
-        visible={modalVisible}
-        options={visibilityOptions}
-        onSelect={option => {
-          setSelectedVisibilityOption(option);
-          setModalVisible(false);
-        }}
-        onClose={() => setModalVisible(false)}
-      />
+      <PostTaskBar onImageSelected={handleImageSelected} />
     </View>
   );
 };
 
 export default AddPostScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    padding: 15,
+  },  
+  headerButton: {
+    marginRight: 15,
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerButtonText: {
+    fontSize: 16,
+    color: '#fff',
+    fontWeight: 'bold',
+  },titleInput: {
+    fontSize: 18,
+    color: '#333',
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
+    marginBottom: 10,
+    paddingBottom: 5,
+  },
+  addLocation: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  locationText: {
+    fontSize: 16,
+    color: '#007BFF',
+  },
+  contentInput: {
+    fontSize: 16,
+    color: '#333',
+    flex: 1,
+    textAlignVertical: 'top',
+  },
+  imageScroll: {
+    marginVertical: 10,
+    maxHeight: 200,
+  },
+  imageContainer: {
+    position: 'relative',
+    marginBottom: 10,
+  },
+  imagePreview: {
+    width: 100,
+    height: 100,
+    borderRadius: 10,
+  },
+  removeButton: {
+    position: 'absolute',
+    top: 5,
+    right: 5,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 15,
+    padding: 5,
+  },
+  removeButtonText: {
+    color: '#fff',
+    fontSize: 12,
+  },
+});
