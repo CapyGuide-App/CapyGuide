@@ -7,7 +7,7 @@ interface PostProps {
   title: string;
   description: string;
   date: string;
-  images: string[]; // Mảng hình ảnh, chỉ hiển thị ảnh đầu tiên
+  images: string[];
   reactionCount: number;
   commentCount: number;
   onPress: () => void;
@@ -25,14 +25,11 @@ const Post: React.FC<PostProps> = ({
 }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.postContainer}>
-      {/* Hình ảnh bên trái */}
       {images.length > 0 && (
             <Image source={{ uri: images[0] }} style={styles.thumbnail} />
           )}
 
-      {/* Nội dung bên phải */}
       <View style={styles.textContainer}>
-        {/* Tiêu đề và Tác giả */}
         <Text style={styles.title} numberOfLines={1}>
           {title}
         </Text>
@@ -40,12 +37,10 @@ const Post: React.FC<PostProps> = ({
           {author}
         </Text>
 
-        {/* Miêu tả */}
         <Text style={styles.description} numberOfLines={1}>
           {description}
         </Text>
 
-        {/* Ngày tháng và tương tác */}
         <View style={styles.infoRow}>
           <View style={styles.dateRow}>
             <Calendar size={16} color="#888" />

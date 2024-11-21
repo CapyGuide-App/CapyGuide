@@ -25,11 +25,11 @@ const SettingsScreen: React.FC = () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Cài Đặt Tài Khoản</Text>
         <View style={styles.itemContainer}>
-          <User size={20} color="#555" />
+          <User size={24} color="#555" />
           <Text style={styles.itemText}>Hình đại diện</Text>
         </View>
         <View style={styles.itemContainer}>
-          <Lock size={20} color="#555" />
+          <Lock size={24} color="#555" />
           <Text style={styles.itemText}>Mật khẩu</Text>
         </View>
       </View>
@@ -37,11 +37,11 @@ const SettingsScreen: React.FC = () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Cài Đặt Ứng Dụng</Text>
         <View style={styles.itemContainer}>
-          <MapPin size={20} color="#555" />
+          <MapPin size={24} color="#555" />
           <Text style={styles.itemText}>Đổi vị trí</Text>
         </View>
         <View style={styles.itemContainer}>
-          <Bell size={20} color="#555" />
+          <Bell size={24} color="#555" />
           <Text style={styles.itemText}>Cài đặt thông báo</Text>
         </View>
       </View>
@@ -49,11 +49,11 @@ const SettingsScreen: React.FC = () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Hỗ trợ</Text>
         <View style={styles.itemContainer}>
-          <Info size={20} color="#555" />
+          <Info size={24} color="#555" />
           <Text style={styles.itemText}>Về CopyGuide</Text>
         </View>
         <View style={styles.itemContainer}>
-          <Trash2 size={20} color="#555" />
+          <Trash2 size={24} color="#555" />
           <Text style={styles.itemText}>Xóa tài khoản</Text>
         </View>
       </View>
@@ -102,21 +102,22 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: '5%',
     backgroundColor: '#f2f2f2',
-    flex: 1,
-    width: 100,
   },
   viewText: {
     fontSize: 16,
     color: '#007BFF',
     textAlign: 'center',
+    width: 70,
   },
   section: {
     marginBottom: 20,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
   itemContainer: {
     flexDirection: 'row',
@@ -124,7 +125,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   itemText: {
-    fontSize: 14,
+    fontSize: 18,
     marginLeft: 10,
     color: '#555',
     flex: 1,
@@ -132,16 +133,17 @@ const styles = StyleSheet.create({
   },
   logout: {
     marginTop: 20,
-    alignSelf: 'center', // Căn giữa theo nội dung
-    paddingHorizontal: 20, // Tạo thêm không gian ngang
-    paddingVertical: 10, // Tạo thêm không gian dọc
-    backgroundColor: '#f9f9f9', // Màu nền
-    borderRadius: 5, // Bo góc
+    alignSelf: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: '#f2f2f2',
+    borderRadius: 5,
   },
   logoutText: {
-    fontSize: 16,
-    color: '#FF3B30',
-    textAlign: 'center', // Căn giữa văn bản
+    fontSize: 20,
+    color: '#000',
+    textAlign: 'center',
+    width: 200,
   },
 });
 
