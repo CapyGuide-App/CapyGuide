@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   TextInput,
@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import PostTaskBar from '../components/PostTaskBar';
+import LocationSelector from '../components/LocationSelector';
 
 const AddPostScreen: React.FC = ({navigation}) => {
   const [postTitle, setPostTitle] = useState('');
@@ -16,18 +17,21 @@ const AddPostScreen: React.FC = ({navigation}) => {
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
 
   const handleImageSelected = (imageUri: string) => {
-    setSelectedImages((prevImages) => [...prevImages, imageUri]);
+    setSelectedImages(prevImages => [...prevImages, imageUri]);
   };
 
   const removeImage = (index: number) => {
-    setSelectedImages((prevImages) =>
-      prevImages.filter((_, imageIndex) => imageIndex !== index)
+    setSelectedImages(prevImages =>
+      prevImages.filter((_, imageIndex) => imageIndex !== index),
     );
   };
 
   const checkValidPost = () => {
-    return (postContent.trim() !== '' || selectedImages.length > 0) && postTitle.trim() !== '';
-  }
+    return (
+      (postContent.trim() !== '' || selectedImages.length > 0) &&
+      postTitle.trim() !== ''
+    );
+  };
 
   const handlePostSubmit = () => {
     if (postContent.trim() === '') {
@@ -62,8 +66,7 @@ const AddPostScreen: React.FC = ({navigation}) => {
 
   return (
     <View style={styles.container}>
-
-            <TextInput
+      <TextInput
         style={styles.titleInput}
         placeholder="Add a title"
         placeholderTextColor="#aaa"
@@ -71,10 +74,12 @@ const AddPostScreen: React.FC = ({navigation}) => {
         onChangeText={setPostTitle}
       />
 
-      <TouchableOpacity style={styles.addLocation}>
-        <Text style={styles.locationText}>📍 Add location</Text>
-      </TouchableOpacity>
-      
+      <LocationSelector
+        onLocationSelected={location =>
+          console.log('Selected Location:', location)
+        }
+      />
+
       <TextInput
         style={styles.contentInput}
         placeholder="Share your story here."
@@ -85,16 +90,14 @@ const AddPostScreen: React.FC = ({navigation}) => {
       />
 
       <ScrollView
-        contentContainerStyle={{ alignItems: 'center' }}
-        style={styles.imageScroll}
-      >
+        contentContainerStyle={{alignItems: 'center'}}
+        style={styles.imageScroll}>
         {selectedImages.map((imageUri, index) => (
           <View key={index} style={styles.imageContainer}>
-            <Image source={{ uri: imageUri }} style={styles.imagePreview} />
+            <Image source={{uri: imageUri}} style={styles.imagePreview} />
             <TouchableOpacity
               style={styles.removeButton}
-              onPress={() => removeImage(index)}
-            >
+              onPress={() => removeImage(index)}>
               <Text style={styles.removeButtonText}>X</Text>
             </TouchableOpacity>
           </View>
@@ -113,7 +116,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     padding: 15,
-  },  
+  },
   headerButton: {
     marginRight: 15,
     paddingHorizontal: 16,
@@ -126,7 +129,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
     fontWeight: 'bold',
-  },titleInput: {
+  },
+  titleInput: {
     fontSize: 18,
     color: '#333',
     borderBottomWidth: 1,

@@ -131,14 +131,17 @@ const styles = StyleSheet.create({
     width: 'auto',
   },
   logout: {
-    alignItems: 'center',
     marginTop: 20,
-    flex: 1,
-    width: 'auto',
+    alignSelf: 'center', // Căn giữa theo nội dung
+    paddingHorizontal: 20, // Tạo thêm không gian ngang
+    paddingVertical: 10, // Tạo thêm không gian dọc
+    backgroundColor: '#f9f9f9', // Màu nền
+    borderRadius: 5, // Bo góc
   },
   logoutText: {
     fontSize: 16,
     color: '#FF3B30',
+    textAlign: 'center', // Căn giữa văn bản
   },
 });
 

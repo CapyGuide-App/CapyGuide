@@ -62,7 +62,7 @@ const CameraHandler: React.FC<CameraHandlerProps> = ({
             >
               <View style={styles.modalOption}>
                 {option.icon}
-                <Text style={styles.modalButtonText}>{option.label}</Text>
+                <Text style={styles.modalButtonText} numberOfLines={1}>{option.label}</Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -101,19 +101,24 @@ const styles = StyleSheet.create({
     padding: 15,
     backgroundColor: '#F3F4F6',
     borderRadius: 8,
+    flexDirection: 'row',
+    justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,
   },
   modalOption: {
     flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: 'baseline',
+    // justifyContent: 'center',
+    // alignSelf: 'center',
   },
   modalButtonText: {
     fontSize: 16,
     color: '#333',
     marginLeft: 10,
     textAlign: 'center',
+    // width: 150,
+    
   },
   modalCancel: {
     marginTop: 10,
@@ -121,5 +126,7 @@ const styles = StyleSheet.create({
   modalCancelText: {
     fontSize: 16,
     color: '#FF3B30',
+    width: 100,
+    textAlign: 'center',
   },
 });

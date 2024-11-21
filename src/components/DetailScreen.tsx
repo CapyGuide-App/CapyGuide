@@ -1,32 +1,78 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image, ScrollView, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
+import { Heart, MessageCircle, Smile, Meh, Frown, SmilePlus  } from "lucide-react-native";
+
+const renderComment = (username: string, userRating: string, commentText: string) => {
+  return (
+    <View style={styles.comment}>
+      <View style={styles.commentHeader}>
+        <View style={styles.avatarPlaceholder} />
+        <Text style={styles.username}>{username}</Text>
+        <Text style={styles.userRating}>{userRating}</Text>
+      </View>
+
+      <Text style={styles.commentText}>{commentText}</Text>
+
+      <View style={styles.commentActions}>
+        <TouchableOpacity style={styles.actionButton}>
+          <Heart size={16} color="#333" />
+          <Text style={styles.actionText}>Thích</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.actionButton}>
+          <MessageCircle size={16} color="#333" />
+          <Text style={styles.actionText}>Thảo luận</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
+
+const comments = [
+  {username: '@vanphuongcute', userRating: '8.9', commentText: 'Chơi rất vui'},
+  {username: '@mhiennoob', userRating: '4.2', commentText: 'Phục vụ hơi kém'},
+];
+
+const reactions = [
+  { id: "great", label: "Tuyệt vời", icon: <SmilePlus color="#333" size={24} /> },
+  { id: "good", label: "Khá tốt", icon: <Smile color="#333" size={24} /> },
+  { id: "average", label: "Trung bình", icon: <Meh color="#333" size={24} /> },
+  { id: "poor", label: "Kém", icon: <Frown color="#333" size={24} /> },
+];
 
 const DetailScreen: React.FC = ({route, navigation}) => {
   const {item} = route.params;
+  const [selectedReaction, setSelectedReaction] = React.useState<string | null>(null);
 
   return (
     <ScrollView style={styles.container}>
-      {/* <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.iconButton}>
-          <Text style={styles.icon}>←</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Text style={styles.icon}>💬</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton}>
-          <Text style={styles.icon}>⭐</Text>
-        </TouchableOpacity>
-      </View> */}
 
       <Image source={{uri: item.image}} style={styles.mainImage} />
 
       <View style={styles.infoContainer}>
         <Text style={styles.title}>{item.name}</Text>
         <View style={styles.statsRow}>
-          <Text style={styles.statItem}>157 bình luận</Text>
-          <Text style={styles.statItem}>421 hình ảnh</Text>
-          <Text style={styles.statItem}>502 lưu lại</Text>
-          <Text style={styles.rating}>8.7</Text>
+          <View style={styles.statItemContainer}>
+            <Text style={styles.statNumber}>157</Text>
+            <Text style={styles.statLabel}>bình luận</Text>
+          </View>
+          <View style={styles.statItemContainer}>
+            <Text style={styles.statNumber}>421</Text>
+            <Text style={styles.statLabel}>hình ảnh</Text>
+          </View>
+          <View style={styles.statItemContainer}>
+            <Text style={styles.statNumber}>502</Text>
+            <Text style={styles.statLabel}>lưu lại</Text>
+          </View>
+          <View style={styles.ratingContainer}>
+            <Text style={styles.ratingText}>8.7</Text>
+          </View>
         </View>
 
         <Text style={styles.sectionTitle}>Thông tin về địa điểm</Text>
@@ -37,31 +83,30 @@ const DetailScreen: React.FC = ({route, navigation}) => {
       <View style={styles.commentsSection}>
         <Text style={styles.sectionTitle}>157 bình luận</Text>
         <View style={styles.reactionsRow}>
-          <Text style={styles.reactionItem}>Tuyệt vời</Text>
-          <Text style={styles.reactionItem}>Khá tốt</Text>
-          <Text style={styles.reactionItem}>Trung bình</Text>
-          <Text style={styles.reactionItem}>Kém</Text>
+          {reactions.map((reaction) => (
+            <TouchableOpacity
+              key={reaction.id}
+              style={[
+                styles.reactionItem,
+                selectedReaction === reaction.id && styles.selectedReaction,
+              ]}
+              onPress={() => setSelectedReaction(reaction.id)}
+            >
+              {reaction.icon}
+              <Text style={styles.reactionText}>{reaction.label}</Text>
+            </TouchableOpacity>
+          ))}
         </View>
 
-        <View style={styles.comment}>
-          <Text style={styles.username}>@vanphuongcute</Text>
-          <Text style={styles.userRating}>8.9</Text>
-          <Text style={styles.commentText}>Nội dung</Text>
-          <View style={styles.actionRow}>
-            <Text style={styles.action}>❤️ Thích</Text>
-            <Text style={styles.action}>💬 Thảo luận</Text>
+        {comments.map((comment, index) => (
+          <View key={index}>
+            {renderComment(
+              comment.username,
+              comment.userRating,
+              comment.commentText,
+            )}
           </View>
-        </View>
-
-        <View style={styles.comment}>
-          <Text style={styles.username}>@mhiennoob</Text>
-          <Text style={styles.userRating}>4.2</Text>
-          <Text style={styles.commentText}>Nội dung</Text>
-          <View style={styles.actionRow}>
-            <Text style={styles.action}>❤️ Thích</Text>
-            <Text style={styles.action}>💬 Thảo luận</Text>
-          </View>
-        </View>
+        ))}
       </View>
     </ScrollView>
   );
@@ -99,14 +144,35 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 15,
+    marginVertical: 15,
   },
-  statItem: {
-    fontSize: 14,
+  statItemContainer: {
+    alignItems: 'center',
+    marginHorizontal: 10,
+  },
+  statNumber: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  statLabel: {
+    fontSize: 12,
     color: '#666',
+    minWidth: 50,
+    textAlign: 'center',
   },
-  rating: {
-    fontSize: 18,
+  ratingContainer: {
+    width: 70,
+    height: 70,
+    borderRadius: '50%',
+    borderWidth: 4,
+    borderColor: '#4caf50',
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#fff',
+  },
+  ratingText: {
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#4caf50',
   },
@@ -127,47 +193,77 @@ const styles = StyleSheet.create({
     borderTopColor: '#ddd',
   },
   reactionsRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: "row",
+    justifyContent: "space-around",
     marginVertical: 10,
   },
   reactionItem: {
+    alignItems: "center",
+    padding: 10,
+  },
+  reactionText: {
     fontSize: 14,
-    color: '#333',
+    color: "#333",
+    marginTop: 5,
+    minWidth: 70,
+    textAlign: "center",
+  },
+  selectedReaction: {
+    backgroundColor: "#e0f7fa",
+    borderRadius: 10,
+    padding: 10,
   },
   comment: {
     padding: 10,
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: "#ddd",
     borderRadius: 5,
     marginBottom: 10,
+    backgroundColor: "#fff",
   },
-  username: {
-    fontWeight: 'bold',
-    fontSize: 14,
+  commentHeader: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 5,
   },
-  userRating: {
-    position: 'absolute',
-    top: 10,
-    right: 10,
+  avatarPlaceholder: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    backgroundColor: "#ccc",
+    marginRight: 10,
+  },
+  username: {
+    fontWeight: "bold",
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#4caf50',
+    flex: 1, // Đẩy rating sang bên phải
+  },
+  userRating: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "#4caf50",
   },
   commentText: {
     fontSize: 14,
-    color: '#333',
-    marginBottom: 5,
+    color: "#333",
+    marginVertical: 5,
   },
-  actionRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+  commentActions: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderTopWidth: 1,
+    borderTopColor: "#ddd",
+    paddingTop: 5,
     marginTop: 5,
   },
-  action: {
+  actionButton: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  actionText: {
+    marginLeft: 5,
     fontSize: 14,
-    color: '#007bff',
+    color: "#333",
   },
 });
 
