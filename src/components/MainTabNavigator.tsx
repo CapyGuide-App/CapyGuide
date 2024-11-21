@@ -1,12 +1,12 @@
-import React, { Children } from 'react';
-import { GestureResponderEvent, TouchableOpacity, View } from 'react-native';
+import React from 'react';
 import { House, Search, Plus, LayoutList, User } from 'lucide-react-native';
 import { useTheme } from '@rneui/themed';
 
 import HomeScreen from '../screens/HomeScreen';
 import ExploreScreen from '../screens/ExploreScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import CustomTabBarButton from './CustomTabBarButton';
+import { Dimensions, TouchableOpacity, View } from 'react-native';
+import Svg, { Path } from 'react-native-svg';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,6 +15,65 @@ const SEARCH_NAME = 'Search';
 const ADD_NAME = 'Add';
 const POST_NAME = 'Post';
 const PROFILE_NAME = 'Profile';
+
+const {width, height} = Dimensions.get('window');
+
+const TAB_BAR_HEIGHT = 60;
+const tabBarColor = 'white';
+
+const CustomTabBarBackground = () => {
+    const borderWidth = 10;
+    const halfHeight = TAB_BAR_HEIGHT / 2;
+    const halfWidth = width / 2;
+    const offset = halfHeight + borderWidth;
+    const connectionWidth = 20;
+    return (
+        <View
+            style={{
+                position: 'absolute',
+                top: -offset,
+                left: 0,
+                right: 0,
+                height: TAB_BAR_HEIGHT + offset,
+                display: 'flex',
+            }}
+        >
+            <Svg>
+                <Path
+                    d={`
+                        M ${halfWidth - halfHeight - borderWidth - connectionWidth} ${offset}
+                        A ${connectionWidth} ${connectionWidth / 2} 0 0 0 ${halfWidth - halfHeight - borderWidth + 1} ${offset - connectionWidth / 2}
+                        L ${halfWidth - halfHeight - borderWidth} ${offset}
+                        A ${halfHeight + borderWidth} ${halfHeight + borderWidth} 0 0 1 ${halfWidth + halfHeight + borderWidth} ${offset}
+                        L ${halfWidth + halfHeight + borderWidth - 1} ${offset - connectionWidth / 2}
+                        A ${connectionWidth} ${connectionWidth / 2} 0 0 0 ${halfWidth + halfHeight + borderWidth + connectionWidth} ${offset}
+                        Z
+                    `}
+                    fill={tabBarColor}
+                />
+            </Svg>
+        </View>
+    );
+}
+
+const CustomTabBarButton = ({ children, navigation, style }) => {
+    const onPress = () => {
+        navigation.navigate("AddPost");
+    };
+    return (<TouchableOpacity
+        style={{
+            top: -TAB_BAR_HEIGHT / 2,
+            justifyContent: 'center',
+            alignItems: 'center',
+        }}
+        onPress={onPress}
+    >
+        <View style={style}>
+            {children}
+        </View>
+    </TouchableOpacity>);
+  }
+  
 
 const MainTabNavigator: React.FC = () => {
     const { theme } = useTheme();
@@ -54,12 +113,17 @@ const MainTabNavigator: React.FC = () => {
                     tabBarShowLabel: false,
                     tabBarStyle: {
                         position: 'absolute',
-                        height: 60,
+                        height: TAB_BAR_HEIGHT,
+                        borderTopLeftRadius: TAB_BAR_HEIGHT / 3,
+                        borderTopRightRadius: TAB_BAR_HEIGHT / 3,
+                        backgroundColor: tabBarColor,
+                        elevation: 0, 
+                        shadowOpacity: 0,
                     },
+                    tabBarBackground: () => (<CustomTabBarBackground />)
                 })
             }
         >
-
             <Tab.Screen name={HOME_NAME} component={HomeScreen} />
             <Tab.Screen name={SEARCH_NAME} component={ExploreScreen} />
             <Tab.Screen name={ADD_NAME} component={HomeScreen} 
@@ -70,10 +134,10 @@ const MainTabNavigator: React.FC = () => {
                                 {...props}
                                 navigation={navigation}
                                 style={{
-                                    width: 60,
-                                    height: 60,
-                                    borderRadius: 30,
-                                    backgroundColor: iconColor
+                                    width: TAB_BAR_HEIGHT,
+                                    height: TAB_BAR_HEIGHT,
+                                    borderRadius: TAB_BAR_HEIGHT / 2,
+                                    backgroundColor: iconColor,
                                 }}
                             />
                         ),

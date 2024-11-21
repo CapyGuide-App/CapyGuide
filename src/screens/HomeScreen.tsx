@@ -1,10 +1,10 @@
 import { SearchBar, useTheme } from '@rneui/themed';
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import NearByCollection from '../components/NearByCollection';
-import { useTranslation } from 'react-i18next';
-import { Button } from '@rneui/base';
-import i18n, { changeLanguage } from '../i18n/i18n';
+import React, { createContext, useState } from 'react';
+import { StyleSheet, ScrollView, View } from 'react-native';
+import LocationPickerText from '../components/LocationPickerText';
+import { useLocation } from '../context/LocationContext';
+import { useFocusEffect } from '@react-navigation/native';
+import Geolocation from '@react-native-community/geolocation';
 
 const hexToRGBA = (hex: string, opacity: number) => {
     hex = hex.replace('#', '');
@@ -18,34 +18,50 @@ const hexToRGBA = (hex: string, opacity: number) => {
 
 const HomeScreen: React.FC = () => {
     const { theme } = useTheme();
-    const {t} = useTranslation();
 
     const [search, setSearch] = useState("");
     const updateSearch = (search:string) => {
         setSearch(search);
     };
 
-    const [isFocused, setIsFocused] = useState(false);
+    const [isFocused, setIsFocused] = useState<boolean>(false);
 
     const searchIconProps = {
         color: theme.colors.primary,
         size: 24,
     };
 
-    const sampleData: { title: string; description: string; data: string[] }[] = [
-        {
-            title: "Sample Title 1",
-            description: "This is the description for the first sample item.",
-            data: ['Pizza', 'Burger', 'Risotto','Pizza', 'Burger', 'Risotto'],
-        },
-      ];
+    const { saveLocation } = useLocation();
+    
+    useFocusEffect(
+        React.useCallback(() => {
+            console.log('Tab is focused: Starting watchPosition');
+      
+            const watchId = Geolocation.watchPosition(
+              position => {
+                console.log('Got position:', position);
+                saveLocation(position.coords);
+              },
+              error => console.error('Error watching position:', error.message),
+              { enableHighAccuracy: true, distanceFilter: 10 }
+            );
+      
+            return () => {
+              console.log('Tab lost focus: Stopping watchPosition');
+              Geolocation.clearWatch(watchId);
+            };
+        }, [])
+    );
 
     return (
-        <ScrollView style={styles.container}>
-            <SearchBar placeholder={t("search")}
+        <View style={styles.container}>
+            <LocationPickerText />
+            <SearchBar placeholder={"Search"}
                 containerStyle={{
-                    backgroundColor: 'transparent',
                     borderBottomWidth: 0,
+                    padding: 0,
+                    borderColor: 'transparent',
+                    backgroundColor: 'transparent',
                 }}
                 inputContainerStyle={{
                     backgroundColor: hexToRGBA(theme.colors.primary, 0.1),
@@ -67,17 +83,21 @@ const HomeScreen: React.FC = () => {
                 value={search}
                 placeholderTextColor={hexToRGBA(theme.colors.primary, 0.7)}
             />
-            
-            <Button onPress={() => changeLanguage(i18n.language === 'vi' ? 'en' : 'vi')}>
-                {t('change language')} 
-            </Button>
-        </ScrollView>
+        </View>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        marginVertical: 10,
+        paddingVertical: 20,
+        paddingHorizontal: 10,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 10,
+    },
+    location: {
+        height: 100,
+        backgroundColor: 'tomato',
     },
 });
 

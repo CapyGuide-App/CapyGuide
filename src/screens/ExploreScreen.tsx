@@ -1,8 +1,9 @@
 import * as React from "react";
-import { StyleSheet, SafeAreaView, View, Button, ViewBase } from "react-native";
-import Mapbox, {Camera, MapView, UserTrackingMode, UserLocation, UserLocationRenderMode, Image, Images, LocationPuck} from "@rnmapbox/maps";
+import { StyleSheet, SafeAreaView } from "react-native";
+import Mapbox, {Camera, MapView, UserTrackingMode, UserLocation, LocationPuck} from "@rnmapbox/maps";
 import { MAPBOX_ACCESS_TOKEN } from '@env';
 
+Mapbox.requestAndroidLocationPermissions();
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
 
 const styles = StyleSheet.create({
