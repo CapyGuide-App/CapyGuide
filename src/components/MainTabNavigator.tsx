@@ -4,9 +4,12 @@ import { useTheme } from '@rneui/themed';
 
 import HomeScreen from '../screens/HomeScreen';
 import ExploreScreen from '../screens/ExploreScreen';
+import BlogScreen from '../screens/BlogScreen';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Dimensions, TouchableOpacity, View } from 'react-native';
 import Svg, { Path } from 'react-native-svg';
+import CustomTabBarButton from './CustomTabBarButton';
+import SettingsScreen from '../screens/SettingsScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -144,8 +147,8 @@ const MainTabNavigator: React.FC = () => {
                     })
                 }
             />
-            <Tab.Screen name={POST_NAME} component={HomeScreen} />
-            <Tab.Screen name={PROFILE_NAME} component={HomeScreen} />
+            <Tab.Screen name={POST_NAME} component={BlogScreen} />
+            <Tab.Screen name={PROFILE_NAME} component={SettingsScreen} />
         </Tab.Navigator>
   );
 };
