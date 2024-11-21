@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@react-native-async-storage/async-storage": "^1.24.0",
+    "@react-native-community/geolocation": "^3.4.0",
     "@react-native-firebase/analytics": "^21.4.0",
     "@react-native-firebase/app": "^21.4.0",
     "@react-native-firebase/database": "^21.4.0",
@@ -20,11 +21,9 @@
     "@rneui/base": "^4.0.0-rc.7",
     "@rneui/themed": "^4.0.0-rc.8",
     "@rnmapbox/maps": "^10.1.33",
-    "i18n-js": "^4.5.0",
-    "i18next": "^23.16.5",
+    "axios": "^1.7.7",
     "lucide-react-native": "^0.456.0",
     "react": "18.3.1",
-    "react-i18next": "^15.1.1",
     "react-native": "0.76.1",
     "react-native-dropdown-picker": "^5.4.6",
     "react-native-gesture-handler": "^2.21.2",
@@ -36,7 +35,7 @@
     "react-native-safe-area-context": "^4.14.0",
     "react-native-screens": "^3.35.0",
     "react-native-share": "^11.0.4",
-    "react-native-svg": "^15.8.0",
+    "react-native-svg": "^15.9.0",
     "react-native-vector-icons": "^10.2.0"
   },
   "devDependencies": {

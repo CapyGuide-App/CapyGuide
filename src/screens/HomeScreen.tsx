@@ -1,4 +1,9 @@
-import React, { useState } from 'react';
+import {SearchBar, useTheme} from '@rneui/themed';
+import React, {createContext, useState} from 'react';
+import LocationPickerText from '../components/LocationPickerText';
+import {useLocation} from '../context/LocationContext';
+import {useFocusEffect} from '@react-navigation/native';
+import Geolocation from '@react-native-community/geolocation';
 import {
   View,
   Text,
@@ -6,37 +11,36 @@ import {
   ScrollView,
   FlatList,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
 } from 'react-native';
-import { SearchBar, useTheme } from '@rneui/themed';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 import locationsData from '../data/locations.json';
 import specialtiesData from '../data/specialties.json';
 import featuredPostsData from '../data/featured_posts.json';
 
-const HomeScreen: React.FC = ({ navigation }) => {
-  const { theme } = useTheme();
-  const { t } = useTranslation();
+const HomeScreen: React.FC = ({navigation}) => {
+  const {theme} = useTheme();
+  const {t} = useTranslation();
   const [search, setSearch] = useState('');
-  const [isFocused, setIsFocused] = useState(false);
 
   const updateSearch = (search: string) => setSearch(search);
 
   const navigateToDetail = (item: any) => {
-    navigation.navigate('Detail', { item });
+    navigation.navigate('Detail', {item});
   };
 
+  const [isFocused, setIsFocused] = useState<boolean>(false);
   const renderSection = (title: string, data: any[]) => (
     <View style={styles.sectionContainer}>
       <Text style={styles.sectionTitle}>{title}</Text>
       <FlatList
         horizontal
         data={data}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
+        keyExtractor={item => item.id}
+        renderItem={({item}) => (
           <TouchableOpacity onPress={() => navigateToDetail(item)}>
             <View style={styles.card}>
-              <Image source={{ uri: item.image }} style={styles.image} />
+              <Image source={{uri: item.image}} style={styles.image} />
               <Text style={styles.cardText}>{item.name}</Text>
             </View>
           </TouchableOpacity>
@@ -46,16 +50,41 @@ const HomeScreen: React.FC = ({ navigation }) => {
     </View>
   );
 
+  const {saveLocation} = useLocation();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log('Tab is focused: Starting watchPosition');
+
+      const watchId = Geolocation.watchPosition(
+        position => {
+          console.log('Got position:', position);
+          saveLocation(position.coords);
+        },
+        error => console.error('Error watching position:', error.message),
+        {enableHighAccuracy: true, distanceFilter: 10},
+      );
+
+      return () => {
+        console.log('Tab lost focus: Stopping watchPosition');
+        Geolocation.clearWatch(watchId);
+      };
+    }, []),
+  );
+
   return (
     <ScrollView style={styles.container}>
+      <LocationPickerText />
       <SearchBar
-        placeholder={t('search')}
+        placeholder={'Search'}
         containerStyle={{
-          backgroundColor: 'transparent',
           borderBottomWidth: 0,
+          padding: 0,
+          borderColor: 'transparent',
+          backgroundColor: 'transparent',
         }}
         inputContainerStyle={{
-          backgroundColor: theme.colors.primary + '10',
+          backgroundColor: hexToRGBA(theme.colors.primary, 0.1),
           borderColor: isFocused ? theme.colors.primary : 'transparent',
           borderWidth: 2,
           borderBottomWidth: 2,
@@ -65,14 +94,14 @@ const HomeScreen: React.FC = ({ navigation }) => {
         }}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
-        searchIcon={{ color: theme.colors.primary, size: 24 }}
-        clearIcon={{ color: theme.colors.primary, size: 24 }}
-        cancelIcon={{ color: theme.colors.primary, size: 24 }}
-        round
-        lightTheme
+        searchIcon={searchIconProps}
+        clearIcon={searchIconProps}
+        cancelIcon={searchIconProps}
+        round={true}
+        lightTheme={true}
         onChangeText={updateSearch}
         value={search}
-        placeholderTextColor={theme.colors.primary + '70'}
+        placeholderTextColor={hexToRGBA(theme.colors.primary, 0.7)}
       />
 
       {renderSection('Địa danh gần bạn', locationsData)}
@@ -84,7 +113,15 @@ const HomeScreen: React.FC = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 10,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 10,
+  },
+  location: {
+    height: 100,
+    backgroundColor: 'tomato',
   },
   sectionContainer: {
     marginVertical: 15,
