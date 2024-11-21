@@ -17,6 +17,14 @@ import {
   ArrowLeft,
   ArrowLeftCircle,
 } from 'lucide-react-native';
+import PostShareButton from '../components/PostShare';
+import { color } from '@rneui/base';
+import renderComment from '../components/renderComment';
+
+const comments = [
+  {username: '@vanphuongcute', userRating: '8.9', commentText: 'Chơi rất vui'},
+  {username: '@mhiennoob', userRating: '8.2', commentText: 'Phục vụ hơi kém'},
+];
 
 const {width} = Dimensions.get('window');
 
@@ -24,6 +32,7 @@ const PostDetailScreen: React.FC<any> = ({route, navigation}) => {
   const {post} = route.params;
   const [modalVisible, setModalVisible] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [loved, setLoved] = useState(false);
 
   const handleImagePress = () => {
     setModalVisible(true);
@@ -129,15 +138,28 @@ const PostDetailScreen: React.FC<any> = ({route, navigation}) => {
         </Text>
         <Text style={styles.description}>{post.description}</Text>
         <View style={styles.actions}>
-          <TouchableOpacity style={styles.actionButton}>
-            <Heart size={20} color="#333" />
-            <Text style={styles.actionText}>Thích</Text>
+          <TouchableOpacity style={styles.actionButton} onPress={() => {setLoved(!loved)}}>
+            <Heart size={20} color={loved ? "#ff5050" : "#333"} fill={loved ? "#ff5050" : "rgba(0, 0, 0, 0)"}/>
+            <Text style={[styles.actionText, {color: loved ? "#ff5050" : "#333"}]}>Thích</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.actionButton}>
             <MessageCircle size={20} color="#333" />
             <Text style={styles.actionText}>Thảo luận</Text>
           </TouchableOpacity>
+
+          <PostShareButton title={post.title} url={post.url} />
         </View>
+      </View>
+      <View>
+        {comments.map((comment, index) => (
+            <View key={index}>
+              {renderComment(
+                comment.username,
+                comment.userRating,
+                comment.commentText,
+              )}
+            </View>
+          ))}
       </View>
     </ScrollView>
   );
@@ -237,6 +259,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 15,
+    paddingBottom: 0,
   },
   title: {
     fontSize: 20,
@@ -255,7 +278,7 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    justifyContent: 'space-between',
     marginBottom: 20,
   },
   actionButton: {
