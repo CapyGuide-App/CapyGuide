@@ -108,16 +108,16 @@ const styles = StyleSheet.create({
   },
   modalOption: {
     flexDirection: 'row',
-    alignItems: 'baseline',
-    // justifyContent: 'center',
-    // alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'center',
   },
   modalButtonText: {
     fontSize: 16,
     color: '#333',
     marginLeft: 10,
     textAlign: 'center',
-    // width: 150,
+    width: 150,
     
   },
   modalCancel: {

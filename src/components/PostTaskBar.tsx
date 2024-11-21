@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { Camera, Edit, FileText, Smile, MoreHorizontal } from 'lucide-react-native';
+import { ImagePlus, Edit, FileText, Smile, MoreHorizontal } from 'lucide-react-native';
 import CameraHandler from './CameraHandler';
 
 interface PostTaskBarProps {
@@ -12,7 +12,7 @@ const PostTaskBar: React.FC<PostTaskBarProps> = ({ onImageSelected }) => {
 
   const options = [
     {
-      icon: <Camera size={24} color="#000" />,
+      icon: <ImagePlus size={24} color="#000" />,
       action: () => setIsModalVisible(true),
     },
     { icon: <Edit size={24} color="#000" />, action: () => console.log('Text clicked') },
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
   taskBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     paddingVertical: 10,
     borderTopWidth: 1,
     borderTopColor: '#ddd',

@@ -15,7 +15,7 @@ import {
 } from 'react-native';
 import locationsData from '../data/locations.json';
 import specialtiesData from '../data/specialties.json';
-import featuredPostsData from '../data/featured_posts.json';
+import featuredPostsData from '../data/sample_posts.json';
 
 const hexToRGBA = (hex: string, opacity: number) => {
   hex = hex.replace('#', '');
@@ -57,6 +57,40 @@ const HomeScreen: React.FC = ({navigation}) => {
       />
     </View>
   );
+  
+  const handlePostPress = (post: any) => {
+    navigation.navigate('PostDetailScreen', { post });
+  };
+
+  const renderPost = (title: string, data: any[]) => {
+    return (
+      <View style={styles.sectionContainer}>
+        <Text style={styles.sectionTitle}>{title}</Text>
+        <FlatList
+          horizontal
+          data={data}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <TouchableOpacity onPress={() => handlePostPress(item)}>
+              <View style={styles.card}>
+              {item.images && item.images.length > 0 ? (
+                <Image source={{ uri: item.images[0] }} style={styles.image} />
+              ) : (
+                <View style={styles.placeholder}>
+                  <Text style={styles.placeholderText}>No Image</Text>
+                </View>
+              )}
+                <Text style={styles.cardText} numberOfLines={1}>
+                  {item.title}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+          showsHorizontalScrollIndicator={false}
+        />
+      </View>
+    );
+  };
 
   const searchIconProps = {
       color: theme.colors.primary,
@@ -119,7 +153,7 @@ const HomeScreen: React.FC = ({navigation}) => {
 
       {renderSection('Địa danh gần bạn', locationsData)}
       {renderSection('Đặc sản gần bạn', specialtiesData)}
-      {renderSection('Bài viết nổi bật', featuredPostsData)}
+      {renderPost('Bài viết nổi bật', featuredPostsData)}
     </ScrollView>
   );
 };
@@ -140,25 +174,40 @@ const styles = StyleSheet.create({
     marginVertical: 15,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 30,
     fontWeight: 'bold',
     marginBottom: 10,
-    marginLeft: 10,
+    paddingLeft: 5,
+    borderBottomWidth: 1,
   },
   card: {
-    width: 100,
+    width: 170,
     marginHorizontal: 10,
     alignItems: 'center',
   },
   image: {
-    width: 80,
-    height: 80,
+    width: 160,
+    height: 180,
     borderRadius: 8,
     marginBottom: 5,
   },
+  placeholder: {
+    width: 120,
+    height: 80,
+    borderRadius: 8,
+    backgroundColor: '#ddd',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  placeholderText: {
+    fontSize: 12,
+    color: '#888',
+  },
   cardText: {
     textAlign: 'center',
-    fontSize: 12,
+    fontSize: 18,
+    width: '100%',
   },
 });
 
