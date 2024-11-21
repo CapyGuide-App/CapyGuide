@@ -5,7 +5,7 @@ import {createStackNavigator} from '@react-navigation/stack';
 import AddPostScreen from './screens/AddPostScreen';
 import { LocationProvider } from './context/LocationContext';
 import { requestLocationPermission } from './Permissions';
-import DetailScreen from './components/DetailScreen';
+import DetailScreen from './screens/DetailScreen'
 import PostDetailScreen from './screens/PostDetailScreen';
 import ProfileScreen from './screens/ProfileScreen';
 
