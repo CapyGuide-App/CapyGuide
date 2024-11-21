@@ -39,7 +39,7 @@ const MainContainer: React.FC = () => {
           <Stack.Screen
             name="Detail"
             component={DetailScreen}
-            options={{title: 'Detail'}}
+            options={{title: 'Chi tiết'}}
           />
           <Stack.Screen
             name="PostDetailScreen"

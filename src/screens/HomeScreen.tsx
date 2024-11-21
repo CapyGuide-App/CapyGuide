@@ -13,14 +13,22 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
-import {useTranslation} from 'react-i18next';
 import locationsData from '../data/locations.json';
 import specialtiesData from '../data/specialties.json';
 import featuredPostsData from '../data/featured_posts.json';
 
+const hexToRGBA = (hex: string, opacity: number) => {
+  hex = hex.replace('#', '');
+
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+};
+
 const HomeScreen: React.FC = ({navigation}) => {
   const {theme} = useTheme();
-  const {t} = useTranslation();
   const [search, setSearch] = useState('');
 
   const updateSearch = (search: string) => setSearch(search);
@@ -49,6 +57,11 @@ const HomeScreen: React.FC = ({navigation}) => {
       />
     </View>
   );
+
+  const searchIconProps = {
+      color: theme.colors.primary,
+      size: 24,
+  };
 
   const {saveLocation} = useLocation();
 
