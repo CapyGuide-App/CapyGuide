@@ -119,7 +119,6 @@ const MainTabNavigator: React.FC = () => {
         tabBarActiveTintColor: iconColor,
         tabBarShowLabel: false,
         tabBarStyle: {
-          position: 'absolute',
           height: TAB_BAR_HEIGHT,
           borderTopLeftRadius: TAB_BAR_HEIGHT / 3,
           borderTopRightRadius: TAB_BAR_HEIGHT / 3,
