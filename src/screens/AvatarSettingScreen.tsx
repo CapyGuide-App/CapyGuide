@@ -41,26 +41,30 @@ const AvatarSettingsScreen = () => {
       </View>
 
       {/* Buttons */}
-      <View style = {styles.groupButton}>    
+         
         <TouchableOpacity onPress={()=> showImagePicker()}>
-          <Upload size={20} color="#000" />
+          <View style = {styles.groupButton}> 
+          <Upload size={20} color="#555" />
           <Text style={styles.button}>Tải hình mới</Text>
+          </View>
         </TouchableOpacity>
-      </View>
-      <View style = {styles.groupButton}> 
+      
       <TouchableOpacity onPress={() => removeImage(setImageUri, imageUri)}>
-        <Trash2 size={20} color="#000" />
+        <View style = {styles.groupButton}> 
+        <Trash2 size={20} color="#555" />
         <Text style={styles.button}>Xóa hình đại diện</Text>
-      </TouchableOpacity>
-      </View>
+        </View>
 
-      <View style = {styles.groupButton}>
+      </TouchableOpacity>
+
+      
       <TouchableOpacity onPress={() => setDefaultImage(setImageUri)}>
-        <ImageIcon size={20} color="#000" />
+        <View style = {styles.groupButton}>
+        <ImageIcon size={20} color="#555" />
         <Text style={styles.button}>Đặt hình mặc định</Text>
+        </View>
       </TouchableOpacity>
-      </View>
-
+      
       <CameraHandler
         isVisible={isCameraHandlerVisible}
         onImageSelected={(uri) => setImageUri(uri)} // Cập nhật ảnh khi chọn
@@ -107,27 +111,25 @@ const styles = StyleSheet.create({
     color: '#fff',
   },
   button: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgb(240, 240, 240)',
-    // paddingVertical: 12,
-    // paddingHorizontal: 20,
-    // borderRadius: 8,
-    // marginBottom: 15,
-    width: 200,
-  },
-  buttonContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  buttonText: {
+    fontSize: 18,
     marginLeft: 10,
-    fontSize: 16,
-    color: '#333',
+    color: '#555',
+    width: '60%',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
   },
   groupButton: {
     flexDirection: 'row',
-  }
+    alignItems: 'center',
+    borderRadius: 8,
+    marginBottom: 15,
+    borderColor: '#555', 
+    borderWidth: 1,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10, 
+    paddingLeft: 5, 
+  },
 });
 export default AvatarSettingsScreen;
