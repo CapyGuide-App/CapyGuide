@@ -11,7 +11,13 @@ import {
 import PostTaskBar from '../components/PostTaskBar';
 import LocationSelector from '../components/LocationSelector';
 
-const AddPostScreen: React.FC = ({navigation}) => {
+import { NavigationProp, useNavigation } from '@react-navigation/native';
+
+interface AddPostScreenProps {
+  navigation: NavigationProp<any>;
+}
+
+const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   const [postTitle, setPostTitle] = useState('');
   const [postContent, setPostContent] = useState('');
   const [selectedImages, setSelectedImages] = useState<string[]>([]);
@@ -23,13 +29,6 @@ const AddPostScreen: React.FC = ({navigation}) => {
   const removeImage = (index: number) => {
     setSelectedImages(prevImages =>
       prevImages.filter((_, imageIndex) => imageIndex !== index),
-    );
-  };
-
-  const checkValidPost = () => {
-    return (
-      (postContent.trim() !== '' || selectedImages.length > 0) &&
-      postTitle.trim() !== ''
     );
   };
 

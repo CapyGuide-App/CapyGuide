@@ -45,6 +45,8 @@ const BlogScreen: React.FC = () => {
             author={post.author}
             avatar={post.avatar}
             title={post.title}
+            date={post.date}
+            views={post.views}
             description={post.description}
             images={post.images}
             reactions={post.reactions}
