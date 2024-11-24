@@ -106,6 +106,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: "#888",
     marginLeft: 5,
+    width: 150,
   },
   reactionRow: {
     flexDirection: "row",
