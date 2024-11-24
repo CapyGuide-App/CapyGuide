@@ -126,7 +126,7 @@ const MainTabNavigator: React.FC = () => {
           elevation: 0,
           shadowOpacity: 0,
         },
-        tabBarBackground: () => <CustomTabBarBackground />,
+        // tabBarBackground: () => <CustomTabBarBackground />, // Uncomment this line to show custom tab bar background
       })}>
       <Tab.Screen name={HOME_NAME} component={HomeScreen} />
       <Tab.Screen name={SEARCH_NAME} component={ExploreScreen} />

@@ -23,7 +23,7 @@ const HomeScreen: React.FC = ({navigation}) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const {theme} = useTheme();
   const [search, setSearch] = useState('');
-  const {placeData, foodData} = useData();
+  const {placeData, foodData, setPlaces, setRestaurants} = useData();
 
   const updateSearch = (search: string) => setSearch(search);
 

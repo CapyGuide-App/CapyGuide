@@ -10,7 +10,6 @@ import ProfileScreen from './screens/ProfileScreen';
 import Geolocation from '@react-native-community/geolocation';
 import Mapbox from '@rnmapbox/maps';
 import { MAPBOX_ACCESS_TOKEN } from '@env';
-import { useData } from './context/DataContext';
 
 const Stack = createStackNavigator();
 

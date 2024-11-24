@@ -1,6 +1,6 @@
 import { useTheme } from "@rneui/themed";
 import { ChevronRight, MapPin } from "lucide-react-native";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useLocation } from "../context/LocationContext";
 import { fetchReverseGeocode } from "../request/GeocodingRequest";
@@ -10,14 +10,25 @@ const LocationPickerText: React.FC = () => {
   const { location, updateLocation } = useLocation();
   const { theme } = useTheme();
   const [locationText, setLocationText] = React.useState<string>('Đang tìm vị trí...');
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (location) {
-      fetchReverseGeocode(location).then((res) => {
-        if (res) {
-          setLocationText(res);
-        }
-      });
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+
+      fetchReverseGeocode(location, controller.signal)
+        .then((data) => {
+          if (data && !controller.signal.aborted) {
+            setLocationText(data);
+          }
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }, [location]);
 

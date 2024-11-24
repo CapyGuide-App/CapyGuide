@@ -1,6 +1,5 @@
 import Geolocation from '@react-native-community/geolocation';
 import React, { createContext, useContext, useState } from 'react';
-import { requestLocationPermission } from '../Permissions';
 import Mapbox from '@rnmapbox/maps';
 
 const LocationContext = createContext();
@@ -15,7 +14,6 @@ export const LocationProvider = ({ children }) => {
   const [location, setLocation] = useState(defaultLocation);
 
   const saveLocation = (newLocation) => {
-    console.log('Saving location:', newLocation);
     setLocation(newLocation);
   };
 
@@ -28,7 +26,6 @@ export const LocationProvider = ({ children }) => {
     Geolocation.getCurrentPosition(
       (position) => {
         saveLocation(position);
-        console.log('Location updated:', position);
       },
       (error) => {
         console.error('Error getting location:', error);

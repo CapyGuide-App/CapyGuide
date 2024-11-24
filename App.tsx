@@ -6,6 +6,7 @@ import 'react-native-gesture-handler';
 import { LocationProvider } from './src/context/LocationContext';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DataProvider } from './src/context/DataContext';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 function App() {
   const [settings, setSettings] = useState<{ theme: string; language: string } | null>(null);
@@ -30,13 +31,15 @@ function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      <SafeAreaProvider>
-        <DataProvider>
-          <LocationProvider>
-            <MainContainer />
+      <GestureHandlerRootView style={{flex: 1}}>
+        <SafeAreaProvider>
+        <LocationProvider>
+            <DataProvider>
+              <MainContainer />
+            </DataProvider>
           </LocationProvider>
-        </DataProvider>
-      </SafeAreaProvider>
+        </SafeAreaProvider>
+      </GestureHandlerRootView>
     </ThemeProvider>
   );
 }
