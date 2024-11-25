@@ -9,7 +9,7 @@ import DetailScreen from './screens/DetailScreen'
 import PostDetailScreen from './screens/PostDetailScreen';
 import ProfileScreen from './screens/ProfileScreen';
 import AvatarSettingScreen from './screens/AvatarSettingScreen';
-
+import ChangePasswordScreen from './screens/ChangePasswordScreen';
 const Stack = createStackNavigator();
 
 requestLocationPermission();
@@ -56,6 +56,11 @@ const MainContainer: React.FC = () => {
             name="AvatarSettingScreen" 
             component={AvatarSettingScreen} 
             options={{title: 'Hình đại diện'}}
+          />
+          <Stack.Screen 
+            name="ChangePasswordScreen" 
+            component={ChangePasswordScreen} 
+            options={{title: 'Thay đổi mật khẩu'}}
           />
         </Stack.Navigator>
       </LocationProvider>

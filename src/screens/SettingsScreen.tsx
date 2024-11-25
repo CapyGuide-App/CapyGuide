@@ -13,6 +13,9 @@ const SettingsScreen: React.FC = () => {
   const navigateToAvatar = () => {
     navigation.navigate('AvatarSettingScreen')
   }
+  const navigateToPassword = () => {
+    navigation.navigate('ChangePasswordScreen')
+  }
 
   return (
     <View style={styles.container}>
@@ -40,7 +43,13 @@ const SettingsScreen: React.FC = () => {
         </View>
         <View style={styles.itemContainer}>
           <Lock size={24} color="#555" />
-          <Text style={styles.itemText}>Mật khẩu</Text>
+          <TouchableOpacity
+            style = {styles.option}
+            onPress={navigateToPassword}
+            activeOpacity={0.6}
+          > 
+            <Text style={styles.itemText}>Thay đổi mật khẩu</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
