@@ -7,7 +7,7 @@ import {
   ScrollView,
   TouchableOpacity,
 } from 'react-native';
-import { Smile, Meh, Frown, SmilePlus  } from "lucide-react-native";
+import {Smile, Meh, Frown, SmilePlus, MessageSquare, LucideImage, Bookmark} from 'lucide-react-native';
 import renderComment from '../components/renderComment';
 
 const comments = [
@@ -16,69 +16,81 @@ const comments = [
 ];
 
 const reactions = [
-  { id: "great", label: "Tuyệt vời", icon: <SmilePlus color="#333" size={24} /> },
-  { id: "good", label: "Khá tốt", icon: <Smile color="#333" size={24} /> },
-  { id: "average", label: "Trung bình", icon: <Meh color="#333" size={24} /> },
-  { id: "poor", label: "Kém", icon: <Frown color="#333" size={24} /> },
+  {id: 'great', label: 'Tuyệt vời', icon: <SmilePlus color="#333" size={24} />},
+  {id: 'good', label: 'Khá tốt', icon: <Smile color="#333" size={24} />},
+  {id: 'average', label: 'Trung bình', icon: <Meh color="#333" size={24} />},
+  {id: 'poor', label: 'Kém', icon: <Frown color="#333" size={24} />},
 ];
 
-import { RouteProp } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import {RouteProp} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 
-type DetailScreenRouteProp = RouteProp<{ Detail: { item: any } }, 'Detail'>;
-type DetailScreenNavigationProp = StackNavigationProp<{ Detail: { item: any } }, 'Detail'>;
+type DetailScreenRouteProp = RouteProp<{Detail: {item: any}}, 'Detail'>;
+type DetailScreenNavigationProp = StackNavigationProp<
+  {Detail: {item: any}},
+  'Detail'
+>;
 
 type Props = {
   route: DetailScreenRouteProp;
   navigation: DetailScreenNavigationProp;
 };
 
-const DetailScreen: React.FC<Props> = ({ route, navigation }) => {
+const DetailScreen: React.FC<Props> = ({route, navigation}) => {
   const {item} = route.params;
-  const [selectedReaction, setSelectedReaction] = React.useState<string | null>(null);
+  const [selectedReaction, setSelectedReaction] = React.useState<string | null>(
+    null,
+  );
 
   return (
     <ScrollView style={styles.container}>
-
-      <Image source={{uri: item.image}} style={styles.mainImage} />
+      <Image source={{uri: item.properties.picture}} style={styles.mainImage} />
 
       <View style={styles.infoContainer}>
-        <Text style={styles.title}>{item.name}</Text>
+        <Text style={styles.title}>{item.properties.name}</Text>
         <View style={styles.statsRow}>
           <View style={styles.statItemContainer}>
+            <MessageSquare color="#4caf50" size={20} />
             <Text style={styles.statNumber}>157</Text>
             <Text style={styles.statLabel}>bình luận</Text>
           </View>
           <View style={styles.statItemContainer}>
+            <LucideImage color="#4caf50" size={20} />
             <Text style={styles.statNumber}>421</Text>
             <Text style={styles.statLabel}>hình ảnh</Text>
           </View>
           <View style={styles.statItemContainer}>
+            <Bookmark color="#4caf50" size={20} />
             <Text style={styles.statNumber}>502</Text>
             <Text style={styles.statLabel}>lưu lại</Text>
           </View>
           <View style={styles.ratingContainer}>
-            <Text style={styles.ratingText}>8.7</Text>
+            <Text style={styles.ratingText}>
+              {item.properties.avg_rating.toFixed(1)}
+            </Text>
           </View>
         </View>
 
         <Text style={styles.sectionTitle}>Thông tin về địa điểm</Text>
-        <Text style={styles.infoItem}>Vị trí cụ thể</Text>
-        <Text style={styles.infoItem}>4.9 km (từ vị trí hiện tại)</Text>
+        <Text style={styles.infoItem}>Địa chỉ: {item.properties.address}</Text>
+        <Text style={styles.infoItem}>Quận: {item.properties.district}</Text>
+        <Text style={styles.infoItem}>Loại hình: {item.properties.type}</Text>
+        <Text style={styles.infoItem}>
+          {item.properties.distance.toFixed(1)} km (từ vị trí hiện tại)
+        </Text>
       </View>
 
       <View style={styles.commentsSection}>
         <Text style={styles.sectionTitle}>157 bình luận</Text>
         <View style={styles.reactionsRow}>
-          {reactions.map((reaction) => (
+          {reactions.map(reaction => (
             <TouchableOpacity
               key={reaction.id}
               style={[
                 styles.reactionItem,
                 selectedReaction === reaction.id && styles.selectedReaction,
               ]}
-              onPress={() => setSelectedReaction(reaction.id)}
-            >
+              onPress={() => setSelectedReaction(reaction.id)}>
               {reaction.icon}
               <Text style={styles.reactionText}>{reaction.label}</Text>
             </TouchableOpacity>
@@ -180,23 +192,23 @@ const styles = StyleSheet.create({
     borderTopColor: '#ddd',
   },
   reactionsRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
+    flexDirection: 'row',
+    justifyContent: 'space-around',
     marginVertical: 10,
   },
   reactionItem: {
-    alignItems: "center",
+    alignItems: 'center',
     padding: 10,
   },
   reactionText: {
     fontSize: 14,
-    color: "#333",
+    color: '#333',
     marginTop: 5,
     minWidth: 70,
-    textAlign: "center",
+    textAlign: 'center',
   },
   selectedReaction: {
-    backgroundColor: "#e0f7fa",
+    backgroundColor: '#e0f7fa',
     borderRadius: 10,
     padding: 10,
   },

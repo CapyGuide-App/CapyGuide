@@ -5,7 +5,6 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
-import locationsData from '../data/locations.json';
 import NearByCollection from '../components/NearByCollection';
 import { useData } from '../context/DataContext';
 
@@ -19,7 +18,11 @@ const hexToRGBA = (hex: string, opacity: number) => {
   return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 };
 
-const HomeScreen: React.FC = ({navigation}) => {
+interface HomeScreenProps {
+  navigation: any;
+}
+
+const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
   const [isFocused, setIsFocused] = useState<boolean>(false);
   const {theme} = useTheme();
   const [search, setSearch] = useState('');
@@ -67,8 +70,8 @@ const HomeScreen: React.FC = ({navigation}) => {
         value={search}
         placeholderTextColor={hexToRGBA(theme.colors.primary, 0.7)}
       />
-        <NearByCollection title="Địa danh gần bạn" geoData={placeData} />
-        <NearByCollection title="Đặc sản gần bạn" geoData={foodData} />
+        <NearByCollection title="Địa danh gần bạn" geoData={placeData} onPressItem={navigateToDetail}/>
+        <NearByCollection title="Đặc sản gần bạn" geoData={foodData}  onPressItem={navigateToDetail}/>
     </ScrollView>
   );
 };
