@@ -10,6 +10,13 @@ const SettingsScreen: React.FC = () => {
     navigation.navigate('ProfileScreen');
   };
 
+  const navigateToAvatar = () => {
+    navigation.navigate('AvatarSettingScreen')
+  }
+  const navigateToPassword = () => {
+    navigation.navigate('ChangePasswordScreen')
+  }
+
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.header} onPress={navigateToProfile}>
@@ -17,7 +24,7 @@ const SettingsScreen: React.FC = () => {
           <View style={styles.avatar} />
         </TouchableOpacity>
         <Text style={styles.username}>loilon504</Text>
-        <TouchableOpacity onPress={navigateToProfile} style={styles.xem}>
+        <TouchableOpacity onPress={navigateToProfile}>
           <Text style={styles.viewText}>Xem</Text>
         </TouchableOpacity>
       </TouchableOpacity>
@@ -26,11 +33,23 @@ const SettingsScreen: React.FC = () => {
         <Text style={styles.sectionTitle}>Cài Đặt Tài Khoản</Text>
         <View style={styles.itemContainer}>
           <User size={24} color="#555" />
-          <Text style={styles.itemText}>Hình đại diện</Text>
+          <TouchableOpacity
+            style={styles.option}
+            onPress={navigateToAvatar}
+            activeOpacity={0.6} // Hiệu ứng nhấn
+          >
+           <Text style={styles.itemText}>Hình đại diện</Text>
+         </TouchableOpacity>
         </View>
         <View style={styles.itemContainer}>
           <Lock size={24} color="#555" />
-          <Text style={styles.itemText}>Mật khẩu</Text>
+          <TouchableOpacity
+            style = {styles.option}
+            onPress={navigateToPassword}
+            activeOpacity={0.6}
+          > 
+            <Text style={styles.itemText}>Thay đổi mật khẩu</Text>
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -144,6 +163,9 @@ const styles = StyleSheet.create({
     color: '#000',
     textAlign: 'center',
     width: 200,
+  },
+  option: {
+    backgroundColor: '#f9f9f9',
   },
 });
 

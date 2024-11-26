@@ -4,9 +4,11 @@ import MainTabNavigator from './components/MainTabNavigator';
 import {createStackNavigator} from '@react-navigation/stack';
 import AddPostScreen from './screens/AddPostScreen';
 import { LocationProvider, useLocation } from './context/LocationContext';
-import DetailScreen from './components/DetailScreen';
+import DetailScreen from './screens/DetailScreen';
 import PostDetailScreen from './screens/PostDetailScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import AvatarSettingScreen from './screens/AvatarSettingScreen';
+import ChangePasswordScreen from './screens/ChangePasswordScreen';
 import Geolocation from '@react-native-community/geolocation';
 import Mapbox from '@rnmapbox/maps';
 import { MAPBOX_ACCESS_TOKEN } from '@env';
@@ -37,8 +39,9 @@ const MainContainer: React.FC = () => {
 
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
+      <LocationProvider>
+        <Stack.Navigator>
+          <Stack.Screen
           name="MainTabNavigator"
           component={MainTabNavigator}
           options={{headerShown: false}}
@@ -71,7 +74,18 @@ const MainContainer: React.FC = () => {
           component={ProfileScreen}
           options={{ title: 'Hồ sơ' }}
         />
-      </Stack.Navigator>
+          <Stack.Screen 
+            name="AvatarSettingScreen" 
+            component={AvatarSettingScreen} 
+            options={{title: 'Hình đại diện'}}
+          />
+          <Stack.Screen 
+            name="ChangePasswordScreen" 
+            component={ChangePasswordScreen} 
+            options={{title: 'Thay đổi mật khẩu'}}
+          />
+        </Stack.Navigator>
+      </LocationProvider>
     </NavigationContainer>
   );
 };
