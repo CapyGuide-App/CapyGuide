@@ -1,15 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import MainContainer from './src/MainContainer';
-import { createTheme, ThemeProvider } from '@rneui/themed';
-import { loadSettings } from './src/Storage';
+import {createTheme, ThemeProvider} from '@rneui/themed';
+import {loadSettings} from './src/Storage';
 import 'react-native-gesture-handler';
-import { LocationProvider } from './src/context/LocationContext';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { DataProvider } from './src/context/DataContext';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {LocationProvider} from './src/context/LocationContext';
+import {SafeAreaProvider} from 'react-native-safe-area-context';
+import {DataProvider} from './src/context/DataContext';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {AuthProvider} from './src/context/AuthContext';
 
 function App() {
-  const [settings, setSettings] = useState<{ theme: string; language: string } | null>(null);
+  const [settings, setSettings] = useState<{
+    theme: string;
+    language: string;
+  } | null>(null);
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -33,11 +37,13 @@ function App() {
     <ThemeProvider theme={theme}>
       <GestureHandlerRootView style={{flex: 1}}>
         <SafeAreaProvider>
-        <LocationProvider>
-            <DataProvider>
-              <MainContainer />
-            </DataProvider>
-          </LocationProvider>
+          <AuthProvider>
+            <LocationProvider>
+              <DataProvider>
+                <MainContainer />
+              </DataProvider>
+            </LocationProvider>
+          </AuthProvider>
         </SafeAreaProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
