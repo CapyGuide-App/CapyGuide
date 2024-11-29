@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, TouchableOpacity, StyleSheet, Modal, Text } from 'react-native';
 import { Camera, Folder } from 'lucide-react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
@@ -38,12 +38,12 @@ const CameraHandler: React.FC<CameraHandlerProps> = ({
 
   const cameraOptions = [
     {
-      icon: <Camera size={24} color="#000" />,
+      icon: <Camera size={24} color="#FF9800" />,
       label: 'Chụp ảnh',
       action: openCamera,
     },
     {
-      icon: <Folder size={24} color="#000" />,
+      icon: <Folder size={24} color="#FF9800" />,
       label: 'Thư viện',
       action: openLibrary,
     },
@@ -62,7 +62,9 @@ const CameraHandler: React.FC<CameraHandlerProps> = ({
             >
               <View style={styles.modalOption}>
                 {option.icon}
-                <Text style={styles.modalButtonText} numberOfLines={1}>{option.label}</Text>
+                <Text style={styles.modalButtonText} numberOfLines={1}>
+                  {option.label}
+                </Text>
               </View>
             </TouchableOpacity>
           ))}
@@ -87,46 +89,53 @@ const styles = StyleSheet.create({
   modalContainer: {
     backgroundColor: '#fff',
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 15,
     alignItems: 'center',
     width: 300,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 5,
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 20,
+    color: '#333',
   },
   modalButton: {
     width: '100%',
     padding: 15,
-    backgroundColor: '#F3F4F6',
-    borderRadius: 8,
+    backgroundColor: '#FFFEF8',
+    borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 10,
+    marginBottom: 15,
+    borderWidth: 1,
+    borderColor: '#FF9800',
   },
   modalOption: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    alignSelf: 'center',
   },
   modalButtonText: {
     fontSize: 16,
-    color: '#333',
+    color: '#FF9800',
     marginLeft: 10,
     textAlign: 'center',
-    width: 150,
-    
   },
   modalCancel: {
     marginTop: 10,
+    width: '100%',
+    alignItems: 'center',
   },
   modalCancelText: {
     fontSize: 16,
-    color: '#FF3B30',
-    width: 100,
+    fontWeight: 'bold',
+    color: '#FF9800',
     textAlign: 'center',
   },
 });
