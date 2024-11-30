@@ -12,6 +12,12 @@ import ProfileSettingsScreen from './screens/ProfileSettingsScreen';
 import ChangePasswordScreen from './screens/ChangePasswordScreen';
 import LoginScreen from './screens/LoginScreen';
 import SignUpScreen from './screens/SignUpScreen';
+import AccountScreen from './screens/AccountScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
+import AppearanceScreen from './screens/AppearanceScreen';
+import SecurityScreen from './screens/SecurityScreen';
+import HelpScreen from './screens/HelpScreen';
+import AboutScreen from './screens/AboutScreen';
 import Geolocation from '@react-native-community/geolocation';
 import Mapbox from '@rnmapbox/maps';
 import {MAPBOX_ACCESS_TOKEN} from '@env';
@@ -79,7 +85,7 @@ const MainStack = () => {
       />
       <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ title: "Hồ sơ" }} />
       <Stack.Screen
-        name="AvatarSettingScreen"
+        name="ProfileSettingScreen"
         component={ProfileSettingsScreen}
         options={{ title: "Chỉnh sửa hồ sơ" }}
       />
@@ -88,6 +94,13 @@ const MainStack = () => {
         component={ChangePasswordScreen}
         options={{ title: "Thay đổi mật khẩu" }}
       />
+
+<Stack.Screen name="AccountScreen" component={AccountScreen} options={{ title: 'Tài khoản' }} />
+        <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} options={{ title: 'Thông báo' }} />
+        <Stack.Screen name="AppearanceScreen" component={AppearanceScreen} options={{ title: 'Giao diện' }} />
+        <Stack.Screen name="SecurityScreen" component={SecurityScreen} options={{ title: 'Bảo mật' }} />
+        <Stack.Screen name="HelpScreen" component={HelpScreen} options={{ title: 'Trợ giúp' }} />
+        <Stack.Screen name="AboutScreen" component={AboutScreen} options={{ title: 'Về CapyGuide' }} />
     </Stack.Navigator>
   );
 };
