@@ -13,7 +13,8 @@ const LoginScreen = ({ navigation }) => {
     <AuthForm
       title="Login"
       buttonText="Login"
-      switchText="Don’t have an account? Sign Up"
+      promptText="Don’t have an account?"
+      switchText="Sign Up"
       onSwitch={() => navigation.navigate("SignUpScreen")}
       onSubmit={handleLogin}
     />

@@ -9,9 +9,20 @@ import {
 } from "react-native";
 import { Eye, EyeOff } from "lucide-react-native";
 
-const AuthForm = ({
+interface AuthFormProps {
+  title: string;
+  buttonText: string;
+  promptText: string;
+  switchText: string;
+  onSwitch: () => void;
+  onSubmit: () => void;
+  isSignUp?: boolean;
+}
+
+const AuthForm: React.FC<AuthFormProps> = ({
   title,
   buttonText,
+  promptText,
   switchText,
   onSwitch,
   onSubmit,
@@ -101,9 +112,7 @@ const AuthForm = ({
         </TouchableOpacity>
       </View>
 
-      <Text style={styles.switchText} onPress={onSwitch}>
-        {switchText}
-      </Text>
+      <View style={styles.inlineContainer}><Text style={styles.promptText}>{promptText} </Text><Text style={styles.switchText} onPress={onSwitch}>{switchText}</Text></View>
     </View>
   );
 };
@@ -178,10 +187,20 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
+  inlineContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  promptText: {
+    color: "#F5A623",
+    fontSize: 16,
+    marginTop: 20,
+  },
   switchText: {
     color: "#F5A623",
-    fontSize: 14,
+    fontSize: 16,
     marginTop: 20,
+    fontWeight: "bold",
   },
 });
 

@@ -6,7 +6,8 @@ const SignUpScreen = ({ navigation }) => {
     <AuthForm
       title="Create an Account"
       buttonText="Sign Up"
-      switchText="Already have an account? Login"
+      promptText="Already have an account?"
+      switchText="Login"
       onSwitch={() => navigation.navigate("LoginScreen")}
       onSubmit={() => navigation.navigate("LoginScreen")}
       isSignUp={true}
