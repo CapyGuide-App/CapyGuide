@@ -1,89 +1,90 @@
-import {SearchBar, useTheme} from '@rneui/themed';
-import React, {useState} from 'react';
+import {Icon, useTheme} from '@rneui/themed';
+import React, {useCallback, useEffect, useState} from 'react';
 import LocationPickerText from '../components/LocationPickerText';
 import {
   StyleSheet,
   ScrollView,
+  View,
+  Image,
+  Text,
+  Pressable,
 } from 'react-native';
 import NearByCollection from '../components/NearByCollection';
-import { useData } from '../context/DataContext';
+import SearchBar from '../components/SearchBar';
+import { fetchData } from '../request/DataRequest';
+import { useLocation } from '../context/LocationContext';
+import { useFocusEffect } from '@react-navigation/native';
 
-const hexToRGBA = (hex: string, opacity: number) => {
-  hex = hex.replace('#', '');
+import ErrorContent from '../components/ErrorContent';
 
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
+const HomeScreen: React.FC = ({navigation}: any) => {
+  const { location } = useLocation();
+  const [foodData, setFoodData] = useState<any[]>([]);
+  const [placeData, setPlaceData] = useState<any[]>([]);
+  const [placeStatus, setPlaceStatus] = useState<'loading' | 'error' | 'success'>('loading');
+  const [foodStatus, setFoodStatus] = useState<'loading' | 'error' | 'success'>('loading');
 
-  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-};
-
-interface HomeScreenProps {
-  navigation: any;
-}
-
-const HomeScreen: React.FC<HomeScreenProps> = ({navigation}) => {
-  const [isFocused, setIsFocused] = useState<boolean>(false);
-  const {theme} = useTheme();
-  const [search, setSearch] = useState('');
-  const {placeData, foodData, setPlaces, setRestaurants} = useData();
-
-  const updateSearch = (search: string) => setSearch(search);
-
-  const navigateToDetail = (item: any) => {
-    navigation.navigate('Detail', {item});
+  const reload = (type: string, saveData: any, setStatus: any, controller: AbortController) => {
+    setStatus((prevStatus: string) => {
+      if (prevStatus === 'loading') return prevStatus;
+      return 'loading';
+    });
+    fetchData(location, type, controller.signal).then((data) => {
+      if (data) {
+        saveData(data);
+        setStatus('success');
+      }
+    }).catch((error) => {
+      if (error.name === "CanceledError" || error.name === "AbortError") {
+        console.log(`${type} request was canceled`);
+      } else {
+        setStatus("error");
+        console.error(error);
+      }
+    });
   };
 
-  const searchIconProps = {
-      color: theme.colors.primary,
-      size: 24,
+  useEffect(() => {
+    const controller = new AbortController();
+    reload('food', setFoodData, setFoodStatus, controller);
+    reload('place', setPlaceData, setPlaceStatus, controller);
+    return () => {
+      controller.abort();
+    };
+  }, [location]);
+  
+  const navigateToDetail = (item: any) => {
+    navigation.navigate('Detail', {item});
   };
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <LocationPickerText />
-      <SearchBar
-        placeholder={'Search'}
-        containerStyle={{
-          borderBottomWidth: 0,
-          padding: 0,
-          borderColor: 'transparent',
-          backgroundColor: 'transparent',
-        }}
-        inputContainerStyle={{
-          backgroundColor: hexToRGBA(theme.colors.primary, 0.1),
-          borderColor: isFocused ? theme.colors.primary : 'transparent',
-          borderWidth: 2,
-          borderBottomWidth: 2,
-        }}
-        inputStyle={{
-          color: theme.colors.primary,
-        }}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        searchIcon={searchIconProps}
-        clearIcon={searchIconProps}
-        cancelIcon={searchIconProps}
-        round={true}
-        lightTheme={true}
-        onChangeText={updateSearch}
-        value={search}
-        placeholderTextColor={hexToRGBA(theme.colors.primary, 0.7)}
-      />
-        <NearByCollection title="Địa danh gần bạn" geoData={placeData} onPressItem={navigateToDetail}/>
-        <NearByCollection title="Đặc sản gần bạn" geoData={foodData}  onPressItem={navigateToDetail}/>
+      <SearchBar contentContainerStyle={styles.container}/>
+      {placeStatus !== 'error' && foodStatus !== 'error' &&
+      <NearByCollection title="Địa danh gần bạn"
+        geoData={placeData} onPressItem={navigateToDetail} 
+        status={placeStatus} onShowAll={() => navigation.navigate('Explore', { indexTab: 0, title: 'Địa danh gần bạn' })}/>}
+      {placeStatus !== 'error' && foodStatus !== 'error' &&
+      <NearByCollection title="Đặc sản gần bạn" 
+        geoData={foodData} onPressItem={navigateToDetail} 
+        status={foodStatus} onShowAll={() => navigation.navigate('Explore', { indexTab: 1, title: 'Đặc sản gần bạn' })}/>}
+      {(placeStatus === 'error' || foodStatus === 'error') &&
+        <ErrorContent onRetry={() => {
+          const controller = new AbortController();
+          reload('food', setFoodData, setFoodStatus, controller);
+          reload('place', setPlaceData, setPlaceStatus, controller);
+        }}/>}
     </ScrollView>
   );
 };
 
-
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-    display: 'flex',
+    padding: 15,
     flexDirection: 'column',
     gap: 10,
+    height: '100%',
   },
 });
 export default HomeScreen;

@@ -12,7 +12,7 @@ import SettingsScreen from '../screens/SettingsScreen';
 const Tab = createBottomTabNavigator();
 
 const HOME_NAME = 'Home';
-const SEARCH_NAME = 'Search';
+const SEARCH_NAME = 'Explore';
 const ADD_NAME = 'Add';
 const POST_NAME = 'Post';
 const PROFILE_NAME = 'Profile';
@@ -126,7 +126,7 @@ const MainTabNavigator: React.FC = () => {
           elevation: 0,
           shadowOpacity: 0,
         },
-        // tabBarBackground: () => <CustomTabBarBackground />, // Uncomment this line to show custom tab bar background
+        // tabBarBackground: () => <CustomTabBarBackground />,
       })}>
       <Tab.Screen name={HOME_NAME} component={HomeScreen} />
       <Tab.Screen name={SEARCH_NAME} component={ExploreScreen} />

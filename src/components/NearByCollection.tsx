@@ -1,66 +1,73 @@
 import { Card, useTheme } from "@rneui/themed";
-import React from "react";
-import { View, StyleProp, StyleSheet, Text, ViewStyle, Image } from "react-native";
+import React, { useEffect } from "react";
+import { View, StyleProp, StyleSheet, Text, ViewStyle, Image, ActivityIndicator } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { Star } from "lucide-react-native";
 import { Pressable } from "react-native";
 
 interface NearByCollectionProps {
     title: string;
-    geoData: any;
+    geoData: any[];
     style?: StyleProp<ViewStyle>;
     windowSize?: number;
-    onPressItem: (item: any) => void;
+    onPressItem?: (item: any) => void;
+    status?: 'loading' | 'error' | 'success';
+    onShowAll?: () => void;
 }
 
-const NearByCollection: React.FC<NearByCollectionProps> = ({ title, geoData, style, windowSize = 10, onPressItem }) => {
+const NearByCollection: React.FC<NearByCollectionProps> = ({ title, geoData, style, windowSize = 10, onPressItem, status = 'loading', onShowAll }) => {
     const { theme } = useTheme();
 
     return (
         <View style={[styles.container, style]}>
-            <Text style={styles.title}>{title}</Text>
-            <FlatList
-                horizontal={true}
-                data={geoData.slice(0, windowSize)}
-                renderItem={({ item }) => (
-                    <Pressable
-                        onPress={() => onPressItem(item)}
-                        style={({ pressed }) => [
-                            styles.card,
-                            {
-                                transform: pressed ? [{ scale: 0.97 }] : [{ scale: 1 }],
-                                opacity: pressed ? 0.8 : 1,
-                            },
-                        ]}
-                    >
-                        <Card theme={theme} containerStyle={styles.cardContent}>
-                            <Image source={{ uri: item.properties.picture }} style={styles.image} />
-                            <Text numberOfLines={1} style={styles.name}>{item.properties.name}</Text>
-                            <View style={styles.description}>
-                                {item.properties.distance && <Text numberOfLines={1}>{item.properties.distance.toFixed(1)} km</Text>}
-                                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, marginLeft: 'auto' }}>
-                                    <Star size={16} fill='#ffc02d' color='#ffc02d' />
-                                    <Text>{item.properties.avg_rating.toFixed(1)}</Text>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                <Text style={styles.title}>{title}</Text>
+                <Pressable onPress={() => onShowAll && onShowAll()}>
+                    <Text style={{ color: theme.colors.primary }}>Xem thêm</Text>
+                </Pressable>
+            </View>
+            {status === 'loading' && <ActivityIndicator color={theme.colors.primary} size="large" />}
+            {status === 'success' && 
+                <FlatList
+                    style={{ height: 'auto' }}
+                    horizontal={true}
+                    data={geoData.slice(0, 10)}
+                    renderItem={({ item }) => (
+                        <Pressable
+                            onPress={() => onPressItem(item)}
+                            style={{
+                                flex: 1,
+                            }}
+                        >
+                            <Card theme={theme} containerStyle={styles.cardContent}>
+                                <Image source={{ uri: item.picture }} style={styles.image} />
+                                <View style={styles.content}>
+                                    <Text numberOfLines={1} style={styles.name}>{item.name}</Text>
+                                    <View style={styles.description}>
+                                        {item.distance && <Text style={styles.descriptionText} numberOfLines={1}>{item.distance.toFixed(1)} km {'\uA78F'} {item.duration.toFixed(1)} phút</Text>}
+                                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, marginLeft: 'auto' }}>
+                                            <Star size={16} fill='#ffc02d' color='#ffc02d' />
+                                            <Text style={styles.descriptionText}>{item.avg_rating.toFixed(1)}</Text>
+                                        </View>
+                                    </View>
                                 </View>
-                            </View>
-                        </Card>
-                    </Pressable>
-                )}
-                keyExtractor={(item) => item.properties.id.toString()}
-                initialNumToRender={windowSize}
-                removeClippedSubviews={true}
-                maxToRenderPerBatch={windowSize}
-                updateCellsBatchingPeriod={10}
-                windowSize={windowSize}
-            />
+                            </Card>
+                        </Pressable>
+                    )}
+                    keyExtractor={(item) => item.id.toString()}
+                    initialNumToRender={windowSize}
+                    removeClippedSubviews={true}
+                    maxToRenderPerBatch={windowSize}
+                    updateCellsBatchingPeriod={10}
+                    windowSize={windowSize}
+                />}
         </View>
     );
 };
 
 const cardStyle = {
-    padding: 10,
+    padding: 0,
     width: 180,
-    height: 200,
     borderRadius: 20,
     marginLeft: 0,
     marginRight: 10,
@@ -70,37 +77,43 @@ const cardStyle = {
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'column',
+        alignItems: 'center',
         gap: 5,
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
+        flex: 1
     },
     card: {
         ...cardStyle,
     },
     cardContent: {
         ...cardStyle,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 5, // Hiệu ứng nổi (shadow) cho Android
+        shadowColor: 'transparent',
     },
     image: {
         width: '100%',
         height: 120,
-        borderRadius: cardStyle.borderRadius - cardStyle.padding,
+        borderTopLeftRadius: cardStyle.borderRadius - cardStyle.padding,
+        borderTopRightRadius: cardStyle.borderRadius - cardStyle.padding,
+    },
+    content: {
+        padding: 10,
+        paddingHorizontal: 10,
     },
     name: {
         fontSize: 15,
         fontWeight: 'bold',
-        marginTop: 10,
         textAlign: 'center',
     },
     description: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    descriptionText: {
+        fontSize: 12,
+        color: 'gray',
     },
 });
 

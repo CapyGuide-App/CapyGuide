@@ -1,34 +1,36 @@
 import { useTheme } from "@rneui/themed";
 import { ChevronRight, MapPin } from "lucide-react-native";
 import React, { useEffect, useRef } from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, TouchableOpacityProps, View } from "react-native";
 import { useLocation } from "../context/LocationContext";
 import { fetchReverseGeocode } from "../request/GeocodingRequest";
 
-
-const LocationPickerText: React.FC = () => {
+const LocationPickerText: React.FC<TouchableOpacityProps> = ({...props}) => {
   const { location, updateLocation } = useLocation();
   const { theme } = useTheme();
   const [locationText, setLocationText] = React.useState<string>('Đang tìm vị trí...');
-  const abortControllerRef = useRef<AbortController | null>(null);
+  const [status, setStatus] = React.useState<'loading' | 'error' | 'success'>('loading');
 
   useEffect(() => {
+    const controller = new AbortController();
     if (location) {
-      if (abortControllerRef.current) {
-        abortControllerRef.current.abort();
-      }
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
-
+      setStatus('loading');
       fetchReverseGeocode(location, controller.signal)
         .then((data) => {
-          if (data && !controller.signal.aborted) {
-            setLocationText(data);
-          }
+          setLocationText(data);
+          setStatus('success');
         })
         .catch((error) => {
-          console.error(error);
+          if (error.name === 'AbortError' || error.name === 'CanceledError') {
+            console.log('Reverse geocoding request was canceled');
+          } else {
+            setStatus('error');
+            console.error(error);
+          }
         });
+    }
+    return () => {
+      controller.abort();
     }
   }, [location]);
 
@@ -38,18 +40,24 @@ const LocationPickerText: React.FC = () => {
         flexDirection: 'row',
         justifyContent: 'space-around',
         gap: 5,
+        alignItems: 'center',
       },
       locationText: {
         flex: 1,
-        fontSize: 15,
+        fontSize: 17,
         color: theme.colors.primary,
       },
   });
 
   return (
-    <TouchableOpacity onPress={updateLocation} style={styles.location}>
+    <TouchableOpacity onPress={updateLocation} style={styles.location} {...props}>
         <MapPin size={20} color={theme.colors.primary}/>
-        <Text style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">{locationText}</Text>
+          <Text style={styles.locationText} numberOfLines={1} ellipsizeMode="tail">
+            {status === 'loading' ? 'Đang tìm vị trí...' :
+             status === 'error' ? 'Lỗi khi tìm vị trí, nhấn để thử lại' :
+             status === 'success' ? locationText :
+             'Đang tìm vị trí...'}
+          </Text>
         <ChevronRight size={20} color={theme.colors.primary}/>
     </TouchableOpacity>
   );

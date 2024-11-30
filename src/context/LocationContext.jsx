@@ -1,5 +1,5 @@
 import Geolocation from '@react-native-community/geolocation';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
 import Mapbox from '@rnmapbox/maps';
 
 const LocationContext = createContext();
@@ -37,6 +37,10 @@ export const LocationProvider = ({ children }) => {
       }
     );
   };
+
+  useEffect(() => {
+    updateLocation();
+  }, []);
 
   return (
     <LocationContext.Provider value={{ location, saveLocation, updateLocation }}>

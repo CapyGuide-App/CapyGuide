@@ -46,6 +46,7 @@ const reactions = [
 
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import { googleMapRoute } from '../request/GoogleMapRequest';
 
 type DetailScreenRouteProp = RouteProp<{Detail: {item: any}}, 'Detail'>;
 type DetailScreenNavigationProp = StackNavigationProp<
@@ -70,9 +71,9 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
 
-  const markerIcon = item.properties.type === 'travel' ? PlacePin : FoodPin;
+  const markerIcon = item.type === 'travel' ? PlacePin : FoodPin;
 
-  
+  console.log('item', item);
 
   const handleShare = async ({title, url}: {title: string; url?: string}) => {
     try {
@@ -91,13 +92,13 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
       <ScrollView style={styles.container}>
         <Pressable onPress={openModal}>
           <Image
-            source={{uri: item.properties.picture}}
+            source={{uri: item.picture}}
             style={styles.mainImage}
           />
         </Pressable>
   
         <View style={styles.infoContainer}>
-          <Text style={styles.title}>{item.properties.name}</Text>
+          <Text style={styles.title}>{item.name}</Text>
           <View style={styles.statsRow}>
             <View style={styles.statItemContainer}>
               <MessageSquare color="#4caf50" size={20} />
@@ -116,7 +117,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
             </View>
             <View style={styles.ratingContainer}>
               <Text style={styles.ratingText}>
-                {item.properties.avg_rating.toFixed(1)}
+                {item.avg_rating.toFixed(1)}
               </Text>
             </View>
           </View>
@@ -127,15 +128,19 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
           <View style={styles.row}>
             <MapPin size={20} color="#000" style={styles.icon2} />
             <Text style={styles.text}>
-              {item.properties.address}, {item.properties.district}
+              {item.address}
             </Text>
+            <TouchableOpacity
+              onPress={() => googleMapRoute(item)}>
+              <Text style={{color: '#4CAF50', marginLeft: 5}}>Chỉ đường</Text>
+            </TouchableOpacity>
           </View>
   
           <View style={styles.row}>
             <Map size={20} color="#4CAF50" style={styles.icon2} />
             <Text style={styles.text}>
               <Text style={styles.distance}>
-                {item.properties.distance.toFixed(1)} km
+                {item.distance.toFixed(1)} km
               </Text>
               {' (From current location)'}
             </Text>
@@ -143,20 +148,22 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
   
           <View style={styles.row}>
             <Utensils size={20} color="#000" style={styles.icon2} />
-            <Text style={styles.text}>Loại hình: {item.properties.type}</Text>
+            <Text style={styles.text}>Loại hình: {item.type}</Text>
           </View>
   
           <View style={styles.mapContainer}>
             <MapView
               style={styles.map}
               styleURL="mapbox://styles/mapbox/streets-v11"
-              localizeLabels>
+              localizeLabels
+              scrollEnabled={false}
+            >
               <Camera
-                centerCoordinate={item.geometry.coordinates}
+                centerCoordinate={[item.longitude, item.latitude]}
                 zoomLevel={15}
                 animationDuration={500}
               />
-              <MarkerView coordinate={item.geometry.coordinates}>
+              <MarkerView coordinate={[item.longitude, item.latitude]}>
                 <Image source={markerIcon} style={styles.markerIcon} />
               </MarkerView>
             </MapView>
@@ -221,7 +228,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
   
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => handleShare({title: item.properties.name, url: item.properties.url})}>
+            onPress={() => handleShare({title: item.name, url: item.url})}>
             <Share2 size={24} color="#333" />
             <Text style={styles.actionText}>Share</Text>
           </TouchableOpacity>
@@ -234,7 +241,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
               </TouchableOpacity>
               <View style={styles.innerContainer}>
                 <Image
-                  source={{uri: item.properties.picture}}
+                  source={{uri: item.picture}}
                   style={styles.fullImage}
                 />
               </View>
