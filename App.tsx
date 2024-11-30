@@ -39,9 +39,7 @@ function App() {
         <SafeAreaProvider>
           <AuthProvider>
             <LocationProvider>
-              <DataProvider>
-                <MainContainer />
-              </DataProvider>
+              <MainContainer />
             </LocationProvider>
           </AuthProvider>
         </SafeAreaProvider>

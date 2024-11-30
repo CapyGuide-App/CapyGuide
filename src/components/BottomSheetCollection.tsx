@@ -1,15 +1,8 @@
 import BottomSheet, { BottomSheetFlatList, BottomSheetFooter, BottomSheetScrollView, BottomSheetSectionList, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Text, Tab, TabView, Divider } from '@rneui/themed';
-import { Star } from 'lucide-react-native';
+import { Flag, LandPlot, Star } from 'lucide-react-native';
 import * as React from "react";
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-
-interface BottomSheetCollectionProps {
-    foodData: any;
-    placeData: any;
-    onTabIndexChange?: (index: number) => void;
-    onItemPress?: (item: any) => void;
-}
 
 const ItemStyle = StyleSheet.create({
     container: {
@@ -73,72 +66,27 @@ const CollectionItem: React.FC<CollectionItemProps> = ({data: item, onPress=() =
     return (
         <TouchableOpacity style={ItemStyle.container} onPress={() => onPress(item)}>
             <Image
-                source={{uri: item.properties.picture}}
+                source={{uri: item.picture}}
                 style={ItemStyle.image}
             />
             <View style={ItemStyle.description}>
-                <Text numberOfLines={1} style={ItemStyle.name}>{item.properties.name}</Text>
-                <Text numberOfLines={1} style={ItemStyle.address}>{item.properties.address}</Text>
+                <Text numberOfLines={1} style={ItemStyle.name}>{item.name}</Text>
+                <Text numberOfLines={1} style={ItemStyle.address}>{item.address}</Text>
             </View>
-            <View style={{flexDirection: 'row', alignItems: 'center', gap: 5, marginLeft: 'auto'}}>
-                <Star size={16} fill='#ffc02d' color='#ffc02d'/>
-                <Text>{item.properties.avg_rating.toFixed(1)}</Text>
+            <View style={{flexDirection: 'column', alignItems: 'left', gap: 5, marginLeft: 'auto'}}>
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                    <Star size={16} fill='#ffc02d' color='#ffc02d'/>
+                    <Text>{item.avg_rating.toFixed(1)}</Text>
+                </View>
+                {item.distance &&
+                <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
+                    <Flag size={16} fill='#1aac4a' color='#1aac4a'/>
+                    <Text>{item.distance.toFixed(1)}km</Text>
+                </View>
+                }
             </View>
         </TouchableOpacity>
     );
 };
 
-const BottomSheetCollection: React.FC<BottomSheetCollectionProps> = ({foodData, placeData, onTabIndexChange=() => {}, onItemPress=() => {}}) => {
-    const snapPoints = React.useMemo(() => ['15%', '50%', '100%'], []);
-    const [index, setIndex] = React.useState(0);
-    const bottomSheetRef = React.useRef<BottomSheet>(null);
-
-    const handleItemPress = (item: any) => {
-        onItemPress(item);
-        bottomSheetRef.current?.collapse();
-    };
-
-    return (
-        <BottomSheet
-            index={1}
-            snapPoints={snapPoints}
-            ref={bottomSheetRef}
-        >
-            <Tab
-                value={index}
-                onChange={(e) => {
-                    setIndex(e);
-                    onTabIndexChange(e);
-                }}
-                indicatorStyle={{
-                    backgroundColor: 'white',
-                    height: 3,
-                }}
-                variant="primary"
-            >
-                <Tab.Item
-                    title="Địa điểm"
-                    titleStyle={{ fontSize: 15, fontWeight: 'bold' }}
-                />
-                <Tab.Item
-                    title="Đặc sản"
-                    titleStyle={{ fontSize: 15, fontWeight: 'bold' }}
-                />
-            </Tab>
-            <TabView
-                value={index}
-                onChange={setIndex}
-                disableSwipe={true}
-            >
-                <TabView.Item>
-                    <LazyFlatList data={placeData} onItemPress={handleItemPress}/>
-                </TabView.Item>
-                <TabView.Item>
-                    <LazyFlatList data={foodData} onItemPress={handleItemPress}/>
-                </TabView.Item>
-            </TabView>
-        </BottomSheet>
-    );
-};
-
-export default BottomSheetCollection;
+export { LazyFlatList }
