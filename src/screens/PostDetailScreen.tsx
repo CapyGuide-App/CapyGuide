@@ -59,7 +59,6 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
 
   return (
     <View style={styles.container}>
-      {/* Image Section */}
       <View style={styles.imageWrapper}>
           <Pressable onPress={openModal}>
             <Image
@@ -90,7 +89,6 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
 
 
       <ScrollView style={styles.scrollContent}>
-        {/* Thumbnails */}
         <FlatList
           data={post.images}
           horizontal
@@ -110,17 +108,12 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
           )}
         />
 
-        {/* Content Section */}
         <View style={styles.content}>
-          {/* Category */}
           <View style={styles.categoryContainer}>
             <Text style={styles.category}>{post.category}</Text>
           </View>
-
-          {/* Title */}
           <Text style={styles.title}>{post.title}</Text>
 
-          {/* Metadata */}
           <View style={styles.metadataRow}>
             <Image source={{uri: post.avatar}} style={styles.avatar} />
             <View>
@@ -131,12 +124,10 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
             </View>
           </View>
 
-          {/* Description */}
           <Text style={styles.description}>{post.description}</Text>
         </View>
       </ScrollView>
 
-      {/* Bottom Action Bar */}
       <View style={styles.actionBar}>
         <TouchableOpacity
           style={styles.actionButton}
@@ -172,7 +163,6 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
         </TouchableOpacity>
       </View>
 
-      {/* Fullscreen Modal */}
       <Modal visible={modalVisible} transparent={true} animationType="fade">
         <View style={styles.modalContainer}>
           <TouchableOpacity style={styles.closeModal} onPress={closeModal}>
@@ -212,10 +202,11 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     marginTop: -20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     backgroundColor: '#fff',
     paddingHorizontal: 10,
+    overflow: 'hidden',
   },
   imageWrapper: {
     position: 'relative',

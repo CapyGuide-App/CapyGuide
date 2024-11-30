@@ -6,38 +6,75 @@ import {
   TouchableOpacity,
   ScrollView,
   Image,
+  Pressable,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {
-  User, Bell, Eye, Lock, Headphones, Info, ChevronRight,
+  User,
+  Bell,
+  Eye,
+  Lock,
+  Headphones,
+  Info,
+  ChevronRight,
   LogOut,
   LucideEdit3,
 } from 'lucide-react-native';
 import avatar from '../assets/avatar.jpg';
-import { useAuth } from '../context/AuthContext';
+import {useAuth} from '../context/AuthContext';
 
 type SettingsScreenNavigationProp = {
   navigate: (
-    screen: 'ProfileScreen' | 'AvatarSettingScreen' | 'ChangePasswordScreen' | 'LoginScreen',
+    screen:
+      | 'ProfileScreen'
+      | 'ProfileSettingScreen'
+      | 'ChangePasswordScreen'
+      | 'LoginScreen'
+      | 'AccountScreen'
+      | 'NotificationsScreen'
+      | 'AppearanceScreen'
+      | 'SecurityScreen'
+      | 'HelpScreen'
+      | 'AboutScreen',
   ) => void;
 };
 
 const SettingsScreen: React.FC = () => {
   const navigation = useNavigation<SettingsScreenNavigationProp>();
-  const { logout } = useAuth();
+  const {logout} = useAuth();
 
   const navigateToProfile = () => {
     navigation.navigate('ProfileScreen');
   };
 
   const navigateToAvatar = () => {
-    navigation.navigate('AvatarSettingScreen');
+    navigation.navigate('ProfileSettingScreen');
   };
-  
-  const navigateToPassword = () => {
-    navigation.navigate('ChangePasswordScreen');
-  };
-  
+
+  const navigateToAccountScreen = () => {
+    navigation.navigate('AccountScreen');
+  }
+
+  const navigateToNotificationsScreen = () => {
+    navigation.navigate('NotificationsScreen');
+  }
+
+  const navigateToAppearanceScreen = () => {
+    navigation.navigate('AppearanceScreen');
+  }
+
+  const navigateToSecurityScreen = () => {
+    navigation.navigate('SecurityScreen');
+  }
+
+  const navigateToHelpScreen = () => {
+    navigation.navigate('HelpScreen');
+  }
+
+  const navigateToAboutScreen = () => {
+    navigation.navigate('AboutScreen');
+  }
+
   const logOutNavigate = () => {
     logout();
   };
@@ -61,7 +98,7 @@ const SettingsScreen: React.FC = () => {
             </View>
           </TouchableOpacity>
         </View>
-        <View style={styles.profileStats}>
+        <Pressable style={styles.profileStats} onPress={navigateToProfile}>
           <View style={styles.statItem}>
             <Text style={styles.statValue}>230</Text>
             <Text style={styles.statLabel}>READS</Text>
@@ -74,45 +111,67 @@ const SettingsScreen: React.FC = () => {
             <Text style={styles.statValue}>200</Text>
             <Text style={styles.statLabel}>SHARE</Text>
           </View>
-        </View>
+        </Pressable>
       </View>
 
-      <View style={styles.section}>
+      <View style={styles.optionsContainer}>
+        <TouchableOpacity
+          style={[styles.option, styles.topOption]}
+          onPress={navigateToAccountScreen}>
+          <View style={styles.optionContent}>
+            <User size={24} color="#ffaa00" />
+            <Text style={styles.optionText}>Tài khoản</Text>
+          </View>
+          <ChevronRight size={24} color="#ffaa00" />
+        </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.itemContainer}>
-          <User size={24} color="#ffaa00" />
-          <Text style={styles.itemText}>Tài khoản</Text>
+          style={styles.option}
+          onPress={navigateToNotificationsScreen}>
+          <View style={styles.optionContent}>
+            <Bell size={24} color="#ffaa00" />
+            <Text style={styles.optionText}>Thông báo</Text>
+          </View>
           <ChevronRight size={24} color="#ffaa00" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.itemContainer}>
-          <Bell size={24} color="#ffaa00" />
-          <Text style={styles.itemText}>Thông báo</Text>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={navigateToAppearanceScreen}>
+          <View style={styles.optionContent}>
+            <Eye size={24} color="#ffaa00" />
+            <Text style={styles.optionText}>Appearance</Text>
+          </View>
           <ChevronRight size={24} color="#ffaa00" />
         </TouchableOpacity>
 
-<TouchableOpacity style={styles.itemContainer}>
-  <Eye size={24} color="#ffaa00" />
-  <Text style={styles.itemText}>Appearance</Text>
-  <ChevronRight size={24} color="#ffaa00" />
-</TouchableOpacity>
-
-<TouchableOpacity style={styles.itemContainer}>
-  <Lock size={24} color="#ffaa00" />
-  <Text style={styles.itemText}>Bảo mật</Text>
-  <ChevronRight size={24} color="#ffaa00" />
-</TouchableOpacity>
-
-        <TouchableOpacity style={styles.itemContainer}>
-          <Headphones size={24} color="#ffaa00" />
-          <Text style={styles.itemText}>Trợ giúp</Text>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={navigateToSecurityScreen}>
+          <View style={styles.optionContent}>
+            <Lock size={24} color="#ffaa00" />
+            <Text style={styles.optionText}>Bảo mật</Text>
+          </View>
           <ChevronRight size={24} color="#ffaa00" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.itemContainer}>
-          <Info size={24} color="#ffaa00" />
-          <Text style={styles.itemText}>Về CapyGuide</Text>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={navigateToHelpScreen}>
+          <View style={styles.optionContent}>
+            <Headphones size={24} color="#ffaa00" />
+            <Text style={styles.optionText}>Trợ giúp</Text>
+          </View>
+          <ChevronRight size={24} color="#ffaa00" />
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={[styles.option, styles.bottomOption]}
+          onPress={navigateToAboutScreen}>
+          <View style={styles.optionContent}>
+            <Info size={24} color="#ffaa00" />
+            <Text style={styles.optionText}>Về CapyGuide</Text>
+          </View>
           <ChevronRight size={24} color="#ffaa00" />
         </TouchableOpacity>
       </View>
@@ -133,7 +192,7 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     backgroundColor: '#fff9e6',
-    borderRadius: 15,
+    borderRadius: 10,
     padding: 20,
     shadowColor: '#000',
     shadowOpacity: 0.1,
@@ -225,26 +284,42 @@ const styles = StyleSheet.create({
     color: '#ffaa00',
     marginBottom: 20,
   },
-  section: {
-    marginBottom: 20,
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  optionsContainer: {
     backgroundColor: '#fff',
-    padding: 15,
     borderRadius: 10,
-    marginBottom: 5,
+    overflow: 'hidden',
+    marginBottom: 20,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 2,
+    paddingHorizontal: 15,
   },
-  itemText: {
-    flex: 1,
+  option: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e5e5',
+  },
+  topOption: {
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+  bottomOption: {
+    borderBottomWidth: 0,
+    borderBottomLeftRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  optionContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  optionText: {
     fontSize: 16,
-    marginLeft: 10,
     color: '#333',
+    marginLeft: 10,
   },
   logout: {
     flexDirection: 'row',
