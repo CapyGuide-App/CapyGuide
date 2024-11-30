@@ -7,10 +7,13 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  Linking,
 } from 'react-native';
-import PostTaskBar from '../components/PostTaskBar';
-import LocationSelector from '../components/LocationSelector';
-
+import {Plus, Image as ImageIcon, VideoIcon, Link, X} from 'lucide-react-native';
+import CameraHandler from '../components/CameraHandler';
+import AddVideoHandler from '../components/AddVideoHandler';
+import AddLinkHandler from '../components/AddLinkHandler';
+import Video from 'react-native-video';
 import { NavigationProp, useNavigation } from '@react-navigation/native';
 
 interface AddPostScreenProps {
@@ -19,91 +22,216 @@ interface AddPostScreenProps {
 
 const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   const [postTitle, setPostTitle] = useState('');
-  const [postContent, setPostContent] = useState('');
-  const [selectedImages, setSelectedImages] = useState<string[]>([]);
+  const [shortDescription, setShortDescription] = useState('');
+  const [postElements, setPostElements] = useState<any[]>([]);
+  const [isCameraHandlerVisible, setIsCameraHandlerVisible] = useState(false);
+  const [isVideoHandlerVisible, setIsVideoHandlerVisible] = useState(false);
+  const [isLinkHandlerVisible, setIsLinkHandlerVisible] = useState(false);
+  const [newTextContent, setNewTextContent] = useState('');
 
   const handleImageSelected = (imageUri: string) => {
-    setSelectedImages(prevImages => [...prevImages, imageUri]);
+    setPostElements(prev => [...prev, {type: 'image', src: imageUri}]);
   };
 
-  const removeImage = (index: number) => {
-    setSelectedImages(prevImages =>
-      prevImages.filter((_, imageIndex) => imageIndex !== index),
-    );
+  const handleVideoSelected = (videoUri: string) => {
+    setPostElements(prev => [...prev, {type: 'video', src: videoUri}]);
+  };
+
+  const handleLinkAdded = (link: {title: string; url: string}) => {
+    setPostElements(prev => [
+      ...prev,
+      {type: 'link', title: link.title, url: link.url},
+    ]);
+  };
+
+  const handleDoneAddingText = () => {
+    if (newTextContent.trim()) {
+      setPostElements(prev => [
+        ...prev,
+        {type: 'text', content: newTextContent},
+      ]);
+    }
+    setNewTextContent('');
+  };
+
+  const handleDeleteElement = (index: number) => {
+    setPostElements(prev => prev.filter((_, i) => i !== index));
   };
 
   const handlePostSubmit = () => {
-    if (postContent.trim() === '') {
+    if (postElements.length === 0 || postTitle.trim() === '') {
       return;
     }
-    console.log('Title:', postTitle);
-    console.log('Content:', postContent);
-    console.log('IMGs:', selectedImages);
+  
+    const newPost = {
+      id: Math.floor(Math.random() * 1000), // Generate a random ID
+      author: "Mẫn Thị Bích Lợi", // Replace with the actual author
+      date: new Date().toISOString().split("T")[0], // Current date in YYYY-MM-DD
+      views: 0, // Initial views
+      avatar: "https://randomuser.me/api/portraits/women/21.jpg", // Replace with the actual avatar
+      title: postTitle,
+      reactions: { like: 0, love: 0 }, // Initial reactions
+      commentsCount: 0, // Initial comments count
+      category: "Ẩm thực", // Replace with a category picker if necessary
+      titleImage:
+        postElements.find((el) => el.type === "image")?.src || "", // Use the first image as the title image
+      elements: postElements.map((el) => {
+        if (el.type === "text") {
+          return { type: "text", content: el.content };
+        } else if (el.type === "image") {
+          return { type: "image", src: el.src, alt: "Image Description" };
+        } else if (el.type === "video") {
+          return { type: "video", src: el.src };
+        } else if (el.type === "link") {
+          return { type: "link", title: el.title, url: el.url };
+        }
+        return el;
+      }),
+    };
+  
+    console.log("New Post:", JSON.stringify(newPost, null, 2));
     navigation.goBack();
   };
-
+  
   React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <TouchableOpacity
           style={[
             styles.headerButton,
-            {backgroundColor: postContent.trim() ? '#007BFF' : '#ccc'},
+            { backgroundColor: postElements.length > 0 && postTitle.trim() ? '#007BFF' : '#ccc' },
           ]}
-          onPress={postContent.trim() ? handlePostSubmit : undefined}>
+          onPress={postElements.length > 0 && postTitle.trim() ? handlePostSubmit : undefined}
+        >
           <Text
             style={[
               styles.headerButtonText,
-              {color: postContent.trim() ? '#fff' : '#888'},
-            ]}>
+              { color: postElements.length > 0 && postTitle.trim() ? '#fff' : '#888' },
+            ]}
+          >
             Đăng
           </Text>
         </TouchableOpacity>
       ),
     });
-  }, [navigation, postContent]);
+  }, [navigation, postTitle, postElements]);
 
   return (
     <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.imagePicker}>
+          <Text
+            style={styles.imagePickerText}
+            onPress={() => setIsCameraHandlerVisible(true)}>
+            Chọn ảnh
+          </Text>
+        </TouchableOpacity>
+        <TextInput
+          style={styles.titleInput}
+          placeholder="Tiêu đề bài viết"
+          placeholderTextColor="#aaa"
+          value={postTitle}
+          onChangeText={setPostTitle}
+        />
+      </View>
       <TextInput
-        style={styles.titleInput}
-        placeholder="Add a title"
-        placeholderTextColor="#aaa"
-        value={postTitle}
-        onChangeText={setPostTitle}
-      />
-
-      <LocationSelector
-        onLocationSelected={location =>
-          console.log('Selected Location:', location)
-        }
-      />
-
-      <TextInput
-        style={styles.contentInput}
-        placeholder="Share your story here."
+        style={styles.shortDescriptionInput}
+        placeholder="Giới thiệu ngắn ..."
         placeholderTextColor="#aaa"
         multiline
-        value={postContent}
-        onChangeText={setPostContent}
+        value={shortDescription}
+        onChangeText={setShortDescription}
       />
 
-      <ScrollView
-        contentContainerStyle={{alignItems: 'center'}}
-        style={styles.imageScroll}>
-        {selectedImages.map((imageUri, index) => (
-          <View key={index} style={styles.imageContainer}>
-            <Image source={{uri: imageUri}} style={styles.imagePreview} />
+      <View style={styles.contentSection}>
+        <TouchableOpacity
+          style={styles.roundButton}
+          onPress={handleDoneAddingText}>
+          <Plus color="#ddd" size={24} />
+        </TouchableOpacity>
+        <View style={styles.textInputContainer}>
+          <TextInput
+            style={styles.textArea}
+            placeholder="Nhập nội dung ..."
+            placeholderTextColor="#aaa"
+            multiline
+            value={newTextContent}
+            onChangeText={setNewTextContent}
+          />
+        </View>
+      </View>
+
+      <View style={styles.actionButtons}>
+        <TouchableOpacity style={styles.roundButton}>
+          <Plus color="#ddd" size={24} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => setIsCameraHandlerVisible(true)}>
+          <ImageIcon color="#000" size={30} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => setIsVideoHandlerVisible(true)}>
+          <VideoIcon color="#000" size={30} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => setIsLinkHandlerVisible(true)}>
+          <Link color="#000" size={30} />
+        </TouchableOpacity>
+      </View>
+
+      <ScrollView contentContainerStyle={styles.previewContainer}>
+        {postElements.map((el, index) => (
+          <View key={index} style={styles.previewElement}>
             <TouchableOpacity
-              style={styles.removeButton}
-              onPress={() => removeImage(index)}>
-              <Text style={styles.removeButtonText}>X</Text>
+              style={styles.deleteButton}
+              onPress={() => handleDeleteElement(index)}>
+              <X color="#000" size={20} />
             </TouchableOpacity>
+            {el.type === 'text' && (
+              <Text style={styles.textPreview}>{el.content}</Text>
+            )}
+            {el.type === 'image' && (
+              <Image source={{uri: el.src}} style={styles.imagePreview} />
+            )}
+            {el.type === 'video' && (
+              <View style={styles.videoContainer}>
+                <Video
+                  source={{ uri: el.src }}
+                  style={styles.videoPreview}
+                  controls
+                  resizeMode="cover"
+                />
+              </View>
+            )}
+            {el.type === 'link' && (
+              <TouchableOpacity onPress={() => Linking.openURL(el.url)}>
+                <Text style={styles.linkTitle}>{el.title}</Text>
+              </TouchableOpacity>
+            )}
           </View>
         ))}
       </ScrollView>
 
-      <PostTaskBar onImageSelected={handleImageSelected} />
+      <CameraHandler
+        isVisible={isCameraHandlerVisible}
+        onClose={() => setIsCameraHandlerVisible(false)}
+        onImageSelected={handleImageSelected}
+      />
+
+      <AddVideoHandler
+        isVisible={isVideoHandlerVisible}
+        onClose={() => setIsVideoHandlerVisible(false)}
+        onVideoSelected={handleVideoSelected}
+      />
+
+      <AddLinkHandler
+        isVisible={isLinkHandlerVisible}
+        onClose={() => setIsLinkHandlerVisible(false)}
+        onLinkAdded={handleLinkAdded}
+      />
     </View>
   );
 };
@@ -111,11 +239,6 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
 export default AddPostScreen;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    padding: 15,
-  },
   headerButton: {
     marginRight: 15,
     paddingHorizontal: 16,
@@ -126,55 +249,143 @@ const styles = StyleSheet.create({
   },
   headerButtonText: {
     fontSize: 16,
-    color: '#fff',
     fontWeight: 'bold',
   },
+  container: {
+    flex: 1,
+    padding: 16,
+    backgroundColor: '#fff',
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginBottom: 10,
+  },
+  imagePicker: {
+    backgroundColor: '#ddd',
+    padding: 10,
+    borderRadius: 5,
+    marginRight: 10,
+    minWidth: 100,
+    minHeight: 100,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imagePickerText: {
+    fontSize: 16,
+    color: '#333',
+  },
   titleInput: {
+    flex: 1,
     fontSize: 18,
     color: '#333',
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
-    marginBottom: 10,
     paddingBottom: 5,
   },
-  addLocation: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 10,
-  },
-  locationText: {
-    fontSize: 16,
-    color: '#007BFF',
-  },
-  contentInput: {
+  shortDescriptionInput: {
     fontSize: 16,
     color: '#333',
-    flex: 1,
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
+    minHeight: 100,
     textAlignVertical: 'top',
   },
-  imageScroll: {
-    marginVertical: 10,
-    maxHeight: 200,
+  contentSection: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    marginTop: 10,
   },
-  imageContainer: {
-    position: 'relative',
+  roundButton: {
+    width: 45,
+    height: 45,
+    borderRadius: '50%',
+    borderWidth: 1,
+    borderColor: '#ddd',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  textInputContainer: {
+    flex: 1,
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    paddingHorizontal: 10,
+    backgroundColor: '#fff',
+  },
+  textArea: {
+    fontSize: 16,
+    color: '#333',
+    minHeight: 40,
+    maxHeight: 200,
+    textAlignVertical: 'center',
+  },
+  addContentButton: {
     marginBottom: 10,
   },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    marginTop: 10,
+    marginBottom: 20,
+    borderRadius: 50,
+    height: 45,
+  },
+  actionButton: {
+    color: '#000',
+    padding: 10,
+    borderRadius: 5,
+  },
+  previewContainer: {
+    marginTop: 20,
+  },
+  previewElement: {
+    marginBottom: 10,
+    backgroundColor: '#f9f9f9',
+    padding: 20,
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    position: 'relative',
+  },
+  deleteButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    zIndex: 1,
+  },
+  textPreview: {
+    fontSize: 16,
+    color: '#333',
+  },
   imagePreview: {
-    width: 200,
+    width: '100%',
     height: 200,
     borderRadius: 10,
   },
-  removeButton: {
-    position: 'absolute',
-    top: 5,
-    right: 5,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 15,
-    padding: 5,
+  videoContainer: {
+    marginVertical: 10,
+    width: '100%',
+    height: 200,
+    borderRadius: 10,
+    overflow: 'hidden',
+    backgroundColor: '#000',
   },
-  removeButtonText: {
-    color: '#fff',
-    fontSize: 12,
+  videoPreview: {
+    width: '100%',
+    height: '100%',
+  },  
+  linkTitle: {
+    fontSize: 16,
+    color: '#007BFF',
+    textDecorationLine: 'underline',
+  },
+  linkUrl: {
+    fontSize: 14,
+    color: '#555',
   },
 });

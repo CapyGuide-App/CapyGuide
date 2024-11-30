@@ -10,6 +10,7 @@ import {
   FlatList,
   Dimensions,
   Pressable,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {
   Heart,
@@ -60,54 +61,12 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
-          <Pressable onPress={openModal}>
-            <Image
-              source={{uri: post.images[currentImageIndex]}}
-              style={styles.image}
-            />
-          </Pressable>
-
-          {currentImageIndex > 0 && (
-            <Pressable
-              style={[styles.arrowWrapper, styles.arrowLeft]}
-              onPress={showPreviousImage}>
-              <ArrowLeft size={40} color="#fff" />
-            </Pressable>
-          )}
-          {currentImageIndex < post.images.length - 1 && (
-            <Pressable
-              style={[styles.arrowWrapper, styles.arrowRight]}
-              onPress={showNextImage}>
-              <ArrowRight size={40} color="#fff" />
-            </Pressable>
-          )}
-
-          <Text style={styles.imageIndicator}>
-            {currentImageIndex + 1} / {post.images.length}
-          </Text>
-        </View>
-
+        <Pressable onPress={openModal}>
+          <Image source={{uri: post.titleImage}} style={styles.titleImage} />
+        </Pressable>
+      </View>
 
       <ScrollView style={styles.scrollContent}>
-        <FlatList
-          data={post.images}
-          horizontal
-          keyExtractor={(item, index) => index.toString()}
-          showsHorizontalScrollIndicator={false}
-          style={styles.thumbnailContainer}
-          renderItem={({item, index}) => (
-            <TouchableOpacity onPress={() => setCurrentImageIndex(index)}>
-              <Image
-                source={{uri: item}}
-                style={[
-                  styles.thumbnail,
-                  index === currentImageIndex && styles.activeThumbnail,
-                ]}
-              />
-            </TouchableOpacity>
-          )}
-        />
-
         <View style={styles.content}>
           <View style={styles.categoryContainer}>
             <Text style={styles.category}>{post.category}</Text>
@@ -123,9 +82,27 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
               </Text>
             </View>
           </View>
-
-          <Text style={styles.description}>{post.description}</Text>
         </View>
+        {post.elements.map((element: any, index: number) => {
+          if (element.type === 'text') {
+            return (
+              <Text key={index} style={styles.textContent}>
+                {element.content}
+              </Text>
+            );
+          } else if (element.type === 'image') {
+            return (
+              <View style={styles.inlineImageContainer}>
+                  <Image
+                    key={index}
+                    source={{uri: element.src}}
+                    style={styles.inlineImage}
+                  />
+              </View>
+            );
+          }
+          return null;
+        })}
       </ScrollView>
 
       <View style={styles.actionBar}>
@@ -162,35 +139,6 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
           <Text style={styles.actionText}>Share</Text>
         </TouchableOpacity>
       </View>
-
-      <Modal visible={modalVisible} transparent={true} animationType="fade">
-        <View style={styles.modalContainer}>
-          <TouchableOpacity style={styles.closeModal} onPress={closeModal}>
-            <ArrowLeft size={40} color="#fff" />
-          </TouchableOpacity>
-          <Image
-            source={{uri: post.images[currentImageIndex]}}
-            style={styles.fullImage}
-          />
-          {currentImageIndex > 0 && (
-            <Pressable
-              style={[styles.arrowWrapper, styles.arrowLeft]}
-              onPress={showPreviousImage}>
-              <ArrowLeft size={40} color="#fff" />
-            </Pressable>
-          )}
-          {currentImageIndex < post.images.length - 1 && (
-            <Pressable
-              style={[styles.arrowWrapper, styles.arrowRight]}
-              onPress={showNextImage}>
-              <ArrowRight size={40} color="#fff" />
-            </Pressable>
-          )}
-          <Text style={styles.imageIndicator2}>
-            {currentImageIndex + 1} / {post.images.length}
-          </Text>
-        </View>
-      </Modal>
     </View>
   );
 };
@@ -200,13 +148,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#f9f9f9',
   },
-  scrollContent: {
-    marginTop: -20,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
-    backgroundColor: '#fff',
-    paddingHorizontal: 10,
-    overflow: 'hidden',
+  titleImage: {
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
   },
   imageWrapper: {
     position: 'relative',
@@ -215,49 +160,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 200,
     resizeMode: 'cover',
-  },
-  arrowWrapper: {
-    position: 'absolute',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 20,
-    width: 50,
-    height: 50,
-  },
-  arrowLeft: {
-    top: '50%',
-    left: 10,
-    transform: [{translateY: -25}],
-  },
-  arrowRight: {
-    top: '50%',
-    right: 10,
-    transform: [{translateY: -25}],
-  },
-  imageIndicator: {
-    position: 'absolute',
-    bottom: 30,
-    left: '50%',
-    transform: [{translateX: -width * 0.075}],
-    fontSize: 14,
-    color: '#fff',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    paddingHorizontal: 10,
-    borderRadius: 10,
-  },
-  imageIndicator2: {
-    position: 'absolute',
-    bottom: 20,
-    fontSize: 14,
-    color: '#fff',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    paddingHorizontal: 10,
-    borderRadius: 10,
-  },
-  thumbnailContainer: {
-    marginTop: 10,
-    paddingHorizontal: 20,
   },
   thumbnail: {
     width: 60,
@@ -286,9 +188,20 @@ const styles = StyleSheet.create({
     height: '70%',
     resizeMode: 'contain',
   },
-  content: {
+  scrollContent: {
     padding: 20,
+    marginTop: -20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     backgroundColor: '#fff',
+    paddingHorizontal: 20,
+    overflow: 'hidden',
+  },
+  content: {
+    backgroundColor: '#fff',
+    borderBottomColor: '#eee',
+    borderBottomWidth: 2,
+    marginBottom: 20,
   },
   categoryContainer: {
     alignSelf: 'flex-start',
@@ -331,12 +244,25 @@ const styles = StyleSheet.create({
     marginTop: 2,
     minWidth: '100%',
   },
-  description: {
+
+  textContent: {
     fontSize: 16,
     lineHeight: 24,
     color: '#444',
     marginBottom: 20,
   },
+  inlineImageContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 10,
+  },
+  inlineImage: {
+    width: '80%',
+    height: 200,
+    resizeMode: 'cover',
+    borderRadius: 8,
+  },
+
   actionBar: {
     flexDirection: 'row',
     justifyContent: 'space-around',
