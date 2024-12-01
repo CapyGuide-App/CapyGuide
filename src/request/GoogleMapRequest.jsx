@@ -3,7 +3,6 @@ import { useLocation } from '../context/LocationContext';
 import { Linking, Platform } from 'react-native';
 
 const googleMapRoute = async (target) => {
-    console.log(target);
     const lat = target.latitude;
     const lng = target.longitude;
     const label = target.name;

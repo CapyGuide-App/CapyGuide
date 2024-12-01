@@ -20,12 +20,16 @@ import HelpScreen from './screens/HelpScreen';
 import AboutScreen from './screens/AboutScreen';
 import Geolocation from '@react-native-community/geolocation';
 import Mapbox from '@rnmapbox/maps';
-import {MAPBOX_ACCESS_TOKEN} from '@env';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {MAPBOX_ACCESS_TOKEN, GOOGLE_CLIENT_ID} from '@env';
 
 const Stack = createStackNavigator();
 
 Mapbox.requestAndroidLocationPermissions();
 Mapbox.setAccessToken(MAPBOX_ACCESS_TOKEN);
+GoogleSignin.configure({
+  webClientId: GOOGLE_CLIENT_ID,
+});
 
 const AuthStack = () => (
   <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>

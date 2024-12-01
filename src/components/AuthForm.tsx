@@ -6,8 +6,13 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  Alert,
 } from "react-native";
 import { Eye, EyeOff } from "lucide-react-native";
+import { hexToRGBA } from "../styles/Methods";
+import { useTheme } from "@rneui/themed";
+import { useAuth } from "../context/AuthContext";
+import { fetchGoogleLogin } from "../request/DataRequest";
 
 interface AuthFormProps {
   title: string;
@@ -15,8 +20,14 @@ interface AuthFormProps {
   promptText: string;
   switchText: string;
   onSwitch: () => void;
-  onSubmit: () => void;
   isSignUp?: boolean;
+  onSubmit: (formData: {
+    username: string;
+    password: string;
+    email: string;
+    displayName: string;
+    confirmPassword: string;
+  }) => void;
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({
@@ -25,32 +36,78 @@ const AuthForm: React.FC<AuthFormProps> = ({
   promptText,
   switchText,
   onSwitch,
-  onSubmit,
   isSignUp = false,
+  onSubmit,
 }) => {
   const [isPasswordVisible, setPasswordVisible] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+    email: "",
+    displayName: "",
+    confirmPassword: "",
+  });
+  const {login} = useAuth();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!isPasswordVisible);
   };
 
+  const { theme } = useTheme();
+  const placeholderTextColor = hexToRGBA(theme.colors.primary, 0.3);
+
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleSubmit = async () => {
+    onSubmit(formData);
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await fetchGoogleLogin();
+      login();
+    } catch (error: Error | any) {
+      Alert.alert("Error", error.message);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.header}>{title}</Text>
-{isSignUp && (
+      {isSignUp && (
         <View style={styles.inputContainer}>
-          <TextInput placeholder="Name" style={styles.input} />
+          <TextInput
+            placeholder="Name"
+            style={styles.input}
+            placeholderTextColor={placeholderTextColor}
+            onChangeText={(value) => handleChange("displayName", value)}
+            value={formData.displayName}
+          />
         </View>
       )}
 
       {isSignUp && (
         <View style={styles.inputContainer}>
-          <TextInput placeholder="Email address" style={styles.input} />
+          <TextInput
+            placeholder="Email address"
+            style={styles.input}
+            placeholderTextColor={placeholderTextColor}
+            onChangeText={(value) => handleChange("email", value)}
+            value={formData.email}
+          />
         </View>
       )}
 
       <View style={styles.inputContainer}>
-        <TextInput placeholder="Username" style={styles.input} />
+        <TextInput
+          placeholder="Username"
+          style={styles.input}
+          placeholderTextColor={placeholderTextColor}
+          onChangeText={(value) => handleChange("username", value)}
+          value={formData.username}
+        />
       </View>
 
       <View style={styles.inputContainer}>
@@ -58,6 +115,9 @@ const AuthForm: React.FC<AuthFormProps> = ({
           placeholder="Password"
           secureTextEntry={!isPasswordVisible}
           style={styles.input}
+          placeholderTextColor={placeholderTextColor}
+          onChangeText={(value) => handleChange("password", value)}
+          value={formData.password}
         />
         <TouchableOpacity onPress={togglePasswordVisibility}>
           {isPasswordVisible ? (
@@ -71,9 +131,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
       {isSignUp && (
         <View style={styles.inputContainer}>
           <TextInput
-            placeholder="Check Password"
+            placeholder="Confirm Password"
             secureTextEntry={!isPasswordVisible}
             style={styles.input}
+            placeholderTextColor={placeholderTextColor}
+            onChangeText={(value) => handleChange("confirmPassword", value)}
+            value={formData.confirmPassword}
           />
           <TouchableOpacity onPress={togglePasswordVisibility}>
             {isPasswordVisible ? (
@@ -85,34 +148,31 @@ const AuthForm: React.FC<AuthFormProps> = ({
         </View>
       )}
 
-      <TouchableOpacity style={styles.button} onPress={onSubmit}>
+      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>{buttonText}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.orText}>or {isSignUp ? "sign up" : "log in"} with</Text>
+      {!isSignUp && <Text style={styles.orText}>
+        or sign in with
+      </Text>}
 
-      <View style={styles.socialContainer}>
-        <TouchableOpacity style={styles.socialButton}>
-          <Image
-            source={require("../assets/google.png")} 
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
-          <Image
-            source={require("../assets/apple.png")} 
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
-          <Image
-            source={require("../assets/facebook.png")} 
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
+      {!isSignUp && (
+        <View style={styles.socialContainer}>
+          <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
+            <Image
+              source={require("../assets/google.png")}
+              style={styles.socialIcon}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <View style={styles.inlineContainer}>
+        <Text style={styles.promptText}>{promptText} </Text>
+        <Text style={styles.switchText} onPress={onSwitch}>
+          {switchText}
+        </Text>
       </View>
-
-      <View style={styles.inlineContainer}><Text style={styles.promptText}>{promptText} </Text><Text style={styles.switchText} onPress={onSwitch}>{switchText}</Text></View>
     </View>
   );
 };
@@ -167,7 +227,7 @@ const styles = StyleSheet.create({
   },
   socialContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     width: "80%",
   },
   socialButton: {
