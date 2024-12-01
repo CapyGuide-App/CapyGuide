@@ -44,7 +44,7 @@ const NearByCollection: React.FC<NearByCollectionProps> = ({ title, geoData, sty
                                 <View style={styles.content}>
                                     <Text numberOfLines={1} style={styles.name}>{item.name}</Text>
                                     <View style={styles.description}>
-                                        {item.distance && <Text style={styles.descriptionText} numberOfLines={1}>{item.distance.toFixed(1)} km {'\uA78F'} {item.duration.toFixed(1)} phút</Text>}
+                                        {item.duration && <Text style={styles.descriptionText} numberOfLines={1}>{item.distance.toFixed(1)} km {'\uA78F'} {item.duration.toFixed(1)} phút</Text>}
                                         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, marginLeft: 'auto' }}>
                                             <Star size={16} fill='#ffc02d' color='#ffc02d' />
                                             <Text style={styles.descriptionText}>{item.avg_rating.toFixed(1)}</Text>

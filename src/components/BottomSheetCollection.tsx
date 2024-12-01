@@ -2,7 +2,7 @@ import BottomSheet, { BottomSheetFlatList, BottomSheetFooter, BottomSheetScrollV
 import { Text, Tab, TabView, Divider } from '@rneui/themed';
 import { Flag, LandPlot, Star } from 'lucide-react-native';
 import * as React from "react";
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 const ItemStyle = StyleSheet.create({
     container: {
@@ -39,20 +39,39 @@ interface LazyFlatListProps {
   
 const LazyFlatList: React.FC<LazyFlatListProps> = ({
     data,
-    itemsPerPage = 10,
+    itemsPerPage = 15,
     windowSize = 10,
-    onItemPress = () => {},
+    onItemPress = () => {}
 }) => {
+    const [currentData, setCurrentData] = React.useState(data.slice(0, itemsPerPage));
+    const [currentItems, setCurrentItems] = React.useState(itemsPerPage);
+
+    React.useEffect(() => {
+        setCurrentData(data.slice(0, currentItems));
+    }, [currentItems]);
+
+    React.useEffect(() => {
+        setCurrentData(data.slice(0, itemsPerPage));
+        setCurrentItems(itemsPerPage);
+    }, [data]);
+
+    const onEndReached = () => {
+        setCurrentItems(currentItems + itemsPerPage);
+    };
+
     return (
         <BottomSheetFlatList
-            data={data}
-            renderItem={({ item }) => <CollectionItem data={item} onPress={onItemPress}/>}
+            data={currentData}
+            renderItem={({ item }) => <CollectionItem data={item} onPress={onItemPress} />}
             ItemSeparatorComponent={() => <Divider inset={false} />}
             initialNumToRender={itemsPerPage}
             removeClippedSubviews={true}
             maxToRenderPerBatch={itemsPerPage}
             updateCellsBatchingPeriod={10}
             windowSize={windowSize}
+            keyExtractor={(item, index) => item.id?.toString() || index.toString()}
+            onEndReached={onEndReached}
+            onEndReachedThreshold={0.2}
         />
     );
 };
@@ -64,7 +83,9 @@ interface CollectionItemProps {
 
 const CollectionItem: React.FC<CollectionItemProps> = ({data: item, onPress=() => {}}) => {
     return (
-        <TouchableOpacity style={ItemStyle.container} onPress={() => onPress(item)}>
+        <TouchableOpacity style={ItemStyle.container} onPress={() => onPress(item)}
+            accessible={true} accessibilityRole='button' accessibilityLabel={item.name}
+        >
             <Image
                 source={{uri: item.picture}}
                 style={ItemStyle.image}
@@ -73,7 +94,7 @@ const CollectionItem: React.FC<CollectionItemProps> = ({data: item, onPress=() =
                 <Text numberOfLines={1} style={ItemStyle.name}>{item.name}</Text>
                 <Text numberOfLines={1} style={ItemStyle.address}>{item.address}</Text>
             </View>
-            <View style={{flexDirection: 'column', alignItems: 'left', gap: 5, marginLeft: 'auto'}}>
+            <View style={{flexDirection: 'column', alignItems: 'flex-start', gap: 5, marginLeft: 'auto'}}>
                 <View style={{flexDirection: 'row', alignItems: 'center', gap: 5}}>
                     <Star size={16} fill='#ffc02d' color='#ffc02d'/>
                     <Text>{item.avg_rating.toFixed(1)}</Text>
