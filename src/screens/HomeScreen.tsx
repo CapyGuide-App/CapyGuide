@@ -62,11 +62,13 @@ const HomeScreen: React.FC = ({navigation}: any) => {
       <LocationPickerText />
       <SearchBar contentContainerStyle={styles.container}/>
       {placeStatus !== 'error' && foodStatus !== 'error' &&
-      <NearByCollection title="Địa danh gần bạn"
+      <NearByCollection
+        title="Địa danh gần bạn"
         geoData={placeData} onPressItem={navigateToDetail} 
         status={placeStatus} onShowAll={() => navigation.navigate('Explore', { indexTab: 0, title: 'Địa danh gần bạn' })}/>}
       {placeStatus !== 'error' && foodStatus !== 'error' &&
-      <NearByCollection title="Đặc sản gần bạn" 
+      <NearByCollection
+        title="Đặc sản gần bạn" 
         geoData={foodData} onPressItem={navigateToDetail} 
         status={foodStatus} onShowAll={() => navigation.navigate('Explore', { indexTab: 1, title: 'Đặc sản gần bạn' })}/>}
       {(placeStatus === 'error' || foodStatus === 'error') &&

@@ -4,6 +4,7 @@ import { View, StyleProp, StyleSheet, Text, ViewStyle, Image, ActivityIndicator 
 import { FlatList } from "react-native-gesture-handler";
 import { Star } from "lucide-react-native";
 import { Pressable } from "react-native";
+import { FlashList } from "@shopify/flash-list";
 
 interface NearByCollectionProps {
     title: string;
@@ -15,7 +16,7 @@ interface NearByCollectionProps {
     onShowAll?: () => void;
 }
 
-const NearByCollection: React.FC<NearByCollectionProps> = ({ title, geoData, style, windowSize = 10, onPressItem, status = 'loading', onShowAll }) => {
+const NearByCollection: React.FC<NearByCollectionProps> = ({title, geoData, style, onPressItem, status = 'loading', onShowAll }) => {
     const { theme } = useTheme();
 
     return (
@@ -28,39 +29,36 @@ const NearByCollection: React.FC<NearByCollectionProps> = ({ title, geoData, sty
             </View>
             {status === 'loading' && <ActivityIndicator color={theme.colors.primary} size="large" />}
             {status === 'success' && 
-                <FlatList
-                    style={{ height: 'auto' }}
-                    horizontal={true}
-                    data={geoData.slice(0, 10)}
-                    renderItem={({ item }) => (
-                        <Pressable
-                            onPress={() => onPressItem(item)}
-                            style={{
-                                flex: 1,
-                            }}
-                        >
-                            <Card theme={theme} containerStyle={styles.cardContent}>
-                                <Image source={{ uri: item.picture }} style={styles.image} />
-                                <View style={styles.content}>
-                                    <Text numberOfLines={1} style={styles.name}>{item.name}</Text>
-                                    <View style={styles.description}>
-                                        {item.duration && <Text style={styles.descriptionText} numberOfLines={1}>{item.distance.toFixed(1)} km {'\uA78F'} {item.duration.toFixed(1)} phút</Text>}
-                                        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, marginLeft: 'auto' }}>
-                                            <Star size={16} fill='#ffc02d' color='#ffc02d' />
-                                            <Text style={styles.descriptionText}>{item.avg_rating.toFixed(1)}</Text>
+                <View style={{ maxHeight: 180 }}>
+                    <FlashList
+                        horizontal={true}
+                        data={geoData.slice(0, 10)}
+                        renderItem={({ item }) => (
+                            <Pressable
+                                onPress={() => onPressItem(item)}
+                                style={{
+                                    flex: 1,
+                                }}
+                            >
+                                <Card theme={theme} containerStyle={styles.cardContent}>
+                                    <Image source={{ uri: item.picture }} style={styles.image} />
+                                    <View style={styles.content}>
+                                        <Text numberOfLines={1} style={styles.name}>{item.name}</Text>
+                                        <View style={styles.description}>
+                                            {item.duration && <Text style={styles.descriptionText} numberOfLines={1}>{item.distance.toFixed(1)} km {'\uA78F'} {item.duration.toFixed(1)} phút</Text>}
+                                            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 2, marginLeft: 'auto' }}>
+                                                <Star size={16} fill='#ffc02d' color='#ffc02d' />
+                                                <Text style={styles.descriptionText}>{item.avg_rating.toFixed(1)}</Text>
+                                            </View>
                                         </View>
                                     </View>
-                                </View>
-                            </Card>
-                        </Pressable>
-                    )}
-                    keyExtractor={(item) => item.id.toString()}
-                    initialNumToRender={windowSize}
-                    removeClippedSubviews={true}
-                    maxToRenderPerBatch={windowSize}
-                    updateCellsBatchingPeriod={10}
-                    windowSize={windowSize}
-                />}
+                                </Card>
+                            </Pressable>
+                        )}
+                        keyExtractor={(item) => item.id.toString()}
+                        estimatedItemSize={180}
+                    />
+                </View>}
         </View>
     );
 };

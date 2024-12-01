@@ -1,4 +1,4 @@
-import BottomSheet, { BottomSheetFlatList, BottomSheetFooter, BottomSheetScrollView, BottomSheetSectionList, BottomSheetView } from '@gorhom/bottom-sheet';
+import BottomSheet, { BottomSheetFlashList, BottomSheetFlatList, BottomSheetFooter, BottomSheetScrollView, BottomSheetSectionList, BottomSheetView } from '@gorhom/bottom-sheet';
 import { Text, Tab, TabView, Divider } from '@rneui/themed';
 import { Flag, LandPlot, Star } from 'lucide-react-native';
 import * as React from "react";
@@ -40,39 +40,21 @@ interface LazyFlatListProps {
 const LazyFlatList: React.FC<LazyFlatListProps> = ({
     data,
     itemsPerPage = 15,
-    windowSize = 10,
     onItemPress = () => {}
 }) => {
-    const [currentData, setCurrentData] = React.useState(data.slice(0, itemsPerPage));
-    const [currentItems, setCurrentItems] = React.useState(itemsPerPage);
-
-    React.useEffect(() => {
-        setCurrentData(data.slice(0, currentItems));
-    }, [currentItems]);
-
-    React.useEffect(() => {
-        setCurrentData(data.slice(0, itemsPerPage));
-        setCurrentItems(itemsPerPage);
-    }, [data]);
-
-    const onEndReached = () => {
-        setCurrentItems(currentItems + itemsPerPage);
-    };
 
     return (
-        <BottomSheetFlatList
-            data={currentData}
-            renderItem={({ item }) => <CollectionItem data={item} onPress={onItemPress} />}
-            ItemSeparatorComponent={() => <Divider inset={false} />}
-            initialNumToRender={itemsPerPage}
-            removeClippedSubviews={true}
-            maxToRenderPerBatch={itemsPerPage}
-            updateCellsBatchingPeriod={10}
-            windowSize={windowSize}
-            keyExtractor={(item, index) => item.id?.toString() || index.toString()}
-            onEndReached={onEndReached}
-            onEndReachedThreshold={0.2}
-        />
+        <View style={{flex: 1, width: '100%'}}>
+            <BottomSheetFlashList
+                data={data}
+                renderItem={({ item }) => <CollectionItem data={item} onPress={onItemPress} />}
+                ItemSeparatorComponent={() => <Divider inset={false} />}
+                removeClippedSubviews={true}
+                keyExtractor={(item, index) => item.id?.toString() || index.toString()}
+                onEndReachedThreshold={0.2}
+                estimatedItemSize={100}
+            />
+        </View>
     );
 };
 

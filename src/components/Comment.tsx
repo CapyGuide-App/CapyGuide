@@ -17,10 +17,17 @@ interface CommentItemProps {
   userRating: number;
   commentText: string;
   avatar: string;
+  date: string;
 }
 
-const CommentItem: React.FC<CommentItemProps> = ({ username, userRating, commentText, avatar }) => {
+const CommentItem: React.FC<CommentItemProps> = ({ username, userRating, commentText, avatar, date }) => {
   const [expanded, setExpanded] = React.useState(false);
+  const [shouldExpand, setShouldExpand] = React.useState(false);
+  date = Intl.DateTimeFormat('vi-VN', { 
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(new Date(date));
 
   return (
     <View style={styles.comment}>
@@ -28,15 +35,27 @@ const CommentItem: React.FC<CommentItemProps> = ({ username, userRating, comment
         <View style={styles.avatarPlaceholder}>
           <Image source={{ uri: avatar }} style={{ width: 30, height: 30, borderRadius: 15 }} />
         </View>
-        <Text style={styles.username}>{username}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.username}>{username}</Text>
+          <Text style={{ fontSize: 12, color: "#8e8e8e" }}>{date}</Text>
+        </View>
         <Text style={styles.userRating}>{userRating}</Text>
       </View>
 
-      <TouchableOpacity onPress={() => setExpanded(!expanded)}>
-        <Text style={styles.commentText} numberOfLines={expanded ? 0 : 3}>
-          {commentText}
-        </Text>
-      </TouchableOpacity>
+      <Text style={styles.commentText} numberOfLines={expanded ? 0 : 3}
+        onTextLayout={(event) => {
+          if (event.nativeEvent.lines.length > 3) {
+            setShouldExpand(true);
+          }
+        }}
+      >
+        {commentText}
+      </Text>
+
+      {shouldExpand && 
+      <TouchableOpacity onPress={() => setExpanded(!expanded)} style={{ marginTop: -5 }}>
+        <Text style={{ color: "#8e8e8e" }}>{expanded ? "Thu gọn" : "Xem thêm"}</Text>
+      </TouchableOpacity>}
 
       <View style={styles.commentActions}>
         <TouchableOpacity style={styles.actionButton}>
@@ -90,6 +109,7 @@ const Comment: React.FC<CommentProps> = ({ poiId }) => {
           userRating={comment.avg_rating}
           commentText={comment.comment}
           avatar={comment.avatar}
+          date={comment.created_on}
         />
       ))}
     </View>
@@ -110,7 +130,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderWidth: 1,
     borderColor: "#ddd",
-    borderRadius: 5,
+    borderRadius: 10,
     marginBottom: 10,
     backgroundColor: "#fff",
   },

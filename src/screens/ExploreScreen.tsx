@@ -14,7 +14,15 @@ import { Tab, TabView, useTheme } from "@rneui/themed";
 import ErrorContent from "../components/ErrorContent";
 import Mapbox from "../components/Mapbox";
 
-const ExploreScreen: React.FC = ({route, navigation}) => {
+import { RouteProp } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+
+type ExploreScreenProps = {
+  route: RouteProp<{ params: { indexTab?: number } }, 'params'>;
+  navigation: StackNavigationProp<any>;
+};
+
+const ExploreScreen: React.FC<ExploreScreenProps> = ({ route, navigation }) => {
   const { location } = useLocation();
   const [indexTab, setIndexTab] = useState(route.params?.indexTab || 0);
   const [placeData, setPlaceData] = useState<any>(null);
@@ -90,9 +98,6 @@ const ExploreScreen: React.FC = ({route, navigation}) => {
         foodData={foodData} navigation={navigation} 
         ref={mapRef}
       />
-      <TouchableOpacity style={styles.focusButton} onPress={focusOnUser}>
-        <Locate size={24} />
-      </TouchableOpacity>
       <BottomSheet
         index={1}
         snapPoints={snapPoints}
@@ -126,6 +131,7 @@ const ExploreScreen: React.FC = ({route, navigation}) => {
             <TabView.Item style={{ flex: 1 }}>
               <View style={{
                 alignItems: 'center',
+                flex: 1,
               }}>
                 {placeStatus === 'loading' && <ActivityIndicator color={theme.colors.primary} size="large" />}
                 {placeStatus === 'error' && <CustomErrorContent />}
@@ -135,6 +141,7 @@ const ExploreScreen: React.FC = ({route, navigation}) => {
             <TabView.Item style={{ flex: 1 }}>
               <View style={{
                 alignItems: 'center',
+                flex: 1,
               }}>
                 {foodStatus === 'loading' && <ActivityIndicator color={theme.colors.primary} size="large" />}
                 {foodStatus === 'error' && <CustomErrorContent />}
@@ -144,6 +151,9 @@ const ExploreScreen: React.FC = ({route, navigation}) => {
           </TabView>
         </BottomSheetView>
       </BottomSheet>
+      <TouchableOpacity style={styles.focusButton} onPress={focusOnUser}>
+        <Locate size={24} />
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -162,5 +172,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     backgroundColor: "white",
     padding: 10,
+    elevation: 2,
   },
 });
