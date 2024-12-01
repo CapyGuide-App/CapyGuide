@@ -13,7 +13,7 @@ interface PostProps {
   avatar: string;
   title: string;
   date: string;
-  images: string[];
+  titleImage: string;
   reactionCount: number;
   commentCount: number;
   onPress: () => void;
@@ -25,7 +25,7 @@ const Post: React.FC<PostProps> = ({
   avatar,
   title,
   date,
-  images,
+  titleImage,
   reactionCount,
   commentCount,
   onPress,
@@ -46,9 +46,7 @@ const Post: React.FC<PostProps> = ({
           opacity: pressed ? 0.8 : 1,
         },
       ]}>
-      {images.length > 0 && (
-        <Image source={{uri: images[0]}} style={styles.thumbnail} />
-      )}
+      <Image source={{uri: titleImage}} style={styles.thumbnail} />
 
       <View style={styles.textContainer}>
         <View style={styles.categoryContainer}>

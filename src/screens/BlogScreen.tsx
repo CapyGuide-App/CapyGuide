@@ -44,7 +44,7 @@ const BlogScreen: React.FC = () => {
             avatar={post.avatar}
             title={post.title}
             date={post.date}
-            images={post.images}
+            titleImage={post.titleImage}
             reactionCount={Object.values(post.reactions).reduce((sum, value) => sum + value, 0)}
             commentCount={post.commentsCount}
             onPress={() => handlePostPress(post)}
