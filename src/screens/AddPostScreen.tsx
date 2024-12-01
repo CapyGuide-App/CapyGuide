@@ -22,6 +22,8 @@ interface AddPostScreenProps {
 
 const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   const [postTitle, setPostTitle] = useState('');
+  const [selectedTitleImage, setSelectedTitleImage] = useState<string | null>(null);
+  const [isTitleImageHandlerVisible, setIsTitleImageHandlerVisible] = useState(false);
   const [shortDescription, setShortDescription] = useState('');
   const [postElements, setPostElements] = useState<any[]>([]);
   const [isCameraHandlerVisible, setIsCameraHandlerVisible] = useState(false);
@@ -31,6 +33,10 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
 
   const handleImageSelected = (imageUri: string) => {
     setPostElements(prev => [...prev, {type: 'image', src: imageUri}]);
+  };
+
+  const handleTitleImageSelected = (imageUri: string) => {
+    setSelectedTitleImage(imageUri);
   };
 
   const handleVideoSelected = (videoUri: string) => {
@@ -119,13 +125,19 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <TouchableOpacity style={styles.imagePicker}>
-          <Text
-            style={styles.imagePickerText}
-            onPress={() => setIsCameraHandlerVisible(true)}>
-            Chọn ảnh
-          </Text>
-        </TouchableOpacity>
+      <TouchableOpacity
+        style={[
+          styles.imagePicker,
+          selectedTitleImage && { backgroundColor: 'transparent' },
+        ]}
+        onPress={() => setIsTitleImageHandlerVisible(true)}
+      >
+        {selectedTitleImage ? (
+          <Image source={{ uri: selectedTitleImage }} style={styles.titleImagePreview} />
+        ) : (
+          <Text style={styles.imagePickerText}>Chọn ảnh</Text>
+        )}
+      </TouchableOpacity>
         <TextInput
           style={styles.titleInput}
           placeholder="Tiêu đề bài viết"
@@ -215,11 +227,17 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
         ))}
       </ScrollView>
 
-      <CameraHandler
-        isVisible={isCameraHandlerVisible}
-        onClose={() => setIsCameraHandlerVisible(false)}
-        onImageSelected={handleImageSelected}
-      />
+<CameraHandler
+  isVisible={isCameraHandlerVisible}
+  onClose={() => setIsCameraHandlerVisible(false)}
+  onImageSelected={handleImageSelected}
+/>
+
+<CameraHandler
+  isVisible={isTitleImageHandlerVisible}
+  onClose={() => setIsTitleImageHandlerVisible(false)}
+  onImageSelected={handleTitleImageSelected}
+/>
 
       <AddVideoHandler
         isVisible={isVideoHandlerVisible}
@@ -270,6 +288,11 @@ const styles = StyleSheet.create({
     minHeight: 100,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  titleImagePreview: {
+    width: 100,
+    height: 100,
+    borderRadius: 5,
   },
   imagePickerText: {
     fontSize: 16,
