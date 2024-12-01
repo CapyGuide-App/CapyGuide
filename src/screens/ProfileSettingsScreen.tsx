@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -12,14 +12,16 @@ import {
 import {ArrowLeft} from 'lucide-react-native';
 import avatar from '../assets/avatar.jpg';
 import CameraHandler from '../components/CameraHandler';
+import { fetchProfile, fetchUpdateProfile } from '../request/DataRequest';
+import { useAuth } from '../context/AuthContext';
 
-const ProfileSettingsScreen = () => {
-  const [imageUri, setImageUri] = useState<string | null>(null); 
-  const [name, setName] = useState('Hiển Nguyễn'); 
-  const [username, setUsername] = useState('kaitonmh'); 
-  const [bio, setBio] = useState(
-    'I am a passionate writer, currently working as a Content Creator at FizzBuzz. Based in Prague.'
-  ); 
+
+const ProfileSettingsScreen = ({ navigation }: { navigation: any }) => {
+  const {currentUser, setCurrentUser} = useAuth();
+  const [image, setImage] = useState<{ uri: string, type?: string, name?: string } | null>(null);
+  const [name, setName] = useState<string | null>(null); 
+  const [username, setUsername] = useState<string | null>(null);
+  const [bio, setBio] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [isCameraHandlerVisible, setCameraHandlerVisible] = useState(false);
 
@@ -27,23 +29,46 @@ const ProfileSettingsScreen = () => {
   const closeModal = () => setModalVisible(false);
 
   const handleSaveChanges = () => {
-    Alert.alert('Lưu thay đổi', 'Thông tin của bạn đã được cập nhật!');
+    if (!name || !username) {
+      Alert.alert('Error', 'Name and username are required');
+      return;
+    }
+
+    fetchUpdateProfile({
+      displayname: name,
+      username,
+      bio,
+    }, image).then((res) => {
+      setCurrentUser(res.user);
+      navigation.goBack();
+    }).catch((err) => {
+      Alert.alert('Error', err.message);
+    });
   };
 
   const openCameraHandler = () => {
     setCameraHandlerVisible(true); 
   };
 
-  const handleImageSelected = (uri: string) => {
-    setImageUri(uri); 
+  const handleImageSelected = (image: any) => {
+    setImage(image);
   };
+
+  useEffect(() => {
+    if (currentUser) {
+      setName(currentUser.displayname);
+      setUsername(currentUser.username);
+      setBio(currentUser.bio);
+      setImage({ uri: currentUser.avatar });
+    }
+  }, []);
 
   return (
     <View style={styles.container}>
       <View style={styles.avatarContainer}>
         <TouchableOpacity onPress={openModal}>
           <Image
-            source={imageUri ? { uri: imageUri } : avatar}
+            source={image?.uri ? { uri: image.uri } : avatar}
             style={styles.avatar}
           />
         </TouchableOpacity>
@@ -57,21 +82,21 @@ const ProfileSettingsScreen = () => {
         <Text style={styles.label}>NAME</Text>
         <TextInput
           style={styles.input}
-          value={name}
+          value={name || ''}
           onChangeText={setName}
         />
 
         <Text style={styles.label}>USERNAME</Text>
         <TextInput
           style={styles.input}
-          value={username}
+          value={username || ''}
           onChangeText={setUsername}
         />
 
         <Text style={styles.label}>BIO</Text>
         <TextInput
           style={[styles.input, styles.textArea]}
-          value={bio}
+          value={bio || ''}
           onChangeText={setBio}
           multiline={true}
         />
@@ -88,7 +113,7 @@ const ProfileSettingsScreen = () => {
             <ArrowLeft size={40} color="#fff" />
           </TouchableOpacity>
           <Image
-            source={imageUri ? { uri: imageUri } : avatar}
+            source={image?.uri ? { uri: image.uri } : avatar}
             style={styles.fullImage}
           />
         </View>

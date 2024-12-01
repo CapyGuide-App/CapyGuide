@@ -28,7 +28,7 @@ apiClient.interceptors.response.use(
             const tokens = await KeychainService.getTokens();
             console.log('Tokens:', tokens);
             if (tokens?.refreshToken) {
-                const refreshResponse = await apiClient.post('https://api.suzueyume.id.vn/refresh', {
+                const refreshResponse = await apiClient.post('/refresh', {
                     refreshToken: tokens?.refreshToken,
                 });
     

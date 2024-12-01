@@ -4,7 +4,7 @@ import { Camera, Folder } from 'lucide-react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 interface CameraHandlerProps {
-  onImageSelected: (imageUri: string) => void;
+  onImageSelected: (image: any) => void;
   isVisible: boolean;
   onClose: () => void;
 }
@@ -20,7 +20,7 @@ const CameraHandler: React.FC<CameraHandlerProps> = ({
       saveToPhotos: true,
     });
     if (result.assets && result.assets[0].uri) {
-      onImageSelected(result.assets[0].uri);
+      onImageSelected(result.assets[0]);
     }
     onClose();
   };
@@ -31,7 +31,7 @@ const CameraHandler: React.FC<CameraHandlerProps> = ({
       selectionLimit: 1,
     });
     if (result.assets && result.assets[0].uri) {
-      onImageSelected(result.assets[0].uri);
+      onImageSelected(result.assets[0]);
     }
     onClose();
   };

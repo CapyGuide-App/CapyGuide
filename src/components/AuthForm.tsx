@@ -11,6 +11,8 @@ import {
 import { Eye, EyeOff } from "lucide-react-native";
 import { hexToRGBA } from "../styles/Methods";
 import { useTheme } from "@rneui/themed";
+import { useAuth } from "../context/AuthContext";
+import { fetchGoogleLogin } from "../request/DataRequest";
 
 interface AuthFormProps {
   title: string;
@@ -45,6 +47,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
     displayName: "",
     confirmPassword: "",
   });
+  const {login} = useAuth();
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!isPasswordVisible);
@@ -59,6 +62,15 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
   const handleSubmit = async () => {
     onSubmit(formData);
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await fetchGoogleLogin();
+      login();
+    } catch (error: Error | any) {
+      Alert.alert("Error", error.message);
+    }
   };
 
   return (
@@ -140,30 +152,20 @@ const AuthForm: React.FC<AuthFormProps> = ({
         <Text style={styles.buttonText}>{buttonText}</Text>
       </TouchableOpacity>
 
-      <Text style={styles.orText}>
-        or {isSignUp ? "sign up" : "log in"} with
-      </Text>
+      {!isSignUp && <Text style={styles.orText}>
+        or sign in with
+      </Text>}
 
-      <View style={styles.socialContainer}>
-        <TouchableOpacity style={styles.socialButton}>
-          <Image
-            source={require("../assets/google.png")}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
-          <Image
-            source={require("../assets/apple.png")}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.socialButton}>
-          <Image
-            source={require("../assets/facebook.png")}
-            style={styles.socialIcon}
-          />
-        </TouchableOpacity>
-      </View>
+      {!isSignUp && (
+        <View style={styles.socialContainer}>
+          <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
+            <Image
+              source={require("../assets/google.png")}
+              style={styles.socialIcon}
+            />
+          </TouchableOpacity>
+        </View>
+      )}
 
       <View style={styles.inlineContainer}>
         <Text style={styles.promptText}>{promptText} </Text>
@@ -225,7 +227,7 @@ const styles = StyleSheet.create({
   },
   socialContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "center",
     width: "80%",
   },
   socialButton: {

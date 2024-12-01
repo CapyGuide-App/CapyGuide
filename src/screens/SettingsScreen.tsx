@@ -20,8 +20,8 @@ import {
   LogOut,
   LucideEdit3,
 } from 'lucide-react-native';
-import avatar from '../assets/avatar.jpg';
 import {useAuth} from '../context/AuthContext';
+import { fetchProfile } from '../request/DataRequest';
 
 type SettingsScreenNavigationProp = {
   navigate: (
@@ -40,6 +40,8 @@ type SettingsScreenNavigationProp = {
 };
 
 const SettingsScreen: React.FC = () => {
+  const {currentUser} = useAuth();
+
   const navigation = useNavigation<SettingsScreenNavigationProp>();
   const {logout} = useAuth();
 
@@ -84,10 +86,13 @@ const SettingsScreen: React.FC = () => {
       <Text style={styles.title}>Profile</Text>
       <View style={styles.profileContainer}>
         <View style={styles.profileHeader}>
-          <Image source={avatar} style={styles.avatar} />
+          <Image
+            source={{uri: currentUser?.avatar}}
+            style={styles.avatar}
+          />
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>Hiển Nguyễn</Text>
-            <Text style={styles.profileHandle}>@kaitonmh</Text>
+            <Text style={styles.profileName}>{currentUser?.displayname}</Text>
+            <Text style={styles.profileHandle}>@{currentUser?.username}</Text>
           </View>
           <TouchableOpacity
             style={styles.editButton}
