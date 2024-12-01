@@ -7,16 +7,7 @@ import Modal from "react-native-modal";
 import { opacity } from 'react-native-reanimated/lib/typescript/Colors';
 import LocationPickerText from './LocationPickerText';
 import { Text } from 'react-native-svg';
-
-const hexToRGBA = (hex: string, opacity: number) => {
-    hex = hex.replace('#', '');
-  
-    const r = parseInt(hex.substring(0, 2), 16);
-    const g = parseInt(hex.substring(2, 4), 16);
-    const b = parseInt(hex.substring(4, 6), 16);
-  
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-};
+import { hexToRGBA } from '../styles/Methods';
 
 interface SearchBarProps {
     contentContainerStyle?: StyleProp<ViewStyle>;

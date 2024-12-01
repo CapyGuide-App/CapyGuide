@@ -13,7 +13,6 @@ const fetchReverseGeocode = async (location, signal) => {
     timeout: 5000,
     signal,
   });
-  console.log(response.data);
   return response.data.display_name;
 };
 
