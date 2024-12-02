@@ -25,17 +25,15 @@ import {
   Heart,
   MessageCircle,
   Share2,
+  Navigation2,
+  HotelIcon,
+  BlocksIcon,
 } from 'lucide-react-native';
-import renderComment from '../components/renderComment';
+import Comment from '../components/Comment';
 import {MapView, Camera, MarkerView} from '@rnmapbox/maps';
 import PlacePin from '../assets/place-pin.png';
 import FoodPin from '../assets/food-pin.png';
 import Share from 'react-native-share';
-
-const comments = [
-  {username: '@vanphuongcute', userRating: '8.9', commentText: 'Chơi rất vui'},
-  {username: '@mhiennoob', userRating: '8.2', commentText: 'Phục vụ hơi kém'},
-];
 
 const reactions = [
   {id: 'great', label: 'Tuyệt vời', icon: <SmilePlus color="#333" size={24} />},
@@ -72,8 +70,6 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
   const closeModal = () => setModalVisible(false);
 
   const markerIcon = item.type === 'travel' ? PlacePin : FoodPin;
-
-  console.log('item', item);
 
   const handleShare = async ({title, url}: {title: string; url?: string}) => {
     try {
@@ -124,46 +120,64 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
         </View>
   
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>Thông tin về địa điểm</Text>
           <View style={styles.row}>
-            <MapPin size={20} color="#000" style={styles.icon2} />
-            <Text style={styles.text}>
-              {item.address}
-            </Text>
-            <TouchableOpacity
-              onPress={() => googleMapRoute(item)}>
-              <Text style={{color: '#4CAF50', marginLeft: 5}}>Chỉ đường</Text>
+            <View style={{flex: 1}} >
+              <Text style={styles.sectionTitle}>Thông tin về địa điểm</Text>
+              <View style={styles.row}>
+                <MapPin size={20} color="#000" style={styles.icon2} />
+                <Text style={styles.text}>
+                  {item.address}
+                </Text>
+              </View>
+      
+              <View style={styles.row}>
+                <Map size={20} color="#4CAF50" style={styles.icon2} />
+                <Text style={styles.text}>
+                  <Text style={styles.distance}>
+                    {item.distance.toFixed(1)} km
+                  </Text>
+                  {' (From current location)'}
+                </Text>
+              </View>
+      
+              <View style={styles.row}>
+                {item.type === 'place' ? 
+                  (<BlocksIcon size={20} color="#000" style={styles.icon2} />) : 
+                  (<Utensils size={20} color="#000" style={styles.icon2} />)
+                }
+                <Text style={styles.text}>Loại hình: {item.type === 'place' ? 'Địa điểm' : 'Ẩm thực'}</Text>
+              </View>
+            </View>
+            <TouchableOpacity style={{borderRadius: 50, backgroundColor: '#1b6ff4', padding: 8, 
+              alignContent: 'center', justifyContent: 'center', alignItems: 'center',
+              transform: [{rotate: '45deg'}]
+            }}
+              onPress={() => googleMapRoute(item)}
+            >
+              <Navigation2 size={20} color="white" fill="white" />
             </TouchableOpacity>
-          </View>
-  
-          <View style={styles.row}>
-            <Map size={20} color="#4CAF50" style={styles.icon2} />
-            <Text style={styles.text}>
-              <Text style={styles.distance}>
-                {item.distance.toFixed(1)} km
-              </Text>
-              {' (From current location)'}
-            </Text>
-          </View>
-  
-          <View style={styles.row}>
-            <Utensils size={20} color="#000" style={styles.icon2} />
-            <Text style={styles.text}>Loại hình: {item.type}</Text>
           </View>
   
           <View style={styles.mapContainer}>
             <MapView
               style={styles.map}
               styleURL="mapbox://styles/mapbox/streets-v11"
-              localizeLabels
+              localizeLabels={{locale: 'current'}}
+              logoEnabled={false}
+              attributionEnabled={false}
               scrollEnabled={false}
+              zoomEnabled={false}
+              rotateEnabled={false}
+              pitchEnabled={false}
+              compassEnabled={false}
             >
               <Camera
                 centerCoordinate={[item.longitude, item.latitude]}
                 zoomLevel={15}
-                animationDuration={500}
+                animationDuration={0}
               />
-              <MarkerView coordinate={[item.longitude, item.latitude]}>
+              <MarkerView
+                coordinate={[item.longitude, item.latitude]}>
                 <Image source={markerIcon} style={styles.markerIcon} />
               </MarkerView>
             </MapView>
@@ -185,19 +199,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
           ))}
         </View>
   
-        <View style={styles.commentsSection}>
-          <Text style={styles.sectionTitle}>157 bình luận</Text>
-  
-          {comments.map((comment, index) => (
-            <View key={index}>
-              {renderComment(
-                comment.username,
-                comment.userRating,
-                comment.commentText,
-              )}
-            </View>
-          ))}
-        </View>
+        <Comment poiId={item.id} />
       </ScrollView>
         <View style={styles.actionBar}>
           <TouchableOpacity
@@ -276,9 +278,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     padding: 20,
     paddingBottom: 0,
-    marginTop: -20,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    marginTop: -30,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     overflow: 'hidden',
   },
   title: {
@@ -351,7 +353,7 @@ const styles = StyleSheet.create({
   },
   mapContainer: {
     height: 200,
-    borderRadius: 10,
+    borderRadius: 20,
     overflow: 'hidden',
     marginTop: 10,
   },
@@ -359,8 +361,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   markerIcon: {
-    width: 30,
-    height: 30,
+    width: 50,
+    height: 50,
     resizeMode: 'contain',
   },
   sectionTitle: {
@@ -372,10 +374,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     marginBottom: 5,
-  },
-  commentsSection: {
-    padding: 15,
-    backgroundColor: '#fff',
   },
   reactionsRow: {
     flexDirection: 'row',

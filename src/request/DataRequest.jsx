@@ -4,7 +4,7 @@ import SessionManager from "../utils/SessionManager";
 import apiClient from "../utils/AxiosClient";
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
-const handleError = (error) => {
+export const handleError = (error) => {
     if (error.response) {
         // Server responded with a status code outside the 2xx range
         console.error('Error response:', error.response.data.message || error.response.data || error.message);
@@ -20,7 +20,7 @@ const handleError = (error) => {
     }
 };  
 
-const fetchGoogleLogin = async () => {
+export const fetchGoogleLogin = async () => {
     try {
         await GoogleSignin.hasPlayServices();
         const userInfo = await GoogleSignin.signIn();
@@ -36,7 +36,7 @@ const fetchGoogleLogin = async () => {
     }
 };
 
-const fetchData = async (source, type, signal, options = {}) => {
+export const fetchData = async (source, type, signal, options = {}) => {
     const maxRetries = 3;
     let retries = 0;
   
@@ -69,7 +69,7 @@ const fetchData = async (source, type, signal, options = {}) => {
     }
 };  
 
-const fetchLogin = async (username, password) => {
+export const fetchLogin = async (username, password) => {
     try {
         const response = await axios.post('https://api.suzueyume.id.vn/login', { username, password });
         const { accessToken, refreshToken } = response.data;
@@ -85,7 +85,7 @@ const fetchLogin = async (username, password) => {
     }
 };  
 
-const fetchRegister = async (displayname, username, password, email) => {
+export const fetchRegister = async (displayname, username, password, email) => {
     try {
         const response = await axios.post('https://api.suzueyume.id.vn/register', { displayname, username, password, email });
 
@@ -102,7 +102,7 @@ const fetchRegister = async (displayname, username, password, email) => {
     }
 }
 
-const fetchProfile = async () => {
+export const fetchProfile = async () => {
     try {
         const response = await apiClient.get('/profile');
         return response.data;
@@ -141,4 +141,14 @@ export const fetchUpdateProfile = async (profileData, avatar) => {
     }
 };
 
-export { fetchData, fetchLogin, fetchRegister, fetchProfile, fetchGoogleLogin };
+export const fetchReviewsOfPOI = async (poiId, params, signal) => {
+    try {
+        const response = await apiClient.get(`/poi/${poiId}/reviews`,
+            { params: params, signal: signal });
+        return response.data.data;
+    } catch (error) {
+        const message = handleError(error);
+        console.error('Failed to fetch reviews:', message);
+        throw new Error(message);
+    }
+};

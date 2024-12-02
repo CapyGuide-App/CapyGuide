@@ -26,7 +26,6 @@ apiClient.interceptors.response.use(
   
         try {
             const tokens = await KeychainService.getTokens();
-            console.log('Tokens:', tokens);
             if (tokens?.refreshToken) {
                 const refreshResponse = await apiClient.post('/refresh', {
                     refreshToken: tokens?.refreshToken,
