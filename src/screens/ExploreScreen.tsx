@@ -102,6 +102,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route, navigation }) => {
         index={1}
         snapPoints={snapPoints}
         ref={bottomSheetRef}
+        {...useBottomSheetIOSReduceMotionOverride()}
       >
         <BottomSheetView style={{ flex: 1}}>
           <Tab
@@ -175,3 +176,16 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
 });
+
+import { useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
+import { ReduceMotion } from 'react-native-reanimated';
+
+export function useBottomSheetIOSReduceMotionOverride() {
+  const animationConfigs = useBottomSheetSpringConfigs({
+    reduceMotion: ReduceMotion.Never,
+    stiffness: 200,
+    overshootClamping: true,
+  });
+
+  return { animationConfigs };
+}

@@ -57,6 +57,7 @@ const NearByCollection: React.FC<NearByCollectionProps> = ({title, geoData, styl
                         )}
                         keyExtractor={(item) => item.id.toString()}
                         estimatedItemSize={180}
+                        removeClippedSubviews={true}
                     />
                 </View>}
         </View>
