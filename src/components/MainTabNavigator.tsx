@@ -8,6 +8,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {Dimensions, TouchableOpacity, View} from 'react-native';
 import Svg, {Path} from 'react-native-svg';
 import SettingsScreen from '../screens/SettingsScreen';
+import { PortalHost } from '@gorhom/portal';
 
 const Tab = createBottomTabNavigator();
 
@@ -88,6 +89,7 @@ const MainTabNavigator: React.FC = () => {
   const iconColor = theme.colors.primary;
 
   return (
+    <>
     <Tab.Navigator
       screenOptions={({route}) => ({
         tabBarIcon: ({color, ...props}) => {
@@ -151,6 +153,8 @@ const MainTabNavigator: React.FC = () => {
       <Tab.Screen name={POST_NAME} component={BlogScreen} />
       <Tab.Screen name={PROFILE_NAME} component={SettingsScreen} />
     </Tab.Navigator>
+    <PortalHost name="search-bar" />
+    </>
   );
 };
 

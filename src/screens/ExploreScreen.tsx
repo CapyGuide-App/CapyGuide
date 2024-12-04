@@ -1,14 +1,13 @@
 import * as React from "react";
-import { StyleSheet, SafeAreaView, View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { StyleSheet, SafeAreaView, View, Text, TouchableOpacity, ActivityIndicator, Dimensions, Modal } from "react-native";
 import {
   MapView,
 } from "@rnmapbox/maps";
 import { useRef, useState } from "react";
 import { useLocation } from "../context/LocationContext";
-import { Locate, Star } from "lucide-react-native";
+import { Locate, Search, Star } from "lucide-react-native";
 import { LazyFlatList } from "../components/BottomSheetCollection";
-import Svg, { Polygon } from "react-native-svg";
-import { fetchData } from "../request/DataRequest";
+import { fetchData, reloadData } from "../request/DataRequest";
 import BottomSheet, { BottomSheetView } from "@gorhom/bottom-sheet";
 import { Tab, TabView, useTheme } from "@rneui/themed";
 import ErrorContent from "../components/ErrorContent";
@@ -25,30 +24,26 @@ type ExploreScreenProps = {
 const ExploreScreen: React.FC<ExploreScreenProps> = ({ route, navigation }) => {
   const { location } = useLocation();
   const [indexTab, setIndexTab] = useState(route.params?.indexTab || 0);
-  const [placeData, setPlaceData] = useState<any>(null);
-  const [foodData, setFoodData] = useState<any>(null);
+  const [placeData, setPlaceData] = useState<any>([]);
+  const [foodData, setFoodData] = useState<any>([]);
   const [placeStatus, setPlaceStatus] = useState<'loading' | 'error' | 'success'>('loading');
   const [foodStatus, setFoodStatus] = useState<'loading' | 'error' | 'success'>('loading');
   const mapRef = useRef<any>(null);
+  const searchRef = useRef<any>(null);
+
+  const [searchFoodData, setSearchFoodData] = useState<any>(null);
+  const [searchPlaceData, setSearchPlaceData] = useState<any>(null);
+  
+  const handleSearch = (data: any) => {
+    const foodData = data?.filter((item: any) => item.type === 'food');
+    const placeData = data?.filter((item: any) => item.type === 'place');
+    setSearchFoodData(foodData);
+    setSearchPlaceData(placeData);
+  };
 
   const reload = (type: string, saveData: any, setStatus: any, controller: AbortController) => {
-    setStatus((prevStatus: string) => {
-      if (prevStatus === 'loading') return prevStatus;
-      return 'loading';
-    });
-    fetchData(location, type, controller.signal).then((data) => {
-      if (data) {
-        saveData(data);
-        setStatus('success');
-      }
-    }).catch((error) => {
-      if (error.name === "CanceledError" || error.name === "AbortError") {
-        console.log(`${type} request was canceled`);
-      } else {
-        setStatus("error");
-        console.error(error);
-      }
-    });
+    const request = fetchData(location, type, controller.signal);
+    reloadData(request, saveData, setStatus);
   };
 
   React.useEffect(() => {
@@ -58,7 +53,6 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route, navigation }) => {
     return () => {
       controller.abort();
     };
-
   }, [location]);
 
   React.useEffect(() => {
@@ -74,10 +68,31 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route, navigation }) => {
   const handleMarkerPress = (item: any) => {
     bottomSheetRef.current?.collapse();
     mapRef.current?.selectFeature(item);
+    setIndexTab(item.type === 'food' ? 1 : 0);
   };
 
-  const snapPoints = React.useMemo(() => ['20%', '40%', '100%'], []);
   const bottomSheetRef = React.useRef<BottomSheet>(null);
+  const snapPoints = React.useMemo(() => ['20%', '45%', '100%'], []);
+
+  // Tạo animatedPosition để theo dõi vị trí BottomSheet
+  const animatedPosition = useSharedValue(0);
+
+  const { height: screenHeight } = Dimensions.get("window");
+  const animatedButtonStyle = useAnimatedStyle(() => {
+    const offset = 60;
+    const min = screenHeight / 2;
+    const translateY = interpolate(
+      animatedPosition.value,
+      [min, screenHeight],
+      [min - offset, screenHeight - offset],
+      Extrapolation.CLAMP
+    );
+  
+    return {
+      transform: [{ translateY }],
+    };
+  });
+
   const { theme } = useTheme();
 
   const CustomErrorContent = React.useMemo(() => () => {
@@ -92,16 +107,40 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route, navigation }) => {
   }, []);
 
   return (
-    <SafeAreaView style={styles.page}>
+    <View style={styles.page}>
       <Mapbox 
-        indexTab={indexTab} placeData={placeData} 
-        foodData={foodData} navigation={navigation} 
+        indexTab={indexTab} placeData={searchPlaceData} 
+        foodData={searchFoodData} navigation={navigation} 
         ref={mapRef}
       />
+      <Animated.View style={[styles.floatingButton, animatedButtonStyle]}>
+        <TouchableOpacity style={styles.focusButton} onPress={focusOnUser}>
+          <Locate size={24} />
+        </TouchableOpacity>
+      </Animated.View>
+      <SearchBar style={{ 
+        position: 'absolute', 
+        top: 20,
+        left: 20, right: 20,
+      }}
+        contentContainerStyle={{
+          padding: 20,
+        }}
+        clearOnClose={false}
+        ref={searchRef}
+        handleSearchData={handleSearch}
+        onSelected={handleMarkerPress}
+      />
       <BottomSheet
-        index={1}
         snapPoints={snapPoints}
+        index={1}
         ref={bottomSheetRef}
+        animatedPosition={animatedPosition}
+        style={{ 
+          borderRadius: 20, 
+          elevation: 5,
+        }}
+        backgroundStyle={{ borderRadius: 20,}}
         {...useBottomSheetIOSReduceMotionOverride()}
       >
         <BottomSheetView style={{ flex: 1}}>
@@ -132,11 +171,11 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route, navigation }) => {
             <TabView.Item style={{ flex: 1 }}>
               <View style={{
                 alignItems: 'center',
-                flex: 1,
+                flexGrow: 1,
               }}>
-                {placeStatus === 'loading' && <ActivityIndicator color={theme.colors.primary} size="large" />}
+                {placeStatus === 'loading' && <ActivityIndicator color={theme.colors.primary} size="large" style={{ marginTop: 20 }} />}
                 {placeStatus === 'error' && <CustomErrorContent />}
-                {placeStatus === 'success' && <LazyFlatList data={placeData} onItemPress={handleMarkerPress}/>}
+                {placeStatus === 'success' && <LazyFlatList data={searchPlaceData} onItemPress={handleMarkerPress}/>}
               </View>
             </TabView.Item>
             <TabView.Item style={{ flex: 1 }}>
@@ -144,18 +183,15 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route, navigation }) => {
                 alignItems: 'center',
                 flex: 1,
               }}>
-                {foodStatus === 'loading' && <ActivityIndicator color={theme.colors.primary} size="large" />}
+                {foodStatus === 'loading' && <ActivityIndicator color={theme.colors.primary} size="large" style={{ marginTop: 20 }} />}
                 {foodStatus === 'error' && <CustomErrorContent />}
-                {foodStatus === 'success' && <LazyFlatList data={foodData} onItemPress={handleMarkerPress}/>}
+                {foodStatus === 'success' && <LazyFlatList data={searchFoodData} onItemPress={handleMarkerPress}/>}
               </View>
             </TabView.Item>
           </TabView>
         </BottomSheetView>
       </BottomSheet>
-      <TouchableOpacity style={styles.focusButton} onPress={focusOnUser}>
-        <Locate size={24} />
-      </TouchableOpacity>
-    </SafeAreaView>
+    </View>
   );
 };
 
@@ -166,19 +202,25 @@ const styles = StyleSheet.create({
     position: "relative",
     flex: 1,
   },
-  focusButton: {
+  floatingButton: {
     position: "absolute",
-    bottom: "50%",
     right: 20,
+  },
+  focusButton: {
     borderRadius: 50,
     backgroundColor: "white",
-    padding: 10,
     elevation: 2,
+    height: 50,
+    width: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
 import { useBottomSheetSpringConfigs } from '@gorhom/bottom-sheet';
-import { ReduceMotion } from 'react-native-reanimated';
+import Animated, { Extrapolation, interpolate, ReduceMotion, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import SearchBar from "../components/SearchBar";
+import { PortalHost } from "@gorhom/portal";
 
 export function useBottomSheetIOSReduceMotionOverride() {
   const animationConfigs = useBottomSheetSpringConfigs({

@@ -12,6 +12,7 @@
   "dependencies": {
     "@animatereactnative/marquee": "^0.3.1",
     "@gorhom/bottom-sheet": "^5.0.6",
+    "@gorhom/portal": "^1.0.14",
     "@react-native-async-storage/async-storage": "^1.24.0",
     "@react-native-community/geolocation": "^3.4.0",
     "@react-native-firebase/analytics": "^21.6.1",

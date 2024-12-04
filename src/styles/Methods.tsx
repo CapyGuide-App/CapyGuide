@@ -8,4 +8,14 @@ const hexToRGBA = (hex: string, opacity: number) => {
     return `rgba(${r}, ${g}, ${b}, ${opacity})`;
 };
 
-export { hexToRGBA };
+const normalizeString = (str: string) => str.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+
+const formatNumber = (num: number): number => {
+    const numTmp = Math.round(num * 10) / 10;
+
+    if (numTmp >= 10)
+        return Math.floor(numTmp);
+    return numTmp;
+};
+
+export { hexToRGBA, normalizeString, formatNumber };

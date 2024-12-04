@@ -50,158 +50,158 @@ interface MapboxProps {
 }
 
 const Mapbox: React.FC<MapboxProps> = React.forwardRef(({ indexTab, placeData, foodData, navigation }, ref) => {
-    const [selectedFeature, setSelectedFeature] = React.useState<any | null>(null);
-    const [isFocused, setIsFocused] = React.useState<boolean>(true);
-    const cameraRef = React.useRef<Camera>(null);
+  const [selectedFeature, setSelectedFeature] = React.useState<any | null>(null);
+  const [isFocused, setIsFocused] = React.useState<boolean>(true);
+  const cameraRef = React.useRef<Camera>(null);
 
-    React.useImperativeHandle(ref, () => ({
-        selectFeature: (feature: any) => {
-            setIsFocused(false);
-            setSelectedFeature(feature);
-        },
-        focusOnUser: () => {
-            setIsFocused(true);
-        }
-    }));
-
-    const handleMarkerPress = (feature: any) => {
-        setIsFocused(false);
-        setSelectedFeature(feature);
-    };
-
-    React.useEffect(() => {
-      if (!isFocused && selectedFeature) {
-        setTimeout(() => {
-          cameraRef.current?.setCamera({
-            centerCoordinate: [selectedFeature.longitude, selectedFeature.latitude],
-            animationDuration: 500,
-            zoomLevel: 15,
-          });
-        }, 0);
+  React.useImperativeHandle(ref, () => ({
+      selectFeature: (feature: any) => {
+          setIsFocused(false);
+          setSelectedFeature(feature);
+      },
+      focusOnUser: () => {
+          setIsFocused(true);
       }
-    }, [isFocused, selectedFeature]);
+  }));
 
-    const CustomShapeSource = React.useMemo(
-      () => ({ type, data, onMarkerPress }: CustomShapeSourceProps) => {
-        return (
-          <ShapeSource
-            id={`${type}-source`}
-            shape={to_geojson(data)}
-            onPress={(event) => {
-              if (event.features[0]) {
-                console.log(event);
-                onMarkerPress(event.features[0].properties);
-              }
-            }}
-          >
-            <SymbolLayer
-              id={`${type}-icons`}
-              style={{
-                iconImage: type,
-                iconAllowOverlap: false,
-                iconAnchor: "bottom",
-                iconSize: 0.1,
-              }}
-            />
-          </ShapeSource>
-        );
-      }, []);
-  
-    const SelectedShapeSource = React.useMemo(() => ({type}: {type: string}) => {
-      if (!selectedFeature || selectedFeature.type !== type) return null;
+  const handleMarkerPress = (feature: any) => {
+      setIsFocused(false);
+      setSelectedFeature(feature);
+  };
+
+  React.useEffect(() => {
+    if (!isFocused && selectedFeature) {
+      setTimeout(() => {
+        cameraRef.current?.setCamera({
+          centerCoordinate: [selectedFeature.longitude, selectedFeature.latitude],
+          animationDuration: 500,
+          zoomLevel: 15,
+        });
+      }, 0);
+    }
+  }, [isFocused, selectedFeature]);
+
+  const CustomShapeSource = React.useMemo(
+    () => ({ type, data, onMarkerPress }: CustomShapeSourceProps) => {
       return (
         <ShapeSource
-          id="selected-source"
-          shape={to_geojson([selectedFeature])}
+          id={`${type}-source`}
+          shape={to_geojson(data)}
+          onPress={(event) => {
+            if (event.features[0]) {
+              console.log(event);
+              onMarkerPress(event.features[0].properties);
+            }
+          }}
         >
-          <CircleLayer
-            id={`selected-${type}-circle`}
+          <SymbolLayer
+            id={`${type}-icons`}
             style={{
-              circleRadius: 5,
-              circleColor: "#FF0000",
+              iconImage: type,
+              iconAllowOverlap: false,
+              iconAnchor: "bottom",
+              iconSize: 0.1,
             }}
           />
         </ShapeSource>
       );
-    }, [selectedFeature]);
+    }, []);
 
+  const SelectedShapeSource = React.useMemo(() => ({type}: {type: string}) => {
+    if (!selectedFeature || selectedFeature.type !== type) return null;
     return (
-    <MapView
-        styleURL="mapbox://styles/suzueyume/cm3yjge2z00jj01sd81ge3ni3"
-        style={styles.map}
-        localizeLabels={{ locale: "vi" }}
-        onTouchStart={() => {
-          setIsFocused(false);
-        }}
-        onTouchMove={() => {
-            setSelectedFeature(null);
-        }}
-    >
-        <Camera
-          ref={cameraRef}
-          animationDuration={1000}
-          zoomLevel={15}
-          followZoomLevel={15}
-          followUserLocation={isFocused}
-          followUserMode={UserTrackingMode.Follow}
+      <ShapeSource
+        id="selected-source"
+        shape={to_geojson([selectedFeature])}
+      >
+        <CircleLayer
+          id={`selected-${type}-circle`}
+          style={{
+            circleRadius: 5,
+            circleColor: "#FF0000",
+          }}
         />
-        <Images images={{ place: require("../assets/place-pin.png"), food: require("../assets/food-pin.png") }} />
-        <CustomShapeSource
-          key={indexTab}
-          type={indexTab === 0 ? "place" : "food"}
-          data={indexTab === 0 ? placeData : foodData}
-          onMarkerPress={handleMarkerPress}
-        />
-        <SelectedShapeSource type={indexTab === 0 ? "place" : "food"} />
-        <LocationPuck />
+      </ShapeSource>
+    );
+  }, [selectedFeature]);
 
-        {selectedFeature && ((indexTab === 0 ? "place" : "food") === selectedFeature.type) && (
-          <MarkerView 
-            key={selectedFeature.id} 
-            coordinate={[selectedFeature.longitude, selectedFeature.latitude]}
-            anchor={{ x: 0, y: 1 }}
-            allowOverlapWithPuck={true}
-          >
-            <View style={{position: 'relative', alignItems: 'center', paddingBottom: 9}}>
-              <View style={styles.markerContainer}>
-                <Text numberOfLines={2} style={styles.markerTitle}>{selectedFeature.name}</Text>
-                <View style={styles.markerDescription}>
-                  <View style={styles.markerInfoField}>
-                    <Text style={[styles.markerInfo, { fontWeight: 'bold' }]}>Distance</Text>
-                    <Text style={styles.markerInfo} numberOfLines={1}>{`${selectedFeature.distance.toFixed(2)} km`}</Text>
-                  </View>
-                  <View style={[styles.markerInfoField]}>
-                    <Text style={[styles.markerInfo, { fontWeight: 'bold' }]}>Rating</Text>
-                    <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                        <Star size={12} fill='#ffc02d' color='#ffc02d'/>
-                        <Text style={styles.markerInfo}>{selectedFeature.avg_rating.toFixed(1)}</Text>
-                    </View>
-                  </View>
-                </View>
-                <View style={{flexDirection: 'row', gap: 10}}>
-                    <TouchableOpacity onPress={() => navigation.navigate("Detail", { item: selectedFeature })}
-                        style={[styles.markerButton, { backgroundColor: "#A1EEBD" }]}
-                    >
-                        <InfoIcon size={16} />
-                        <Text>Chi tiết</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity onPress={() => googleMapRoute(selectedFeature)}
-                        style={[styles.markerButton, { backgroundColor: "#BBE9FF" }]}
-                    >
-                        <NavigationIcon size={16} />
-                        <Text>Chỉ đường</Text>
-                    </TouchableOpacity>
+  return (
+  <MapView
+      styleURL="mapbox://styles/suzueyume/cm3yjge2z00jj01sd81ge3ni3"
+      style={styles.map}
+      localizeLabels={{ locale: "vi" }}
+      onTouchMove={() => {
+          setIsFocused(false);
+          setSelectedFeature(null);
+      }}
+      logoEnabled={false}
+      attributionEnabled={false}
+      scaleBarEnabled={false}
+  >
+    <Camera
+      ref={cameraRef}
+      animationDuration={1000}
+      zoomLevel={15}
+      followZoomLevel={15}
+      followUserLocation={isFocused}
+      followUserMode={UserTrackingMode.Follow}
+    />
+    <Images images={{ place: require("../assets/place-pin.png"), food: require("../assets/food-pin.png") }} />
+    <CustomShapeSource
+      key={indexTab}
+      type={indexTab === 0 ? "place" : "food"}
+      data={indexTab === 0 ? placeData : foodData}
+      onMarkerPress={handleMarkerPress}
+    />
+    <SelectedShapeSource type={indexTab === 0 ? "place" : "food"} />
+    <LocationPuck />
+
+    {selectedFeature && ((indexTab === 0 ? "place" : "food") === selectedFeature.type) && (
+      <MarkerView 
+        key={selectedFeature.id} 
+        coordinate={[selectedFeature.longitude, selectedFeature.latitude]}
+        anchor={{ x: 0, y: 1 }}
+        allowOverlapWithPuck={true}
+      >
+        <View style={{position: 'relative', alignItems: 'center', paddingBottom: 9}}>
+          <View style={styles.markerContainer}>
+            <Text numberOfLines={2} style={styles.markerTitle}>{selectedFeature.name}</Text>
+            <View style={styles.markerDescription}>
+              <View style={styles.markerInfoField}>
+                <Text style={[styles.markerInfo, { fontWeight: 'bold' }]}>Distance</Text>
+                <Text style={styles.markerInfo} numberOfLines={1}>{`${selectedFeature.distance.toFixed(2)} km`}</Text>
+              </View>
+              <View style={[styles.markerInfoField]}>
+                <Text style={[styles.markerInfo, { fontWeight: 'bold' }]}>Rating</Text>
+                <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                    <Star size={12} fill='#ffc02d' color='#ffc02d'/>
+                    <Text style={styles.markerInfo}>{selectedFeature.avg_rating.toFixed(1)}</Text>
                 </View>
               </View>
-              <Svg height="10" width="20" style={{ position: 'absolute', bottom: 0,}}>
-                <Polygon points="0,0 10,10 20,0" fill="white" />
-              </Svg>
             </View>
-          </MarkerView>
-        )}
-      </MapView>
-    );
-});
+            <View style={{flexDirection: 'row', gap: 10}}>
+                <TouchableOpacity onPress={() => navigation.navigate("Detail", { item: selectedFeature })}
+                    style={[styles.markerButton, { backgroundColor: "#A1EEBD" }]}
+                >
+                    <InfoIcon size={16} />
+                    <Text>Chi tiết</Text>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => googleMapRoute(selectedFeature)}
+                    style={[styles.markerButton, { backgroundColor: "#BBE9FF" }]}
+                >
+                    <NavigationIcon size={16} />
+                    <Text>Chỉ đường</Text>
+                </TouchableOpacity>
+            </View>
+          </View>
+          <Svg height="10" width="20" style={{ position: 'absolute', bottom: 0,}}>
+            <Polygon points="0,0 10,10 20,0" fill="white" />
+          </Svg>
+        </View>
+      </MarkerView>
+    )}
+  </MapView>
+)});
 
 export default Mapbox;
 
