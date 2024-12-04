@@ -50,7 +50,7 @@ const MainStack = () => {
       (error) => console.error("Error watching position:", error.message),
       {
         enableHighAccuracy: true,
-        distanceFilter: 500,
+        distanceFilter: 200,
         interval: 15000,
         fastestInterval: 10000,
       }
@@ -99,7 +99,7 @@ const MainStack = () => {
         options={{ title: "Thay đổi mật khẩu" }}
       />
 
-<Stack.Screen name="AccountScreen" component={AccountScreen} options={{ title: 'Tài khoản' }} />
+        <Stack.Screen name="AccountScreen" component={AccountScreen} options={{ title: 'Tài khoản' }} />
         <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} options={{ title: 'Thông báo' }} />
         <Stack.Screen name="AppearanceScreen" component={AppearanceScreen} options={{ title: 'Giao diện' }} />
         <Stack.Screen name="SecurityScreen" component={SecurityScreen} options={{ title: 'Bảo mật' }} />

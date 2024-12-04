@@ -5,7 +5,7 @@ import errorImage from '../assets/error-icon.png';
 
 const ErrorContent = ({onRetry, style}: { onRetry: () => void, style?: any }) => {
     return (
-        <View style={[{ alignItems: 'center', justifyContent: 'center', flexGrow: 1}, style]}>
+        <View style={[{ alignItems: 'center', justifyContent: 'center'}, style]}>
           <Image source={errorImage} style={{ 
               width: 80, height: 80, resizeMode: 'contain', tintColor: '#c2c2c2'
           }} />

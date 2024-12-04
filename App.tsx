@@ -5,9 +5,9 @@ import {loadSettings} from './src/Storage';
 import 'react-native-gesture-handler';
 import {LocationProvider} from './src/context/LocationContext';
 import {SafeAreaProvider} from 'react-native-safe-area-context';
-import {DataProvider} from './src/context/DataContext';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {AuthProvider} from './src/context/AuthContext';
+import {PortalProvider} from '@gorhom/portal';
 
 function App() {
   const [settings, setSettings] = useState<{
@@ -36,13 +36,15 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <GestureHandlerRootView style={{flex: 1}}>
-        <SafeAreaProvider>
-          <AuthProvider>
-            <LocationProvider>
-              <MainContainer />
-            </LocationProvider>
-          </AuthProvider>
-        </SafeAreaProvider>
+        <PortalProvider>
+          <SafeAreaProvider>
+            <AuthProvider>
+              <LocationProvider>
+                <MainContainer />
+              </LocationProvider>
+            </AuthProvider>
+          </SafeAreaProvider>
+        </PortalProvider>
       </GestureHandlerRootView>
     </ThemeProvider>
   );
