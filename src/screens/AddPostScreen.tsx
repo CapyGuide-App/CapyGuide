@@ -9,15 +9,20 @@ import {
   TouchableOpacity,
   Linking,
   Modal,
+  Pressable,
 } from 'react-native';
 import {
   Plus,
   Image as ImageIcon,
   VideoIcon,
   Link,
-  Pencil,
+  Edit,
   X,
+  ArrowUp,
+  ArrowDown,
+  Menu,
 } from 'lucide-react-native';
+import DragList, {DragListRenderItemInfo} from 'react-native-draglist';
 import CameraHandler from '../components/CameraHandler';
 import AddVideoHandler from '../components/AddVideoHandler';
 import AddLinkHandler from '../components/AddLinkHandler';
@@ -46,9 +51,22 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   const [editingElement, setEditingElement] = useState<any>(null);
   const [editContent, setEditContent] = useState('');
   const [editUrl, setEditUrl] = useState('');
+  const [cntElements, setCntElements] = useState(0);
 
   const handleImageSelected = (imageUri: string) => {
-    setPostElements(prev => [...prev, {type: 'image', src: imageUri}]);
+    if (editingElement) {
+      setPostElements(prev =>
+        prev.map(el => (el === editingElement ? {...el, src: imageUri} : el)),
+      );
+      setEditingElement(null);
+    } else {
+      setCntElements(cntElements + 1);
+      setPostElements(prev => [
+        ...prev,
+        {id: cntElements, type: 'image', src: imageUri},
+      ]);
+    }
+    setIsCameraHandlerVisible(false);
   };
 
   const handleTitleImageSelected = (imageUri: string) => {
@@ -56,21 +74,35 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   };
 
   const handleVideoSelected = (videoUri: string) => {
-    setPostElements(prev => [...prev, {type: 'video', src: videoUri}]);
+    if (editingElement) {
+      setPostElements(prev =>
+        prev.map(el => (el === editingElement ? {...el, src: videoUri} : el)),
+      );
+      setEditingElement(null);
+    } else {
+      setCntElements(cntElements + 1);
+      setPostElements(prev => [
+        ...prev,
+        {id: cntElements, type: 'video', src: videoUri},
+      ]);
+    }
+    setIsVideoHandlerVisible(false);
   };
 
   const handleLinkAdded = (link: {title: string; url: string}) => {
+    setCntElements(cntElements + 1);
     setPostElements(prev => [
       ...prev,
-      {type: 'link', title: link.title, url: link.url},
+      {id: cntElements, type: 'link', title: link.title, url: link.url},
     ]);
   };
 
   const handleDoneAddingText = () => {
     if (newTextContent.trim()) {
+      setCntElements(cntElements + 1);
       setPostElements(prev => [
         ...prev,
-        {type: 'text', content: newTextContent},
+        {id: cntElements, type: 'text', content: newTextContent},
       ]);
     }
     setNewTextContent('');
@@ -115,10 +147,22 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   };
 
   const handleEditElement = (element: any) => {
-    setEditingElement(element);
-    setEditContent(element.type === 'text' ? element.content : element.title);
-    setEditUrl(element.type === 'link' ? element.url : '');
-    setIsModalVisible(true);
+    if (element.type === 'text') {
+      setEditingElement(element);
+      setEditContent(element.content);
+      setIsModalVisible(true);
+    } else if (element.type === 'link') {
+      setEditingElement(element);
+      setEditContent(element.title);
+      setEditUrl(element.url);
+      setIsModalVisible(true);
+    } else if (element.type === 'image') {
+      setIsCameraHandlerVisible(true);
+      setEditingElement(element);
+    } else if (element.type === 'video') {
+      setIsVideoHandlerVisible(true);
+      setEditingElement(element);
+    }
   };
 
   const handleSaveElement = () => {
@@ -170,95 +214,153 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
     });
   }, [navigation, postTitle, postElements]);
 
+  function keyExtractor(item: any, index: number) {
+    return `${item.type}-${index}`;
+  }
+
+  function renderItem(info: DragListRenderItemInfo<any>) {
+    const {item, onDragStart, onDragEnd, isActive} = info;
+
+    return (
+      <View style={styles.previewElement}>
+        <TouchableOpacity
+          style={styles.deleteButton}
+          onPress={() => handleDeleteElement(item)}>
+          <X color="#000" size={22} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.editButton}
+          onPress={() => handleEditElement(item)}>
+          <Edit color="#000" size={20} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.dragButton}
+          onPressIn={onDragStart}
+          onPressOut={onDragEnd}>
+          <Menu color="#000" size={20} />
+        </TouchableOpacity>
+
+        {item.type === 'text' && (
+          <Text style={styles.textPreview}>{item.content}</Text>
+        )}
+        {item.type === 'image' && (
+          <Image source={{uri: item.src}} style={styles.imagePreview} />
+        )}
+        {item.type === 'video' && (
+          <View style={styles.videoContainer}>
+            <Video
+              source={{uri: item.src}}
+              style={styles.videoPreview}
+              controls
+              resizeMode="cover"
+            />
+          </View>
+        )}
+        {item.type === 'link' && (
+          <TouchableOpacity
+            onPress={() => {
+              let url = item.url;
+
+              if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = `https://${url}`;
+              }
+
+              Linking.openURL(url).catch(err =>
+                console.error('Failed to open URL:', err),
+              );
+            }}>
+            <Text style={styles.linkTitle}>{item.title}</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    );
+  }
+
+  async function onReordered(fromIndex: number, toIndex: number) {
+    const copy = [...postElements]; // Don't modify react data in-place
+    const removed = copy.splice(fromIndex, 1);
+
+    copy.splice(toIndex, 0, removed[0]); // Now insert at the new pos
+    setPostElements(copy);
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={[
-            styles.imagePicker,
-            selectedTitleImage && {backgroundColor: 'transparent'},
-          ]}
-          onPress={() => setIsTitleImageHandlerVisible(true)}>
-          {selectedTitleImage ? (
-            <Image
-              source={{uri: selectedTitleImage}}
-              style={styles.titleImagePreview}
-            />
-          ) : (
-            <Text style={styles.imagePickerText}>Chọn ảnh</Text>
-          )}
-        </TouchableOpacity>
-        <TextInput
-          style={styles.titleInput}
-          placeholder="Tiêu đề bài viết"
-          placeholderTextColor="#aaa"
-          value={postTitle}
-          onChangeText={setPostTitle}
-        />
-      </View>
-      <TextInput
-        style={styles.shortDescriptionInput}
-        placeholder="Giới thiệu ngắn ..."
-        placeholderTextColor="#aaa"
-        multiline
-        value={shortDescription}
-        onChangeText={setShortDescription}
-      />
-
-      <View style={styles.contentSection}>
-        <TouchableOpacity
-          style={styles.roundButton}
-          onPress={handleDoneAddingText}>
-          <Plus color="#ddd" size={24} />
-        </TouchableOpacity>
-        <View style={styles.textInputContainer}>
+      <ScrollView contentContainerStyle={styles.previewContainer}>
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={[
+              styles.imagePicker,
+              selectedTitleImage && {backgroundColor: 'transparent'},
+            ]}
+            onPress={() => setIsTitleImageHandlerVisible(true)}>
+            {selectedTitleImage ? (
+              <Image
+                source={{uri: selectedTitleImage}}
+                style={styles.titleImagePreview}
+              />
+            ) : (
+              <Text style={styles.imagePickerText}>Chọn ảnh</Text>
+            )}
+          </TouchableOpacity>
           <TextInput
-            style={styles.textArea}
-            placeholder="Nhập nội dung ..."
+            style={styles.titleInput}
+            placeholder="Tiêu đề bài viết"
             placeholderTextColor="#aaa"
+            value={postTitle}
+            onChangeText={setPostTitle}
             multiline
-            value={newTextContent}
-            onChangeText={setNewTextContent}
           />
         </View>
-      </View>
-
-      <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.roundButton}>
-          <Plus color="#ddd" size={24} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => setIsCameraHandlerVisible(true)}>
-          <ImageIcon color="#000" size={30} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => setIsVideoHandlerVisible(true)}>
-          <VideoIcon color="#000" size={30} />
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => setIsLinkHandlerVisible(true)}>
-          <Link color="#000" size={30} />
-        </TouchableOpacity>
-      </View>
-
-      <ScrollView contentContainerStyle={styles.previewContainer}>
-        {postElements.map((el, index) => (
+        {/* <TextInput
+          style={styles.shortDescriptionInput}
+          placeholder="Giới thiệu ngắn ..."
+          placeholderTextColor="#aaa"
+          multiline
+          value={shortDescription}
+          onChangeText={setShortDescription}
+        /> */}
+        {/* {postElements.map((el, index) => (
           <View key={index} style={styles.previewElement}>
             <TouchableOpacity
               style={styles.deleteButton}
               onPress={() => handleDeleteElement(index)}>
-              <X color="#000" size={20} />
+              <X color="#000" size={22} />
             </TouchableOpacity>
-            {(el.type === 'text' || el.type === 'link') && (
-              <TouchableOpacity
-                style={styles.editButton}
-                onPress={() => handleEditElement(el)}>
-                <Pencil color="#000" size={20} />
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              style={styles.editButton}
+              onPress={() => handleEditElement(el)}>
+              <Edit color="#000" size={20} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.upArrowButton}
+              onPress={() => {
+                if (index > 0) {
+                  const newPostElements = [...postElements];
+                  [newPostElements[index - 1], newPostElements[index]] = [
+                    newPostElements[index],
+                    newPostElements[index - 1],
+                  ];
+                  setPostElements(newPostElements);
+                }
+              }}>
+              <ArrowUp color="#000" size={22} />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={styles.downArrowButton}
+              onPress={() => {
+                if (index < postElements.length - 1) {
+                  const newPostElements = [...postElements];
+                  [newPostElements[index], newPostElements[index + 1]] = [
+                    newPostElements[index + 1],
+                    newPostElements[index],
+                  ];
+                  setPostElements(newPostElements);
+                }
+              }}>
+              <ArrowDown color="#000" size={22} />
+            </TouchableOpacity>
 
             {el.type === 'text' && (
               <Text style={styles.textPreview}>{el.content}</Text>
@@ -296,7 +398,54 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
               </TouchableOpacity>
             )}
           </View>
-        ))}
+        ))} */}
+        <DragList
+          data={postElements}
+          keyExtractor={keyExtractor}
+          onReordered={onReordered}
+          renderItem={renderItem}
+        />
+
+        <View style={styles.contentSection}>
+          <TouchableOpacity
+            style={styles.roundButton}
+            onPress={handleDoneAddingText}>
+            <Plus color="#ddd" size={24} />
+          </TouchableOpacity>
+          <View style={styles.textInputContainer}>
+            <TextInput
+              style={styles.textArea}
+              placeholder="Nhập nội dung ..."
+              placeholderTextColor="#aaa"
+              multiline
+              value={newTextContent}
+              onChangeText={setNewTextContent}
+            />
+          </View>
+        </View>
+
+        <View style={styles.actionButtons}>
+          <TouchableOpacity style={styles.roundButton}>
+            <Plus color="#ddd" size={24} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => {
+              setIsCameraHandlerVisible(true);
+            }}>
+            <ImageIcon color="#000" size={30} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => setIsVideoHandlerVisible(true)}>
+            <VideoIcon color="#000" size={30} />
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => setIsLinkHandlerVisible(true)}>
+            <Link color="#000" size={30} />
+          </TouchableOpacity>
+        </View>
       </ScrollView>
 
       <CameraHandler
@@ -336,6 +485,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
             <TextInput
               style={styles.modalInput}
               value={editContent}
+              multiline
               onChangeText={setEditContent}
               placeholder={
                 editingElement?.type === 'text'
@@ -350,6 +500,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
                 value={editUrl}
                 onChangeText={setEditUrl}
                 placeholder="Enter link URL"
+                multiline
               />
             )}
 
@@ -481,9 +632,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
   },
-  previewContainer: {
-    marginTop: 20,
-  },
+  previewContainer: {},
   previewElement: {
     marginBottom: 10,
     backgroundColor: '#f9f9f9',
@@ -495,26 +644,48 @@ const styles = StyleSheet.create({
   },
   deleteButton: {
     position: 'absolute',
-    top: 10,
+    top: 5,
     right: 10,
     zIndex: 1,
+    padding: 5,
+    borderRadius: 50,
   },
-  textInput: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-    color: '#333',
+  editButton: {
+    position: 'absolute',
+    top: 5,
+    right: 40,
+    zIndex: 1,
+    padding: 5,
+    borderRadius: 50,
+  },
+  dragButton: {
+    position: 'absolute',
+    top: 5,
+    left: 10,
+    zIndex: 1,
+    padding: 5,
+    borderRadius: 50,
+  },
+  upArrowButton: {
+    position: 'absolute',
+    top: 7,
+    right: 90,
+  },
+  downArrowButton: {
+    position: 'absolute',
+    top: 7,
+    right: 130,
   },
   textPreview: {
     fontSize: 16,
     color: '#333',
+    marginTop: 20,
   },
   imagePreview: {
     width: '100%',
     height: 200,
     borderRadius: 10,
+    marginTop: 20,
   },
   videoContainer: {
     marginVertical: 10,
@@ -523,15 +694,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     overflow: 'hidden',
     backgroundColor: '#000',
-  },
-  videoPreview: {
-    width: '100%',
-    height: '100%',
+    marginTop: 20,
   },
   linkTitle: {
     fontSize: 16,
     color: '#007BFF',
     textDecorationLine: 'underline',
+    marginTop: 20,
+  },
+  videoPreview: {
+    width: '100%',
+    height: '100%',
   },
   linkUrl: {
     fontSize: 14,
@@ -593,11 +766,5 @@ const styles = StyleSheet.create({
   cancelButtonText: {
     color: '#333',
     fontWeight: 'bold',
-  },
-  editButton: {
-    position: 'absolute',
-    top: 10,
-    right: 40,
-    zIndex: 1,
   },
 });
