@@ -270,6 +270,7 @@ const styles = StyleSheet.create({
   statItem: {
     alignItems: 'center',
     flex: 1,
+    width: '33.33%',
   },
 
   statValue: {
@@ -281,6 +282,8 @@ const styles = StyleSheet.create({
   statLabel: {
     fontSize: 12,
     color: '#888',
+    width: '100%',
+    textAlign: 'center',
   },
 
   title: {
@@ -325,6 +328,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     marginLeft: 10,
+    width: '60%',
   },
   logout: {
     flexDirection: 'row',

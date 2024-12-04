@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal } from 'react-native';
-import { Link } from 'lucide-react-native';
 
 interface AddLinkHandlerProps {
   onLinkAdded: (link: { title: string; url: string }) => void;
@@ -22,7 +21,12 @@ const AddLinkHandler: React.FC<AddLinkHandlerProps> = ({ onLinkAdded, isVisible,
   };
 
   return (
-    <Modal visible={isVisible} transparent animationType="fade">
+    <Modal
+      visible={isVisible}
+      transparent={true}
+      animationType="slide"
+      onRequestClose={onClose}
+    >
       <View style={styles.modalOverlay}>
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Thêm liên kết</Text>
@@ -44,13 +48,14 @@ const AddLinkHandler: React.FC<AddLinkHandlerProps> = ({ onLinkAdded, isVisible,
             keyboardType="url"
           />
 
-          <TouchableOpacity style={styles.addButton} onPress={handleAddLink}>
-            <Text style={styles.addButtonText}>Thêm</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
-            <Text style={styles.cancelButtonText}>Hủy</Text>
-          </TouchableOpacity>
+          <View style={styles.modalButtons}>
+            <TouchableOpacity style={styles.saveButton} onPress={handleAddLink}>
+              <Text style={styles.saveButtonText}>Thêm</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+              <Text style={styles.cancelButtonText}>Hủy</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </View>
     </Modal>
@@ -88,31 +93,42 @@ const styles = StyleSheet.create({
     width: '100%',
     fontSize: 16,
     color: '#333',
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    marginBottom: 20,
-    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 10,
   },
-  addButton: {
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     width: '100%',
-    padding: 15,
+    marginTop: 20,
+  },
+  saveButton: {
+    flex: 1,
+    marginRight: 5,
+    padding: 10,
     backgroundColor: '#007BFF',
     borderRadius: 10,
     alignItems: 'center',
   },
-  addButtonText: {
+  saveButtonText: {
     fontSize: 16,
     color: '#fff',
     fontWeight: 'bold',
   },
   cancelButton: {
-    marginTop: 10,
-    width: '100%',
+    flex: 1,
+    marginLeft: 5,
+    padding: 10,
+    backgroundColor: '#ccc',
+    borderRadius: 10,
     alignItems: 'center',
   },
   cancelButtonText: {
     fontSize: 16,
     fontWeight: 'bold',
-    color: '#007BFF',
+    color: '#333',
   },
 });

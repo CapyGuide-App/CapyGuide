@@ -17,7 +17,7 @@ const AddVideoHandler: React.FC<AddVideoHandlerProps> = ({
   const recordVideo = async () => {
     const result = await launchCamera({
       mediaType: 'video',
-      saveToPhotos: true,
+      saveToPhotos: false,
     });
     if (result.assets && result.assets[0].uri) {
       onVideoSelected(result.assets[0].uri);
