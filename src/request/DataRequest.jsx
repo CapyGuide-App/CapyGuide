@@ -141,14 +141,46 @@ export const fetchUpdateProfile = async (profileData, avatar) => {
     }
 };
 
-export const fetchReviewsOfPOI = async (poiId, params, signal) => {
+export const fetchReviewsOfPOI = async (poiId, signal, params) => {
+    if (!poiId) {
+        return;
+    }
     try {
         const response = await apiClient.get(`/poi/${poiId}/reviews`,
             { params: params, signal: signal });
-        return response.data.data;
+        console.log('Fetched reviews:', response.data);
+        return response.data.review;
     } catch (error) {
         const message = handleError(error);
         console.error('Failed to fetch reviews:', message);
         throw new Error(message);
     }
+};
+
+export const fetchPOI = async (poiId, signal) => {
+    try {
+        const response = await apiClient.get(`/poi/${poiId}`, { signal: signal });
+        return response.data;
+    } catch (error) {
+        const message = handleError(error);
+        console.error('Failed to fetch POI:', message);
+        throw new Error(message);
+    }
+};
+
+export const reloadData = async (request, saveData, setStatus) => {
+    setStatus && setStatus('loading');
+    request && request.then((data) => {
+      if (data) {
+        saveData && saveData(data);
+        setStatus && setStatus('success');
+      }
+    }).catch((error) => {
+      if (error.name === "CanceledError" || error.name === "AbortError") {
+        console.log('Request was canceled');
+      } else {
+        setStatus && setStatus('error');
+        console.error(error);
+      }
+    });
 };

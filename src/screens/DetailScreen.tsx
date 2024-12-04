@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -29,7 +29,7 @@ import {
   HotelIcon,
   BlocksIcon,
 } from 'lucide-react-native';
-import Comment from '../components/Comment';
+import Comment, { CommentItem } from '../components/Comment';
 import {MapView, Camera, MarkerView} from '@rnmapbox/maps';
 import PlacePin from '../assets/place-pin.png';
 import FoodPin from '../assets/food-pin.png';
@@ -45,12 +45,10 @@ const reactions = [
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import { googleMapRoute } from '../request/GoogleMapRequest';
+import { fetchPOI, reloadData } from '../request/DataRequest';
 
-type DetailScreenRouteProp = RouteProp<{Detail: {item: any}}, 'Detail'>;
-type DetailScreenNavigationProp = StackNavigationProp<
-  {Detail: {item: any}},
-  'Detail'
->;
+type DetailScreenRouteProp = RouteProp<{Detail: {poiID: string}}, 'Detail'>;
+type DetailScreenNavigationProp = StackNavigationProp<any, 'Detail'>;
 
 type Props = {
   route: DetailScreenRouteProp;
@@ -58,7 +56,8 @@ type Props = {
 };
 
 const DetailScreen: React.FC<Props> = ({route, navigation}) => {
-  const {item} = route.params;
+  const {poiID} = route.params;
+  const [item, setItem] = useState<any>({});
   const [selectedReaction, setSelectedReaction] = React.useState<string | null>(
     null,
   );
@@ -70,6 +69,19 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
   const closeModal = () => setModalVisible(false);
 
   const markerIcon = item.type === 'travel' ? PlacePin : FoodPin;
+    
+  const reload = (poiID: string, setItem: any, controller: AbortController) => {
+    const request = fetchPOI(poiID, controller.signal);
+    reloadData(request, setItem);
+  };
+
+  useEffect(() => {
+    const controller = new AbortController();
+    reload(poiID, setItem, controller);
+    return () => {
+      controller.abort();
+    };
+  }, [poiID]);
 
   const handleShare = async ({title, url}: {title: string; url?: string}) => {
     try {
@@ -82,6 +94,10 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
       console.log('Share Error: ', error);
     }
   };
+
+  if (!item) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
@@ -113,7 +129,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
             </View>
             <View style={styles.ratingContainer}>
               <Text style={styles.ratingText}>
-                {item.avg_rating.toFixed(1)}
+                {item.avg_rating}
               </Text>
             </View>
           </View>
@@ -134,7 +150,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
                 <Map size={20} color="#4CAF50" style={styles.icon2} />
                 <Text style={styles.text}>
                   <Text style={styles.distance}>
-                    {item.distance.toFixed(1)} km
+                    5 km
                   </Text>
                   {' (From current location)'}
                 </Text>
@@ -170,16 +186,17 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
               rotateEnabled={false}
               pitchEnabled={false}
               compassEnabled={false}
+              scaleBarEnabled={false}
             >
-              <Camera
-                centerCoordinate={[item.longitude, item.latitude]}
-                zoomLevel={15}
-                animationDuration={0}
-              />
-              <MarkerView
-                coordinate={[item.longitude, item.latitude]}>
-                <Image source={markerIcon} style={styles.markerIcon} />
-              </MarkerView>
+            {/* <Camera
+              centerCoordinate={[item.longitude, item.latitude]}
+              zoomLevel={15}
+              animationDuration={0}
+            /> */}
+            <MarkerView
+              coordinate={[item.longitude, item.latitude]}>
+              <Image source={markerIcon} style={styles.markerIcon} />
+            </MarkerView>
             </MapView>
           </View>
         </View>
@@ -199,7 +216,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
           ))}
         </View>
   
-        <Comment poiId={item.id} />
+      <Comment poiId={item.id} data={item.reviews} />
       </ScrollView>
         <View style={styles.actionBar}>
           <TouchableOpacity
@@ -273,6 +290,7 @@ const styles = StyleSheet.create({
     height: 200,
     resizeMode: 'cover',
     marginBottom: 10,
+    backgroundColor: '#ccc',
   },
   infoContainer: {
     backgroundColor: '#fff',

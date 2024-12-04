@@ -8,38 +8,41 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import { Heart, MessageCircle  } from "lucide-react-native";
-import { fetchReviewsOfPOI } from '../request/DataRequest';
+import { fetchReviewsOfPOI, reloadData } from '../request/DataRequest';
 import ErrorContent from './ErrorContent';
 import { useTheme } from '@rneui/themed';
+import { FlashList } from '@shopify/flash-list';
 
 interface CommentItemProps {
-  username: string;
-  userRating: number;
-  commentText: string;
-  avatar: string;
-  date: string;
+  item: {
+    displayname: string;
+    avg_rating: number;
+    comment: string;
+    avatar: string;
+    created_on: string;
+  };
 }
 
-const CommentItem: React.FC<CommentItemProps> = ({ username, userRating, commentText, avatar, date }) => {
+const CommentItem: React.FC<CommentItemProps> = ({ item }) => {
   const [expanded, setExpanded] = React.useState(false);
   const [shouldExpand, setShouldExpand] = React.useState(false);
-  date = Intl.DateTimeFormat('vi-VN', { 
+  const date = Intl.DateTimeFormat('vi-VN', { 
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
-  }).format(new Date(date));
+  }).format(new Date(item.created_on));
 
   return (
     <View style={styles.comment}>
       <View style={styles.commentHeader}>
         <View style={styles.avatarPlaceholder}>
-          <Image source={{ uri: avatar }} style={{ width: 30, height: 30, borderRadius: 15 }} />
+          <Image source={{ uri: item.avatar }} style={{ width: 30, height: 30, borderRadius: 15 }} />
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.username}>{username}</Text>
+          <Text style={styles.username}>{item.displayname}</Text>
           <Text style={{ fontSize: 12, color: "#8e8e8e" }}>{date}</Text>
         </View>
-        <Text style={styles.userRating}>{userRating}</Text>
+        <Text style={styles.userRating}>{item.avg_rating.toFixed(1)}</Text>
       </View>
 
       <Text style={styles.commentText} numberOfLines={expanded ? 0 : 3}
@@ -49,7 +52,7 @@ const CommentItem: React.FC<CommentItemProps> = ({ username, userRating, comment
           }
         }}
       >
-        {commentText}
+        {item.comment}
       </Text>
 
       {shouldExpand && 
@@ -73,28 +76,32 @@ const CommentItem: React.FC<CommentItemProps> = ({ username, userRating, comment
 
 interface CommentProps {
   poiId: string;
+  data?: any[];
 }
 
-const Comment: React.FC<CommentProps> = ({ poiId }) => {
+const Comment: React.FC<CommentProps> = ({ poiId, data }) => {
   const [status, setStatus] = React.useState<'loading' | 'success' | 'error'>('loading');
-  const [comments, setComments] = React.useState<any[]>([]);
+  const [comments, setComments] = React.useState<any[]>(data || []);
   const {theme} = useTheme();
 
-  const reloadComments = () => {
-    setStatus('loading');
-    fetchReviewsOfPOI(poiId, {page: 1, limit: 3})
-      .then((response) => {
-        setComments(response);
-        setStatus('success');
-      })
-      .catch(() => {
-        setStatus('error');
-      });
+  const reloadComments = (poiId: any, saveData: any, setStatus: any, controller: AbortController) => {
+    const request = fetchReviewsOfPOI(poiId, controller.signal);
+    reloadData(request, saveData, setStatus);
   };
 
   React.useEffect(() => {
-    reloadComments();
-  }, [poiId]);
+    const controller = new AbortController();
+    if (data) {
+      setComments(data);
+      setStatus('success');
+    } else {
+      reloadComments(poiId, setComments, setStatus, controller);
+    }
+
+    return () => {
+      controller.abort();
+    }
+  }, [poiId, data]);
 
   return (
     <View style={styles.commentsSection}>
@@ -102,16 +109,16 @@ const Comment: React.FC<CommentProps> = ({ poiId }) => {
 
       {status === 'loading' && <ActivityIndicator size="large" color={theme.colors.primary} />}
       {status === 'error' && <ErrorContent onRetry={reloadComments} />}
-      {status === 'success' && comments.map((comment, index) => (
-        <CommentItem
-          key={index}
-          username={comment.displayname}
-          userRating={comment.avg_rating}
-          commentText={comment.comment}
-          avatar={comment.avatar}
-          date={comment.created_on}
+      {status === 'success' && 
+        <FlashList
+          data={comments}
+          renderItem={({ item }) => <CommentItem item={item} />}
+          keyExtractor={(item) => item.id.toString()}
+          removeClippedSubviews={true}
+          onEndReachedThreshold={0.2}
+          estimatedItemSize={200}
         />
-      ))}
+      }
     </View>
   );
 };
@@ -181,3 +188,4 @@ const styles = StyleSheet.create({
   },});
 
   export default Comment;
+  export { CommentItem };

@@ -2,7 +2,7 @@ import BottomSheet, { BottomSheetFlashList, BottomSheetFlatList, BottomSheetFoot
 import { Text, Tab, TabView, Divider } from '@rneui/themed';
 import { Flag, LandPlot, Star } from 'lucide-react-native';
 import * as React from "react";
-import { ActivityIndicator, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native';
 
 const ItemStyle = StyleSheet.create({
     container: {
@@ -40,11 +40,11 @@ interface LazyFlatListProps {
 const LazyFlatList: React.FC<LazyFlatListProps> = ({
     data,
     itemsPerPage = 15,
-    onItemPress = () => {}
+    onItemPress = () => {},
 }) => {
 
     return (
-        <View style={{flex: 1, width: '100%'}}>
+        <View style={{flexGrow: 1, width: '100%', height: '100%'}}>
             <BottomSheetFlashList
                 data={data}
                 renderItem={({ item }) => <CollectionItem data={item} onPress={onItemPress} />}
