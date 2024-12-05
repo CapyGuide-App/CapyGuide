@@ -153,7 +153,7 @@ const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentCo
     }, []);
 
     useEffect(() => {
-        setSearchResult(data);
+        search(searchText);
     }, [data]);
 
     const openModal = () => {

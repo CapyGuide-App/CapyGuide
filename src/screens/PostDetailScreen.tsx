@@ -24,9 +24,9 @@ import {
 } from 'lucide-react-native';
 import Share from 'react-native-share';
 import { fetchBlog, fetchReactionBlog, reloadData } from '../request/DataRequest';
-import { format } from 'date-fns';
 import ErrorContent from '../components/ErrorContent';
 import BottomSheet, { BottomSheetFooter, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { formatRelativeTime } from '../styles/Methods';
 
 const {width} = Dimensions.get('window');
 
@@ -44,7 +44,7 @@ const PostContent = ({post}: any) => {
             <View>
               <Text style={styles.author}>{post.displayname}</Text>
               <Text style={styles.metadata}>
-                {post && format(new Date(post.created_at), "dd/MM/yyyy")} • {post.views} views
+                {post && formatRelativeTime(post.created_at)} • {post.views} views
               </Text>
             </View>
           </View>

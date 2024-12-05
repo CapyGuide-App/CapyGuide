@@ -52,14 +52,16 @@ const BlogScreen: React.FC = () => {
         {status === "error" && <ErrorContent onRetry={() => reloadData(fetchBlogs, setData, setStatus)} />}
         {status === "success" && (
           <FlashList
-          data={searchData}
-          renderItem={({ item }) => (
-            <Post item={item} onPress={() => handlePostPress(item)} />
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          removeClippedSubviews={true}
-          estimatedItemSize={300}
-        />
+            refreshing={status === "loading"}
+            onRefresh={() => reloadData(fetchBlogs(), setData, setStatus)}
+            data={searchData}
+            renderItem={({ item }) => (
+              <Post item={item} onPress={() => handlePostPress(item)} />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            removeClippedSubviews={true}
+            estimatedItemSize={300}
+          />
         )}
       </View>
   );

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react-native';
 import { fetchReactionBlog } from '../request/DataRequest';
 import { format } from 'date-fns';
+import { formatRelativeTime } from '../styles/Methods';
 
 interface PostProps {
   item: any;
@@ -55,7 +56,7 @@ const Post: React.FC<PostProps> = ({
           <Image source={{uri: item.avatar}} style={styles.avatar} />
           <View>
             <Text style={styles.author}>{item.displayname}</Text>
-            <Text style={styles.date}>{format(new Date(item.created_at), "dd/MM/yyyy")}</Text>
+            <Text style={styles.date}>{formatRelativeTime(item.created_at)}</Text>
           </View>
         </View>
       </View>
