@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   TextInput,
@@ -25,7 +25,12 @@ import AddVideoHandler from '../components/AddVideoHandler';
 import AddLinkHandler from '../components/AddLinkHandler';
 import Video from 'react-native-video';
 import {NavigationProp} from '@react-navigation/native';
-import {fetchCreatePost} from '../request/DataRequest';
+import {
+  fetchCreatePost,
+  fetchDeletePost,
+  fetchUpdatePost,
+} from '../request/DataRequest';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {useTheme} from '@rneui/themed';
 
 interface AddPostScreenProps {
@@ -35,12 +40,11 @@ interface AddPostScreenProps {
 
 const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
   const post = route.params?.post;
+  const screenTitle = post ? 'Sửa bài viết' : 'Tạo bài viết';
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
   const [postTitle, setPostTitle] = useState('');
-  const [selectedTitleImage, setSelectedTitleImage] = useState<any | null>(
-    post?.picture,
-  );
+  const [selectedTitleImage, setSelectedTitleImage] = useState(null);
   const [isTitleImageHandlerVisible, setIsTitleImageHandlerVisible] =
     useState(false);
   const [postElements, setPostElements] = useState<any[]>([]);
@@ -54,6 +58,27 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
   const [editContent, setEditContent] = useState('');
   const [editUrl, setEditUrl] = useState('');
   const [cntElements, setCntElements] = useState(0);
+
+  React.useEffect(() => {
+    if (post) {
+      console.log(post);
+      setPostTitle(post.title);
+      post.picture && setSelectedTitleImage({uri: post.picture});
+      const elements = post.content.map((element: any) => {
+        switch (element.content_type) {
+          case 'text':
+            return {type: 'text', content: element.content_data};
+          case 'image':
+            return {type: 'image', uri: element.content_data};
+          case 'video':
+            return {type: 'video', uri: element.content_data};
+          default:
+            return null;
+        }
+      });
+      setPostElements(elements);
+    }
+  }, [post]);
 
   const handleImageSelected = (image: any) => {
     if (editingElement) {
@@ -71,6 +96,10 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
   const handleTitleImageSelected = (image: any) => {
     setSelectedTitleImage(image);
   };
+
+  useEffect(() => {
+    console.log(selectedTitleImage);
+  }, [selectedTitleImage]);
 
   const handleVideoSelected = (video: any) => {
     if (editingElement) {
@@ -104,8 +133,10 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
     setNewTextContent('');
   };
 
-  const handleDeleteElement = (item: any) => {
-    setPostElements(prev => prev.filter(i => i.id !== item.id));
+  const handleDeleteElement = (index: number) => {
+    const copy = [...postElements];
+    copy.splice(index, 1);
+    setPostElements(copy);
   };
 
   const handlePostSubmit = () => {
@@ -113,9 +144,20 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
       return;
     }
 
-    fetchCreatePost(postTitle, selectedTitleImage, postElements).then(() => {
-      navigation.goBack();
-    });
+    if (post) {
+      fetchUpdatePost(
+        post.id,
+        postTitle,
+        selectedTitleImage,
+        postElements,
+      ).then(() => {
+        navigation.goBack();
+      });
+    } else {
+      fetchCreatePost(postTitle, selectedTitleImage, postElements).then(() => {
+        navigation.goBack();
+      });
+    }
   };
 
   const handleEditElement = (element: any) => {
@@ -155,6 +197,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
 
   React.useLayoutEffect(() => {
     navigation.setOptions({
+      headerTitle: screenTitle,
       headerRight: () => (
         <TouchableOpacity
           style={[
@@ -184,14 +227,14 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
         </TouchableOpacity>
       ),
     });
-  }, [navigation, postTitle, postElements]);
+  }, [navigation, postTitle, postElements, selectedTitleImage]);
 
   function keyExtractor(item: any, index: number) {
     return `${item.id}-${index}`;
   }
 
   function renderItem(info: DragListRenderItemInfo<any>) {
-    const {item, onDragStart, onDragEnd, isActive} = info;
+    const {item, onDragStart, onDragEnd, isActive, index} = info;
 
     return (
       <View style={styles.previewElement}>
@@ -224,6 +267,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
               source={{uri: item.uri}}
               style={styles.videoPreview}
               controls
+              paused
               resizeMode="cover"
             />
           </View>
@@ -348,6 +392,17 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
             <Link color={theme.colors.black} size={30} />
           </TouchableOpacity>
         </View>
+        {post && (
+          <TouchableOpacity
+            onPress={() => {
+              fetchDeletePost(post.id).then(() => {
+                navigation.navigate('MainTabNavigator', {screen: 'BlogScreen'});
+              });
+            }}
+            style={{justifyContent: 'center', alignItems: 'center'}}>
+            <Text style={styles.deleteText}>Xóa bài viết</Text>
+          </TouchableOpacity>
+        )}
       </ScrollView>
 
       <CameraHandler
@@ -673,5 +728,9 @@ const dynamicStyles = (theme: any) =>
     cancelButtonText: {
       color: '#333',
       fontWeight: 'bold',
+    },
+    deleteText: {
+      color: 'red',
+      fontSize: 15,
     },
   });

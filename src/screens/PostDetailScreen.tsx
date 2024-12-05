@@ -10,12 +10,25 @@ import {
   Linking,
   ActivityIndicator,
 } from 'react-native';
-import {Heart, MessageCircle, Bookmark, Share2} from 'lucide-react-native';
+import {
+  Heart,
+  MessageCircle,
+  Bookmark,
+  Share2,
+  ArrowLeft,
+  ArrowRight,
+  PencilLineIcon,
+} from 'lucide-react-native';
 import Share from 'react-native-share';
 import {fetchBlog, fetchReactionBlog, reloadData} from '../request/DataRequest';
 import ErrorContent from '../components/ErrorContent';
-import BottomSheet, { BottomSheetFooter, BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { formatRelativeTime } from '../styles/Methods';
+import BottomSheet, {
+  BottomSheetFooter,
+  BottomSheetScrollView,
+} from '@gorhom/bottom-sheet';
+import {formatRelativeTime} from '../styles/Methods';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
+import Video from 'react-native-video';
 import {useTheme} from '@rneui/themed';
 import {BackgroundImage} from '@rneui/base';
 
@@ -27,52 +40,68 @@ const PostContent = ({post}: any) => {
   return (
     <View style={{paddingBottom: 90}}>
       <View style={styles.content}>
-          <View style={styles.categoryContainer}>
-            <Text style={styles.category}>{post.category}</Text>
-          </View>
-          <Text style={styles.title}>{post.title}</Text>
+        <View style={styles.categoryContainer}>
+          <Text style={styles.category}>{post.category}</Text>
+        </View>
+        <Text style={styles.title}>{post.title}</Text>
 
-          <View style={styles.metadataRow}>
-            <Image source={{uri: post.avatar}} style={styles.avatar} />
-            <View>
-              <Text style={styles.author}>{post.displayname}</Text>
-              <Text style={styles.metadata}>
-                {post && formatRelativeTime(post.created_at)} • {post.views} views
-              </Text>
-            </View>
+        <View style={styles.metadataRow}>
+          <Image source={{uri: post.avatar}} style={styles.avatar} />
+          <View>
+            <Text style={styles.author}>{post.displayname}</Text>
+            <Text style={styles.metadata}>
+              {post && formatRelativeTime(post.created_at)} • {post.views} views
+            </Text>
           </View>
         </View>
-        {post.content.map((element: any, index: number) => {
-          switch (element.content_type) {
-            case 'text':
-              return <Text key={index} style={styles.textContent}>{element.content_data}</Text>;
-            case 'image':
-              return (
-                <View style={styles.inlineImageContainer} key={index}>
-                  <Image source={{uri: element.content_data}} style={styles.inlineImage} />
-                </View>
-              );
-            case 'link':
-              return (
-                <Text style={{color: '#007BFF'}} onPress={() => Linking.openURL(element.content_data)} key={index}>
-                  {element.content_data}
-                </Text>
-              );
-            case 'video':
-              return (
-                <View key={index}>
-                  <Text>Video: {element.content_data}</Text>
-                </View>
-              );
-            default:
-              return null;
-          }
-        })}
+      </View>
+      {post.content.map((element: any, index: number) => {
+        switch (element.content_type) {
+          case 'text':
+            return (
+              <Text key={index} style={styles.textContent}>
+                {element.content_data}
+              </Text>
+            );
+          case 'image':
+            return (
+              <View style={styles.inlineImageContainer} key={index}>
+                <Image
+                  source={{uri: element.content_data}}
+                  style={styles.inlineImage}
+                />
+              </View>
+            );
+          case 'link':
+            return (
+              <Text
+                style={{color: '#007BFF'}}
+                onPress={() => Linking.openURL(element.content_data)}
+                key={index}>
+                {element.content_data}
+              </Text>
+            );
+          case 'video':
+            return (
+              <View key={index}>
+                <Video
+                  source={{uri: element.content_data}}
+                  style={{width: width - 40, height: 200}}
+                  controls
+                  paused
+                />
+              </View>
+            );
+          default:
+            return null;
+        }
+      })}
     </View>
   );
 };
 
 const PostDetailScreen: React.FC<any> = ({route}) => {
+  const navigation = useNavigation();
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
   const {postId} = route.params;
@@ -154,6 +183,29 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
 
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => {
+        if (!post?.owner) return null;
+        return (
+          <TouchableOpacity
+            style={{marginRight: 20}}
+            onPress={() =>
+              navigation.navigate('AddPost', {title: 'Edit Post', post})
+            }>
+            <PencilLineIcon size={24} color="#333" />
+          </TouchableOpacity>
+        );
+      },
+    });
+  }, [navigation, post]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      reload();
+    }, []),
+  );
+
   const renderFooter = (props: any) => {
     return (
       <BottomSheetFooter {...props}>
@@ -163,12 +215,14 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
             onPress={() => handleReactions('love')}>
             <Heart
               size={24}
-              color={loved ? '#ff5050' : theme.colors.black
-              }
+              color={loved ? '#ff5050' : theme.colors.black}
               fill={loved ? '#ff5050' : 'none'}
             />
             <Text
-              style={[styles.actionText, {color: loved ? '#ff5050' : theme.colors.black}]}>
+              style={[
+                styles.actionText,
+                {color: loved ? '#ff5050' : theme.colors.black},
+              ]}>
               Love
             </Text>
           </TouchableOpacity>
@@ -182,28 +236,33 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
             style={styles.actionButton}
             onPress={() => handleReactions('save')}>
             <Bookmark
-            size={24}
-            color={theme.colors.black}
-            fill={saved ? theme.colors.black : 'transparent'}
-          />
+              size={24}
+              color={theme.colors.black}
+              fill={saved ? theme.colors.black : 'transparent'}
+            />
             <Text style={styles.actionText}>Save</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => handleShare({title: post?.title ?? '', url: post?.picture ?? ''})}>
+            onPress={() =>
+              handleShare({title: post?.title ?? '', url: post?.picture ?? ''})
+            }>
             <Share2 size={24} color={theme.colors.black} />
             <Text style={styles.actionText}>Share</Text>
           </TouchableOpacity>
         </View>
       </BottomSheetFooter>
-  )}
+    );
+  };
 
   return (
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
         <Pressable onPress={openModal}>
-          {post?.picture && <Image source={{uri: post?.picture}} style={styles.titleImage} />}
+          {post?.picture && (
+            <Image source={{uri: post?.picture}} style={styles.titleImage} />
+          )}
         </Pressable>
       </View>
 
@@ -212,11 +271,12 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
         index={0}
         footerComponent={renderFooter}
         animateOnMount={false}
-        overDragResistanceFactor={1}
-      >
+        overDragResistanceFactor={1}>
         <BottomSheetScrollView style={styles.scrollContent}>
           <View>
-            {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" />}
+            {status === 'loading' && (
+              <ActivityIndicator size="large" color="#007BFF" />
+            )}
             {status === 'error' && <ErrorContent onRetry={reload} />}
             {status === 'success' && <PostContent post={post} />}
           </View>
