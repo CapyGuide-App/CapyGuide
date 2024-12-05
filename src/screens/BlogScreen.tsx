@@ -1,56 +1,67 @@
-import React, { useState } from "react";
-import { ScrollView, StyleSheet } from "react-native";
-import { SearchBar } from "@rneui/themed";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 import Post from "../components/Post";
-import postsData from "../data/sample_posts.json";
-import { useNavigation } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
+import SearchBar from "../components/SearchBar";
+import { hexToRGBA } from "../styles/Methods";
+import { useTheme } from "@rneui/themed";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { FlashList } from "@shopify/flash-list";
+import { View } from "react-native";
+import { fetchBlogs, reloadData } from "../request/DataRequest";
+import ErrorContent from "../components/ErrorContent";
 
 const BlogScreen: React.FC = () => {
-  const [search, setSearch] = useState("");
   const navigation = useNavigation();
-
-  const updateSearch = (search: string) => {
-    setSearch(search);
+  const {theme} = useTheme();
+  const [data, setData] = useState([]);
+  const [searchData, setSearchData] = useState([]);
+  const [status, setStatus] = useState<"loading" | "error" | "success">("loading");
+  const isFocused = useIsFocused();
+  const handleSearch = (data: any) => {
+    setSearchData(data);
   };
 
+  useEffect(() => {
+    const controller = new AbortController();
+    const request = fetchBlogs(controller.signal);
+    reloadData(request, setData, setStatus);
+
+    return () => {
+      controller.abort();
+    };
+  }, []);
+
   const handlePostPress = (post: any) => {
-    navigation.navigate("PostDetailScreen", { post });
+    navigation.navigate("PostDetailScreen", { postId: post.id });
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <SearchBar
-        placeholder="Search articles..."
-        containerStyle={styles.searchContainer}
-        inputContainerStyle={styles.searchInputContainer}
-        inputStyle={styles.searchInput}
-        searchIcon={{ size: 20 }}
-        clearIcon={{ size: 20 }}
-        round
-        lightTheme
-        onChangeText={updateSearch}
-        value={search}
-      />
-
-      {postsData
-        .filter((post) =>
-          post.title.toLowerCase().includes(search.toLowerCase())
-        )
-        .map((post, index) => (
-          <Post
-            key={index}
-            category={post.category}
-            author={post.author}
-            avatar={post.avatar}
-            title={post.title}
-            date={post.date}
-            titleImage={post.titleImage}
-            reactionCount={Object.values(post.reactions).reduce((sum, value) => sum + value, 0)}
-            commentCount={post.commentsCount}
-            onPress={() => handlePostPress(post)}
-          />
-        ))}
-    </ScrollView>
+      <View style={styles.container}>
+        <SearchBar
+          backgroundColor={hexToRGBA(theme.colors.primary, 0.15)}
+          contentContainerStyle={styles.container}
+          placeholder="Tìm kiếm bài viết"
+          type="article"
+          isModal={false}
+          data={data}
+          searchField="title"
+          handleSearchData={handleSearch}
+        />
+        {status === "loading" && <ActivityIndicator size="large" color={theme.colors.primary} />}
+        {status === "error" && <ErrorContent onRetry={() => reloadData(fetchBlogs, setData, setStatus)} />}
+        {status === "success" && (
+          <FlashList
+          data={searchData}
+          renderItem={({ item }) => (
+            <Post item={item} onPress={() => handlePostPress(item)} />
+          )}
+          keyExtractor={(item) => item.id.toString()}
+          removeClippedSubviews={true}
+          estimatedItemSize={300}
+        />
+        )}
+      </View>
   );
 };
 
@@ -58,7 +69,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f9f9f9",
-    marginBottom: 40,
+    padding: 10,
+    paddingTop: 20,
+    flexDirection: 'column',
+    gap: 10,
   },
   searchContainer: {
     backgroundColor: "transparent",

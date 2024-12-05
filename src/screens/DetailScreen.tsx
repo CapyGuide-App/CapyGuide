@@ -47,7 +47,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import { googleMapRoute } from '../request/GoogleMapRequest';
 import { fetchPOI, reloadData } from '../request/DataRequest';
 
-type DetailScreenRouteProp = RouteProp<{Detail: {poiID: string}}, 'Detail'>;
+type DetailScreenRouteProp = RouteProp<{Detail: {poiID: string; initItem: any}}, 'Detail'>;
 type DetailScreenNavigationProp = StackNavigationProp<any, 'Detail'>;
 
 type Props = {
@@ -56,7 +56,7 @@ type Props = {
 };
 
 const DetailScreen: React.FC<Props> = ({route, navigation}) => {
-  const {poiID} = route.params;
+  const {poiID, initItem} = route.params;
   const [item, setItem] = useState<any>({});
   const [selectedReaction, setSelectedReaction] = React.useState<string | null>(
     null,
@@ -104,13 +104,13 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
       <ScrollView style={styles.container}>
         <Pressable onPress={openModal}>
           <Image
-            source={{uri: item.picture}}
+            source={{uri: initItem.picture}}
             style={styles.mainImage}
           />
         </Pressable>
   
         <View style={styles.infoContainer}>
-          <Text style={styles.title}>{item.name}</Text>
+          <Text style={styles.title}>{initItem.name}</Text>
           <View style={styles.statsRow}>
             <View style={styles.statItemContainer}>
               <MessageSquare color="#4caf50" size={20} />
@@ -129,7 +129,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
             </View>
             <View style={styles.ratingContainer}>
               <Text style={styles.ratingText}>
-                {item.avg_rating}
+                {initItem.avg_rating?.toFixed(1)}
               </Text>
             </View>
           </View>
@@ -142,7 +142,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
               <View style={styles.row}>
                 <MapPin size={20} color="#000" style={styles.icon2} />
                 <Text style={styles.text}>
-                  {item.address}
+                  {initItem.address}
                 </Text>
               </View>
       
@@ -150,18 +150,18 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
                 <Map size={20} color="#4CAF50" style={styles.icon2} />
                 <Text style={styles.text}>
                   <Text style={styles.distance}>
-                    5 km
+                    {initItem.distance?.toFixed(2)}
                   </Text>
                   {' (From current location)'}
                 </Text>
               </View>
       
               <View style={styles.row}>
-                {item.type === 'place' ? 
+                {initItem.type === 'place' ? 
                   (<BlocksIcon size={20} color="#000" style={styles.icon2} />) : 
                   (<Utensils size={20} color="#000" style={styles.icon2} />)
                 }
-                <Text style={styles.text}>Loại hình: {item.type === 'place' ? 'Địa điểm' : 'Ẩm thực'}</Text>
+                <Text style={styles.text}>Loại hình: {initItem.type === 'place' ? 'Địa điểm' : 'Ẩm thực'}</Text>
               </View>
             </View>
             <TouchableOpacity style={{borderRadius: 50, backgroundColor: '#1b6ff4', padding: 8, 
@@ -188,13 +188,13 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
               compassEnabled={false}
               scaleBarEnabled={false}
             >
-            {/* <Camera
-              centerCoordinate={[item.longitude, item.latitude]}
+            {initItem.longitude && initItem.latitude && <Camera
+              centerCoordinate={[initItem.longitude, initItem.latitude]}
               zoomLevel={15}
               animationDuration={0}
-            /> */}
+            />}
             <MarkerView
-              coordinate={[item.longitude, item.latitude]}>
+              coordinate={[initItem.longitude, initItem.latitude]}>
               <Image source={markerIcon} style={styles.markerIcon} />
             </MarkerView>
             </MapView>

@@ -4,7 +4,7 @@ import { Camera, Folder } from 'lucide-react-native';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 
 interface AddVideoHandlerProps {
-  onVideoSelected: (videoUri: string) => void;
+  onVideoSelected: (video: any) => void;
   isVisible: boolean;
   onClose: () => void;
 }
@@ -19,8 +19,8 @@ const AddVideoHandler: React.FC<AddVideoHandlerProps> = ({
       mediaType: 'video',
       saveToPhotos: false,
     });
-    if (result.assets && result.assets[0].uri) {
-      onVideoSelected(result.assets[0].uri);
+    if (result.assets && result.assets[0]) {
+      onVideoSelected(result.assets[0]);
     }
     onClose();
   };
@@ -30,8 +30,8 @@ const AddVideoHandler: React.FC<AddVideoHandlerProps> = ({
       mediaType: 'video',
       selectionLimit: 1,
     });
-    if (result.assets && result.assets[0].uri) {
-      onVideoSelected(result.assets[0].uri);
+    if (result.assets && result.assets[0]) {
+      onVideoSelected(result.assets[0]);
     }
     onClose();
   };

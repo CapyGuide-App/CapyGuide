@@ -28,6 +28,7 @@ import AddVideoHandler from '../components/AddVideoHandler';
 import AddLinkHandler from '../components/AddLinkHandler';
 import Video from 'react-native-video';
 import {NavigationProp, useNavigation} from '@react-navigation/native';
+import { fetchCreatePost } from '../request/DataRequest';
 
 interface AddPostScreenProps {
   navigation: NavigationProp<any>;
@@ -35,12 +36,11 @@ interface AddPostScreenProps {
 
 const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   const [postTitle, setPostTitle] = useState('');
-  const [selectedTitleImage, setSelectedTitleImage] = useState<string | null>(
+  const [selectedTitleImage, setSelectedTitleImage] = useState<any | null>(
     null,
   );
   const [isTitleImageHandlerVisible, setIsTitleImageHandlerVisible] =
     useState(false);
-  const [shortDescription, setShortDescription] = useState('');
   const [postElements, setPostElements] = useState<any[]>([]);
   const [isCameraHandlerVisible, setIsCameraHandlerVisible] = useState(false);
   const [isVideoHandlerVisible, setIsVideoHandlerVisible] = useState(false);
@@ -53,37 +53,37 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   const [editUrl, setEditUrl] = useState('');
   const [cntElements, setCntElements] = useState(0);
 
-  const handleImageSelected = (imageUri: string) => {
+  const handleImageSelected = (image) => {
     if (editingElement) {
       setPostElements(prev =>
-        prev.map(el => (el === editingElement ? {...el, src: imageUri} : el)),
+        prev.map(el => (el === editingElement ? image : el)),
       );
       setEditingElement(null);
     } else {
       setCntElements(cntElements + 1);
       setPostElements(prev => [
         ...prev,
-        {id: cntElements, type: 'image', src: imageUri},
+        {...image,}
       ]);
     }
     setIsCameraHandlerVisible(false);
   };
 
-  const handleTitleImageSelected = (imageUri: string) => {
-    setSelectedTitleImage(imageUri);
+  const handleTitleImageSelected = (image: any) => {
+    setSelectedTitleImage(image);
   };
 
-  const handleVideoSelected = (videoUri: string) => {
+  const handleVideoSelected = (video: any) => {
     if (editingElement) {
       setPostElements(prev =>
-        prev.map(el => (el === editingElement ? {...el, src: videoUri} : el)),
+        prev.map(el => (el === editingElement ? video : el)),
       );
       setEditingElement(null);
     } else {
       setCntElements(cntElements + 1);
       setPostElements(prev => [
         ...prev,
-        {id: cntElements, type: 'video', src: videoUri},
+        {...video,}
       ]);
     }
     setIsVideoHandlerVisible(false);
@@ -93,7 +93,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
     setCntElements(cntElements + 1);
     setPostElements(prev => [
       ...prev,
-      {id: cntElements, type: 'link', title: link.title, url: link.url},
+      {type: 'link', title: link.title, url: link.url},
     ]);
   };
 
@@ -102,7 +102,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
       setCntElements(cntElements + 1);
       setPostElements(prev => [
         ...prev,
-        {id: cntElements, type: 'text', content: newTextContent},
+        {type: 'text', content: newTextContent},
       ]);
     }
     setNewTextContent('');
@@ -116,34 +116,11 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
     if (postElements.length === 0 || postTitle.trim() === '') {
       return;
     }
+    console.log(postElements);
 
-    const newPost = {
-      id: Math.floor(Math.random() * 1000), // Generate a random ID
-      author: 'Mẫn Thị Bích Lợi', // Replace with the actual author
-      date: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD
-      views: 0, // Initial views
-      avatar: 'https://randomuser.me/api/portraits/women/21.jpg', // Replace with the actual avatar
-      title: postTitle,
-      reactions: {like: 0, love: 0}, // Initial reactions
-      commentsCount: 0, // Initial comments count
-      category: 'Ẩm thực', // Replace with a category picker if necessary
-      titleImage: postElements.find(el => el.type === 'image')?.src || '', // Use the first image as the title image
-      elements: postElements.map(el => {
-        if (el.type === 'text') {
-          return {type: 'text', content: el.content};
-        } else if (el.type === 'image') {
-          return {type: 'image', src: el.src, alt: 'Image Description'};
-        } else if (el.type === 'video') {
-          return {type: 'video', src: el.src};
-        } else if (el.type === 'link') {
-          return {type: 'link', title: el.title, url: el.url};
-        }
-        return el;
-      }),
-    };
-
-    console.log('New Post:', JSON.stringify(newPost, null, 2));
-    navigation.goBack();
+    fetchCreatePost(postTitle, selectedTitleImage, postElements).then(() => {
+      navigation.goBack();
+    });
   };
 
   const handleEditElement = (element: any) => {
@@ -243,13 +220,13 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
         {item.type === 'text' && (
           <Text style={styles.textPreview}>{item.content}</Text>
         )}
-        {item.type === 'image' && (
-          <Image source={{uri: item.src}} style={styles.imagePreview} />
+        {item.type.startsWith('image') && (
+          <Image source={{uri: item.uri}} style={styles.imagePreview} />
         )}
-        {item.type === 'video' && (
+        {item.type.startsWith('video') && (
           <View style={styles.videoContainer}>
             <Video
-              source={{uri: item.src}}
+              source={{uri: item.uri}}
               style={styles.videoPreview}
               controls
               resizeMode="cover"
@@ -296,7 +273,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
             onPress={() => setIsTitleImageHandlerVisible(true)}>
             {selectedTitleImage ? (
               <Image
-                source={{uri: selectedTitleImage}}
+                source={{uri: selectedTitleImage.uri}}
                 style={styles.titleImagePreview}
               />
             ) : (
@@ -312,93 +289,6 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
             multiline
           />
         </View>
-        {/* <TextInput
-          style={styles.shortDescriptionInput}
-          placeholder="Giới thiệu ngắn ..."
-          placeholderTextColor="#aaa"
-          multiline
-          value={shortDescription}
-          onChangeText={setShortDescription}
-        /> */}
-        {/* {postElements.map((el, index) => (
-          <View key={index} style={styles.previewElement}>
-            <TouchableOpacity
-              style={styles.deleteButton}
-              onPress={() => handleDeleteElement(index)}>
-              <X color="#000" size={22} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.editButton}
-              onPress={() => handleEditElement(el)}>
-              <Edit color="#000" size={20} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.upArrowButton}
-              onPress={() => {
-                if (index > 0) {
-                  const newPostElements = [...postElements];
-                  [newPostElements[index - 1], newPostElements[index]] = [
-                    newPostElements[index],
-                    newPostElements[index - 1],
-                  ];
-                  setPostElements(newPostElements);
-                }
-              }}>
-              <ArrowUp color="#000" size={22} />
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={styles.downArrowButton}
-              onPress={() => {
-                if (index < postElements.length - 1) {
-                  const newPostElements = [...postElements];
-                  [newPostElements[index], newPostElements[index + 1]] = [
-                    newPostElements[index + 1],
-                    newPostElements[index],
-                  ];
-                  setPostElements(newPostElements);
-                }
-              }}>
-              <ArrowDown color="#000" size={22} />
-            </TouchableOpacity>
-
-            {el.type === 'text' && (
-              <Text style={styles.textPreview}>{el.content}</Text>
-            )}
-            {el.type === 'image' && (
-              <Image source={{uri: el.src}} style={styles.imagePreview} />
-            )}
-            {el.type === 'video' && (
-              <View style={styles.videoContainer}>
-                <Video
-                  source={{uri: el.src}}
-                  style={styles.videoPreview}
-                  controls
-                  resizeMode="cover"
-                />
-              </View>
-            )}
-            {el.type === 'link' && (
-              <TouchableOpacity
-                onPress={() => {
-                  let url = el.url;
-
-                  if (
-                    !url.startsWith('http://') &&
-                    !url.startsWith('https://')
-                  ) {
-                    url = `https://${url}`;
-                  }
-
-                  Linking.openURL(url).catch(err =>
-                    console.error('Failed to open URL:', err),
-                  );
-                }}>
-                <Text style={styles.linkTitle}>{el.title}</Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        ))} */}
         <DragList
           data={postElements}
           keyExtractor={keyExtractor}

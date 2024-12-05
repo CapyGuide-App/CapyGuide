@@ -19,10 +19,8 @@ import { Portal, PortalHost } from "@gorhom/portal";
 import { formatNumber, normalizeString } from "../styles/Methods";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FlashList } from "@shopify/flash-list";
-import { fetchData } from "../request/DataRequest";
-import { useLocation } from "../context/LocationContext";
 
-interface SearchItemProps {
+interface SearchPoiItemProps {
     item: any;
     type: string;
     searchText?: string;
@@ -30,7 +28,7 @@ interface SearchItemProps {
     onPaste?: (item: any) => void;
 }
 
-const SearchItem: React.FC<SearchItemProps> = ({ item, type, searchText, onPress, onPaste }) => {
+export const SearchPoiItem: React.FC<SearchPoiItemProps> = ({ item, type, searchText, onPress, onPaste }) => {
     const { theme } = useTheme();
     const prefixLength = searchText?.length || 0;
     const prefix = item.name.slice(0, prefixLength);
@@ -86,39 +84,37 @@ interface SearchBarProps {
     onSelected?: (item: any) => void;
     ref?: any;
     handleSearchData?: (data: any) => void;
+    placeholder?: string;
+    type: "poi" | "article";
+    isModal?: boolean;
+    data: any[];
+    searchField?: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentContainerStyle, clearOnClose = true, backgroundColor, handleSearchData, onSelected }, ref) => {
+const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentContainerStyle, clearOnClose = true, backgroundColor, handleSearchData, onSelected, placeholder = "Tìm kiếm", type, isModal = true, data, searchField }, ref) => {
     const { theme } = useTheme();
     const [isFocused, setIsFocused] = useState(false);
     const animationValue = useRef(new Animated.Value(0)).current;
     const [searchBarPosition, setSearchBarPosition] = useState({ x: 0, y: 0 });
     const fakeSearchBarRef = useRef<View>(null);
     const [searchText, setSearchText] = useState("");
-    const [searchResult, setSearchResult] = useState<any[]>([]);
+    const [searchResult, setSearchResult] = useState<any[]>(data);
     const searchInputRef = useRef<TextInput>(null);
     const [searchHistory, setSearchHistory] = useState<any[]>([]);
-    const [data, setData] = useState<any[]>([]);
-    const { location } = useLocation();
-
-    useEffect(() => {
-        fetchData(location).then((data) => {
-            setData(data);
-        });
-    }, []);
 
     React.useImperativeHandle(ref, () => ({
         searchResult,
     }));
 
-    const STORAGE_KEY = "SEARCH_HISTORY";
+    const STORAGE_KEY = "SEARCH_HISTORY" + (type === "poi" ? "_POI" : "_ARTICLE");
     const saveSearch = async (term) => {
         try {
-            const name = term.name;
-            if (!name.trim()) return;
-            term = { name, address: term.address, type: term.type, id: term.id };
-
-            const updatedHistory = [term, ...searchHistory.filter((item) => item.name !== term.name)];
+            if (searchField ? !term[searchField] : !term.name) {
+                return;
+            }
+            const updatedHistory = [term, ...searchHistory.filter((item) => 
+                searchField ? item[searchField] !== term.name : item.name !== term.name
+            )];
 
             // Save max 10 items
             if (updatedHistory.length > 10) {
@@ -197,7 +193,10 @@ const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentCo
         setSearchText(text);
         if (text.length > 0) {
             const normalizedText = normalizeString(text);
-            setSearchResult(data?.filter((item: any) => normalizeString(item.name).startsWith(normalizedText)));
+            setSearchResult(data?.filter((item: any) => {
+                const name = searchField ? item[searchField] : item.name;
+                return normalizeString(name).startsWith(normalizedText);
+            }));
         } else {
             setSearchResult(data);
         }
@@ -277,16 +276,19 @@ const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentCo
                         <SearchIcon color={theme.colors.primary} size={25} />
                         <TextInput
                             style={searchBarStyles.input}
-                            placeholder="Tìm kiếm"
+                            placeholder={placeholder}
                             placeholderTextColor={theme.colors.primary}
-                            editable={false}
+                            editable={!isModal}
+                            onChangeText={search}
                             value={searchText}
+                            clearTextOnFocus={false}
+                            numberOfLines={1}
                         />
                     </View>
                 </TouchableWithoutFeedback>
             </View>
 
-            <Portal hostName="search-bar">
+            {isModal && <Portal hostName="search-bar">
                 {isFocused && (
                 <Animated.View style={[searchBarStyles.modalContainer, contentContainerStyle]}>
                     <Animated.View style={[searchBarStyles.container, {backgroundColor: backgroundColor || animatedBackgroundColor}]}>
@@ -298,7 +300,7 @@ const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentCo
                             </Animated.View>
                             <TextInput
                                 style={searchBarStyles.input}
-                                placeholder="Tìm kiếm"
+                                placeholder={placeholder}
                                 placeholderTextColor={theme.colors.primary}
                                 autoFocus
                                 onChangeText={search}
@@ -317,9 +319,10 @@ const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentCo
                     </Animated.View>
                     <View style={{ flex: 1 }}>
                         <FlashList
-                            data={searchText.length > 0 ? searchResult : searchHistory}
+                            data={(searchText.length > 0 ? searchResult : searchHistory).slice(0, 5)}
                             renderItem={({ item }) => (
-                                <SearchItem item={item} 
+                                type === "poi" ? (
+                                    <SearchPoiItem item={item} 
                                     type={searchText.length > 0 ? "search" : "history"}
                                     searchText={searchText}
                                     onPress={() => {
@@ -333,15 +336,17 @@ const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentCo
                                     onPaste={() => {
                                         pasteSearch(item);
                                     }}
-                                />
+                                />) : (
+                                    <Text>{searchField ? item[searchField] : item.name}</Text>
+                                )
                             )}
-                            keyExtractor={(item) => item.id?.toString() || item.name}
+                            keyExtractor={(item) => (item.id?.toString() || (searchField ? item[searchField] : item.name))}
                             estimatedItemSize={50}
                         />
                     </View>
                 </Animated.View>
                 )}
-            </Portal>
+            </Portal>}
         </>
 )});
 

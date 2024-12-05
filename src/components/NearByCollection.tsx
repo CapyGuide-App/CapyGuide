@@ -24,7 +24,7 @@ const NearByCollection: React.FC<NearByCollectionProps> = ({title, geoData, styl
             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Text style={styles.title}>{title}</Text>
                 <Pressable onPress={() => onShowAll && onShowAll()}>
-                    <Text style={{ color: theme.colors.primary }}>Xem thêm</Text>
+                    <Text style={{ fontSize: 15, color: theme.colors.primary }}>Xem thêm</Text>
                 </Pressable>
             </View>
             {status === 'loading' && <ActivityIndicator color={theme.colors.primary} size="large" />}
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     descriptionText: {
-        fontSize: 12,
+        fontSize: 13,
         color: 'gray',
     },
 });

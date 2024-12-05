@@ -8,12 +8,14 @@ import {
   Image,
   Text,
   Pressable,
+  TouchableOpacity,
 } from 'react-native';
 import NearByCollection from '../components/NearByCollection';
 import SearchBar from '../components/SearchBar';
 import { fetchData, reloadData } from '../request/DataRequest';
 import { useLocation } from '../context/LocationContext';
 import { useFocusEffect } from '@react-navigation/native';
+import DragList, {DragListRenderItemInfo} from 'react-native-draglist';
 
 import ErrorContent from '../components/ErrorContent';
 import { hexToRGBA } from '../styles/Methods';
@@ -40,15 +42,41 @@ const HomeScreen: React.FC = ({navigation}: any) => {
   }, [location]);
   
   const navigateToDetail = (item: any) => {
-    navigation.navigate('Detail', { poiID: item.id });
+    navigation.navigate('Detail', { poiID: item.id, initItem: item });
   };
   const {theme} = useTheme();
+
+  function keyExtractor(str: string, _index: number) {
+    return str;
+  }
+
+  function renderItem(info: DragListRenderItemInfo<string>) {
+    const {item, onDragStart, onDragEnd, isActive} = info;
+
+    return (
+      <TouchableOpacity
+        key={item}
+        onPressIn={onDragStart}
+        onPressOut={onDragEnd}>
+        <Text>{item}</Text>
+      </TouchableOpacity>
+    );
+  }
+
+  const [data, setData] = useState(['Item 1', 'Item 2', 'Item 3', 'Item 4', 'Item 5']);
+  async function onReordered(fromIndex: number, toIndex: number) {
+    const copy = [...data]; // Don't modify react data in-place
+    const removed = copy.splice(fromIndex, 1);
+
+    copy.splice(toIndex, 0, removed[0]); // Now insert at the new pos
+    setData(copy);
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <LocationPickerText />
       <SearchBar contentContainerStyle={[styles.container]} backgroundColor={hexToRGBA(theme.colors.primary, 0.15)}
-        data={placeData.concat(foodData)}/>
+        data={placeData.concat(foodData)} type='poi' onSelected={navigateToDetail}/>
       {placeStatus !== 'error' && foodStatus !== 'error' &&
       <NearByCollection
         title="Địa danh gần bạn"
