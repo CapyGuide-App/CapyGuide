@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, ScrollView, StyleSheet } from "react-native";
 import Post from "../components/Post";
-import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useIsFocused, useNavigation } from "@react-navigation/native";
 import SearchBar from "../components/SearchBar";
 import { hexToRGBA } from "../styles/Methods";
 import { useTheme } from "@rneui/themed";
@@ -35,6 +35,12 @@ const BlogScreen: React.FC = () => {
   const handlePostPress = (post: any) => {
     navigation.navigate("PostDetailScreen", { postId: post.id });
   };
+  
+  useEffect(() => {
+    if (isFocused) {
+      reloadData(fetchBlogs(), setData, setStatus);
+    }
+  }, [isFocused]);
 
   return (
       <View style={styles.container}>

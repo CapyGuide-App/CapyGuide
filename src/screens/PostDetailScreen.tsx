@@ -21,12 +21,15 @@ import {
   Share2,
   ArrowLeft,
   ArrowRight,
+  PencilLineIcon,
 } from 'lucide-react-native';
 import Share from 'react-native-share';
 import { fetchBlog, fetchReactionBlog, reloadData } from '../request/DataRequest';
 import ErrorContent from '../components/ErrorContent';
 import BottomSheet, { BottomSheetFooter, BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { formatRelativeTime } from '../styles/Methods';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import Video from 'react-native-video';
 
 const {width} = Dimensions.get('window');
 
@@ -68,7 +71,12 @@ const PostContent = ({post}: any) => {
             case 'video':
               return (
                 <View key={index}>
-                  <Text>Video: {element.content_data}</Text>
+                  <Video
+                    source={{uri: element.content_data}}
+                    style={{width: width - 40, height: 200}}
+                    controls
+                    paused
+                  />
                 </View>
               );
             default:
@@ -80,6 +88,7 @@ const PostContent = ({post}: any) => {
 };
 
 const PostDetailScreen: React.FC<any> = ({route}) => {
+  const navigation = useNavigation();
   const {postId} = route.params;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
@@ -140,6 +149,27 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
+
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => {
+        if (!post?.owner) return null;
+        return (
+          <TouchableOpacity
+            style={{marginRight: 20}}
+            onPress={() => navigation.navigate('AddPost', {title: 'Edit Post', post})}>
+            <PencilLineIcon size={24} color="#333" />
+          </TouchableOpacity>
+        );
+      }
+    });
+  }, [navigation, post]);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      reload();
+    }, [])
+  );
 
   const renderFooter = (props: any) => {
     return (
@@ -241,12 +271,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'rgba(0, 0, 0, 0.8)',
-  },
-  closeModal: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    zIndex: 2,
   },
   fullImage: {
     width: '90%',

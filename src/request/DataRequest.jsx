@@ -185,6 +185,51 @@ export const reloadData = async (request, saveData, setStatus) => {
     });
 };
 
+export const fetchDeletePost = async (postId) => {
+    try {
+        const response = await apiClient.post(`/blog/${postId}/delete`);
+        return response.data;
+    } catch (error) {
+        const message = handleError(error);
+        console.error('Failed to delete post:', message);
+        throw new Error(message);
+    }
+};
+
+export const fetchUpdatePost = async (postId, title, titleImage, elements) => {
+    try {
+        const formData = new FormData();
+        formData.append('title', title);
+        {titleImage?.fileName && formData.append('title_image', {
+            uri: titleImage.uri,
+            type: titleImage.type,
+            name: titleImage.fileName || 'titleImage',
+        })}
+        formData.append('elements', JSON.stringify(elements));
+
+        elements.forEach((el, index) => {
+            if (el.type.startsWith('image') || el.type.startsWith('video')) {
+                if (el.fileName) {
+                    formData.append(`media`, {
+                        uri: el.uri,
+                        type: el.type,
+                        name: el.fileName,
+                    });
+                }
+            }
+        });
+
+        const response = await apiClient.post(`/blog/${postId}/update`, formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return response.data;
+    } catch (error) {
+        const message = handleError(error);
+        console.error('Failed to update post:', message);
+        throw new Error(message);
+    }
+};
+
 export const fetchCreatePost = async (title, titleImage, elements) => { 
     try {
         const formData = new FormData();
