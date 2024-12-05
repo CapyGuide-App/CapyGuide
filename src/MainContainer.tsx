@@ -72,7 +72,6 @@ const MainStack = () => {
         name="AddPost"
         component={AddPostScreen}
         options={{
-          title: "Tạo bài viết",
           headerTitleAlign: "center",
           headerStyle: {
             backgroundColor: "#fff",
