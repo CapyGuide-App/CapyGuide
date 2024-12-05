@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { ChevronRight, User } from 'lucide-react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {ChevronRight, User} from 'lucide-react-native';
 import {useTheme} from '@rneui/themed';
 
 const AccountScreen: React.FC = () => {
@@ -15,41 +15,46 @@ const AccountScreen: React.FC = () => {
       <Text style={styles.title}>Tài khoản</Text>
 
       <View style={styles.optionsContainer}>
-        <TouchableOpacity style={[styles.option, styles.topOption]} onPress={() => handlePress('Thông tin cá nhân')}>
+        <TouchableOpacity
+          style={[styles.option, styles.topOption]}
+          onPress={() => handlePress('Thông tin cá nhân')}>
           <View style={styles.optionContent}>
-            
             <Text style={styles.optionText}>Thông tin cá nhân</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.option} onPress={() => handlePress('Email và số điện thoại')}>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => handlePress('Email và số điện thoại')}>
           <View style={styles.optionContent}>
-            
             <Text style={styles.optionText}>Email và số điện thoại</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.option} onPress={() => handlePress('Liên kết mạng xã hội')}>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => handlePress('Liên kết mạng xã hội')}>
           <View style={styles.optionContent}>
-            
             <Text style={styles.optionText}>Liên kết mạng xã hội</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.option} onPress={() => handlePress('Quản lý thiết bị')}>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => handlePress('Quản lý thiết bị')}>
           <View style={styles.optionContent}>
-            
             <Text style={styles.optionText}>Quản lý thiết bị</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.option, styles.bottomOption]} onPress={() => handlePress('Xóa tài khoản')}>
+        <TouchableOpacity
+          style={[styles.option, styles.bottomOption]}
+          onPress={() => handlePress('Xóa tài khoản')}>
           <View style={styles.optionContent}>
-            
             <Text style={styles.optionText}>Xóa tài khoản</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
@@ -103,6 +108,7 @@ const dynamicStyles = (theme: any) =>
       fontSize: 16,
       color: theme.colors.text,
       marginLeft: 10,
+      width: '90%',
     },
     actionContainer: {
       flexDirection: 'row',

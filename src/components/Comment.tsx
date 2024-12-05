@@ -74,7 +74,7 @@ const CommentItem: React.FC<CommentItemProps> = ({item}) => {
       <View style={styles.commentActions}>
         <TouchableOpacity style={styles.actionButton}>
           <Heart size={16} color={theme.colors.text} />
-          <Text style={[styles.actionText, {width: 35}]}>Thích</Text>
+          <Text style={[styles.actionText, {width: 40}]}>Thích</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.actionButton}>
           <MessageCircle size={16} color={theme.colors.text} />

@@ -129,6 +129,7 @@ const dynamicStyles = (theme: any) =>
       fontSize: 16,
       color: theme.colors.text,
       marginLeft: 10,
+      width: '90%',
     },
     actionContainer: {
       flexDirection: 'row',

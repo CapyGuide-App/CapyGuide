@@ -2,10 +2,11 @@ import React, {useEffect, useState} from 'react';
 import {View, Text, Image, StyleSheet, Pressable} from 'react-native';
 import {
   Bookmark,
-  MoreVertical,
   Heart,
   MessageCircle,
 } from 'lucide-react-native';
+import { fetchReactionBlog } from '../request/DataRequest';
+import { formatRelativeTime } from '../styles/Methods';
 import {useTheme} from '@rneui/themed';
 
 interface PostProps {
@@ -19,18 +20,14 @@ const Post: React.FC<PostProps> = ({item, onPress}) => {
   const [save, setSave] = useState(false);
 
   const onPressBookMark = () => {
-    setSave(!save);
+    const newSave = !save;
+    setSave(newSave);
+    fetchReactionBlog(item.id, 'save', newSave);
   };
 
   useEffect(() => {
     setSave(item.saved);
   }, [item.saved]);
-
-  const date = Intl.DateTimeFormat('vi-VN', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(new Date(item.created_at));
 
   return (
     <Pressable
@@ -57,7 +54,7 @@ const Post: React.FC<PostProps> = ({item, onPress}) => {
           <Image source={{uri: item.avatar}} style={styles.avatar} />
           <View>
             <Text style={styles.author}>{item.displayname}</Text>
-            <Text style={styles.date}>{date}</Text>
+            <Text style={styles.date}>{formatRelativeTime(item.created_at)}</Text>
           </View>
         </View>
       </View>

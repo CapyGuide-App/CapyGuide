@@ -4,19 +4,73 @@ import {
   Text,
   Image,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
   Dimensions,
   Pressable,
   Linking,
+  ActivityIndicator,
 } from 'react-native';
 import {Heart, MessageCircle, Bookmark, Share2} from 'lucide-react-native';
 import Share from 'react-native-share';
 import {fetchBlog, fetchReactionBlog, reloadData} from '../request/DataRequest';
+import ErrorContent from '../components/ErrorContent';
+import BottomSheet, { BottomSheetFooter, BottomSheetScrollView } from '@gorhom/bottom-sheet';
+import { formatRelativeTime } from '../styles/Methods';
 import {useTheme} from '@rneui/themed';
 import {BackgroundImage} from '@rneui/base';
 
 const {width} = Dimensions.get('window');
+
+const PostContent = ({post}: any) => {
+  const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
+  return (
+    <View style={{paddingBottom: 90}}>
+      <View style={styles.content}>
+          <View style={styles.categoryContainer}>
+            <Text style={styles.category}>{post.category}</Text>
+          </View>
+          <Text style={styles.title}>{post.title}</Text>
+
+          <View style={styles.metadataRow}>
+            <Image source={{uri: post.avatar}} style={styles.avatar} />
+            <View>
+              <Text style={styles.author}>{post.displayname}</Text>
+              <Text style={styles.metadata}>
+                {post && formatRelativeTime(post.created_at)} • {post.views} views
+              </Text>
+            </View>
+          </View>
+        </View>
+        {post.content.map((element: any, index: number) => {
+          switch (element.content_type) {
+            case 'text':
+              return <Text key={index} style={styles.textContent}>{element.content_data}</Text>;
+            case 'image':
+              return (
+                <View style={styles.inlineImageContainer} key={index}>
+                  <Image source={{uri: element.content_data}} style={styles.inlineImage} />
+                </View>
+              );
+            case 'link':
+              return (
+                <Text style={{color: '#007BFF'}} onPress={() => Linking.openURL(element.content_data)} key={index}>
+                  {element.content_data}
+                </Text>
+              );
+            case 'video':
+              return (
+                <View key={index}>
+                  <Text>Video: {element.content_data}</Text>
+                </View>
+              );
+            default:
+              return null;
+          }
+        })}
+    </View>
+  );
+};
 
 const PostDetailScreen: React.FC<any> = ({route}) => {
   const {theme} = useTheme();
@@ -65,8 +119,8 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
     try {
       await Share.open({
         title: 'Share Post',
-        message: `Check out this post: ${title}`,
-        url: url || '',
+        message: `Bạn ơi, đọc bài viết này hay lắm: ${title}`,
+        url: `https://api.suzueyume.id.vn/blog/${postId}/share` || url || '',
       }).then(() => console.log('Share Success'));
     } catch (error) {
       console.log('Share Error: ', error);
@@ -100,107 +154,74 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.imageWrapper}>
-        <Pressable onPress={openModal}>
-          {post?.picture && (
-            <Image source={{uri: post?.picture}} style={styles.titleImage} />
-          )}
-        </Pressable>
-      </View>
+  const renderFooter = (props: any) => {
+    return (
+      <BottomSheetFooter {...props}>
+        <View style={styles.actionBar}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => handleReactions('love')}>
+            <Heart
+              size={24}
+              color={loved ? '#ff5050' : theme.colors.black
+              }
+              fill={loved ? '#ff5050' : 'none'}
+            />
+            <Text
+              style={[styles.actionText, {color: loved ? '#ff5050' : theme.colors.black}]}>
+              Love
+            </Text>
+          </TouchableOpacity>
 
-      <ScrollView style={styles.scrollContent}>
-        <View style={styles.content}>
-          {/* <View style={styles.categoryContainer}>
-            <Text style={styles.category}>{post?.category}</Text>
-          </View> */}
-          <Text style={styles.title}>{post?.title}</Text>
+          <TouchableOpacity style={styles.actionButton}>
+            <MessageCircle size={24} color={theme.colors.black} />
+            <Text style={styles.actionText}>Comment</Text>
+          </TouchableOpacity>
 
-          <View style={styles.metadataRow}>
-            <Image source={{uri: post?.avatar}} style={styles.avatar} />
-            <View>
-              <Text style={styles.author}>{post?.displayname}</Text>
-              <Text style={styles.metadata}>
-                {post?.created_at} • {post?.views} views
-              </Text>
-            </View>
-          </View>
-        </View>
-        {post?.content.map((element: any) => {
-          switch (element.content_type) {
-            case 'text':
-              return (
-                <Text style={styles.textContent}>{element.content_data}</Text>
-              );
-            case 'image':
-              return (
-                <View style={styles.inlineImageContainer}>
-                  <Image
-                    source={{uri: element.content_data}}
-                    style={styles.inlineImage}
-                  />
-                </View>
-              );
-            case 'link':
-              return (
-                <Text
-                  style={styles.link}
-                  onPress={() => Linking.openURL(element.content_data)}>
-                  {element.content_data}
-                </Text>
-              );
-            case 'video':
-              return (
-                <View>
-                  <Text>Video: {element.content_data}</Text>
-                </View>
-              );
-            default:
-              return null;
-          }
-        })}
-      </ScrollView>
-
-      <View style={styles.actionBar}>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => handleReactions('love')}>
-          <Heart
-            size={24}
-            color={loved ? '#ff5050' : theme.colors.black}
-            fill={loved ? '#ff5050' : 'none'}
-          />
-          <Text style={[styles.actionText, loved && {color: '#ff5050'}]}>
-            Love
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton}>
-          <MessageCircle size={24} color={theme.colors.black} />
-          <Text style={styles.actionText}>Comment</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => handleReactions('save')}>
-          <Bookmark
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => handleReactions('save')}>
+            <Bookmark
             size={24}
             color={theme.colors.black}
             fill={saved ? theme.colors.black : 'transparent'}
           />
-          <Text style={styles.actionText}>Save</Text>
-        </TouchableOpacity>
+            <Text style={styles.actionText}>Save</Text>
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() =>
-            handleShare({title: post?.title ?? '', url: post?.url ?? ''})
-          }>
-          <Share2 size={24} color={theme.colors.black} />
-          <Text style={styles.actionText}>Share</Text>
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => handleShare({title: post?.title ?? '', url: post?.picture ?? ''})}>
+            <Share2 size={24} color={theme.colors.black} />
+            <Text style={styles.actionText}>Share</Text>
+          </TouchableOpacity>
+        </View>
+      </BottomSheetFooter>
+  )}
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.imageWrapper}>
+        <Pressable onPress={openModal}>
+          {post?.picture && <Image source={{uri: post?.picture}} style={styles.titleImage} />}
+        </Pressable>
       </View>
+
+      <BottomSheet
+        snapPoints={['75%']}
+        index={0}
+        footerComponent={renderFooter}
+        animateOnMount={false}
+        overDragResistanceFactor={1}
+      >
+        <BottomSheetScrollView style={styles.scrollContent}>
+          <View>
+            {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" />}
+            {status === 'error' && <ErrorContent onRetry={reload} />}
+            {status === 'success' && <PostContent post={post} />}
+          </View>
+        </BottomSheetScrollView>
+      </BottomSheet>
     </View>
   );
 };

@@ -1,14 +1,11 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { ChevronRight } from 'lucide-react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {ChevronRight} from 'lucide-react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '@rneui/themed';
 
 type SettingsScreenNavigationProp = {
-  navigate: (
-    screen:
-      'ChangePasswordScreen',
-  ) => void;
+  navigate: (screen: 'ChangePasswordScreen') => void;
 };
 
 const SecurityScreen: React.FC = () => {
@@ -29,41 +26,46 @@ const SecurityScreen: React.FC = () => {
       <Text style={styles.title}>Bảo mật</Text>
 
       <View style={styles.optionsContainer}>
-        <TouchableOpacity style={[styles.option, styles.topOption]} onPress={navigateToPassword}>
+        <TouchableOpacity
+          style={[styles.option, styles.topOption]}
+          onPress={navigateToPassword}>
           <View style={styles.optionContent}>
-            
             <Text style={styles.optionText}>Đổi mật khẩu</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.option} onPress={() => handlePress('Xác thực hai yếu tố')}>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => handlePress('Xác thực hai yếu tố')}>
           <View style={styles.optionContent}>
-            
             <Text style={styles.optionText}>Xác thực hai yếu tố</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.option} onPress={() => handlePress('Quyền riêng tư')}>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => handlePress('Quyền riêng tư')}>
           <View style={styles.optionContent}>
-            
             <Text style={styles.optionText}>Quyền riêng tư</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.option} onPress={() => handlePress('Hoạt động đăng nhập')}>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => handlePress('Hoạt động đăng nhập')}>
           <View style={styles.optionContent}>
-            
             <Text style={styles.optionText}>Hoạt động đăng nhập</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.option, styles.bottomOption]} onPress={() => handlePress('Cài đặt khóa ứng dụng')}>
+        <TouchableOpacity
+          style={[styles.option, styles.bottomOption]}
+          onPress={() => handlePress('Cài đặt khóa ứng dụng')}>
           <View style={styles.optionContent}>
-            
             <Text style={styles.optionText}>Cài đặt khóa ứng dụng</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
@@ -117,6 +119,7 @@ const dynamicStyles = (theme: any) =>
       fontSize: 16,
       color: theme.colors.text,
       marginLeft: 10,
+      width: '90%',
     },
     actionContainer: {
       flexDirection: 'row',

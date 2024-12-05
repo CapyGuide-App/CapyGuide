@@ -18,7 +18,8 @@ import {useFocusEffect} from '@react-navigation/native';
 import DragList, {DragListRenderItemInfo} from 'react-native-draglist';
 
 import ErrorContent from '../components/ErrorContent';
-import {hexToRGBA} from '../styles/Methods';
+import { hexToRGBA } from '../styles/Methods';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 const HomeScreen: React.FC = ({navigation}: any) => {
   const {theme} = useTheme();
@@ -88,8 +89,13 @@ const HomeScreen: React.FC = ({navigation}: any) => {
     setData(copy);
   }
 
+  const {updateLocation} = useLocation();
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}
+      refreshControl={
+      <RefreshControl refreshing={placeStatus === 'loading' || foodStatus === 'loading'} onRefresh={updateLocation} />
+    }>
       <LocationPickerText />
       <SearchBar
         contentContainerStyle={[styles.container]}

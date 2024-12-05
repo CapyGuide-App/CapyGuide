@@ -1,10 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { ChevronRight, Info } from 'lucide-react-native';
-import { useTheme } from '@rneui/themed';
+import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
+import {ChevronRight, Info} from 'lucide-react-native';
+import {useTheme} from '@rneui/themed';
 
 const HelpScreen: React.FC = () => {
-  const { theme } = useTheme();
+  const {theme} = useTheme();
   const styles = dynamicStyles(theme);
   const handlePress = (option: string) => {
     Alert.alert(option, `Bạn đã chọn: ${option}`);
@@ -15,35 +15,45 @@ const HelpScreen: React.FC = () => {
       <Text style={styles.title}>Trợ giúp</Text>
 
       <View style={styles.optionsContainer}>
-        <TouchableOpacity style={[styles.option, styles.topOption]} onPress={() => handlePress('Câu hỏi thường gặp')}>
+        <TouchableOpacity
+          style={[styles.option, styles.topOption]}
+          onPress={() => handlePress('Câu hỏi thường gặp')}>
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Câu hỏi thường gặp</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.option} onPress={() => handlePress('Hướng dẫn sử dụng')}>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => handlePress('Hướng dẫn sử dụng')}>
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Hướng dẫn sử dụng</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.option} onPress={() => handlePress('Liên hệ hỗ trợ')}>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => handlePress('Liên hệ hỗ trợ')}>
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Liên hệ hỗ trợ</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.option} onPress={() => handlePress('Phản hồi')}>
+        <TouchableOpacity
+          style={styles.option}
+          onPress={() => handlePress('Phản hồi')}>
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Phản hồi</Text>
           </View>
           <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
-        <TouchableOpacity style={[styles.option, styles.bottomOption]} onPress={() => handlePress('Điều khoản và chính sách')}>
+        <TouchableOpacity
+          style={[styles.option, styles.bottomOption]}
+          onPress={() => handlePress('Điều khoản và chính sách')}>
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Điều khoản và chính sách</Text>
           </View>
@@ -98,6 +108,7 @@ const dynamicStyles = (theme: any) =>
       fontSize: 16,
       color: theme.colors.text,
       marginLeft: 10,
+      width: '90%',
     },
     actionContainer: {
       flexDirection: 'row',
