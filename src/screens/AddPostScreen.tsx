@@ -32,13 +32,13 @@ import { fetchCreatePost } from '../request/DataRequest';
 
 interface AddPostScreenProps {
   navigation: NavigationProp<any>;
+  route: any;
 }
 
-const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
+const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
+  const post = route.params?.post;
   const [postTitle, setPostTitle] = useState('');
-  const [selectedTitleImage, setSelectedTitleImage] = useState<any | null>(
-    null,
-  );
+  const [selectedTitleImage, setSelectedTitleImage] = useState<any | null>(post?.picture);
   const [isTitleImageHandlerVisible, setIsTitleImageHandlerVisible] =
     useState(false);
   const [postElements, setPostElements] = useState<any[]>([]);
@@ -116,7 +116,6 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
     if (postElements.length === 0 || postTitle.trim() === '') {
       return;
     }
-    console.log(postElements);
 
     fetchCreatePost(postTitle, selectedTitleImage, postElements).then(() => {
       navigation.goBack();

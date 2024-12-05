@@ -243,9 +243,6 @@ export const fetchBlog = async (blogId, signal) => {
 
 export const fetchReactionBlog = async (blogId, type, status) => {
     try {
-        console.log('blogId:', blogId);
-        console.log('type:', type);
-        console.log('status:', status);
         const response = await apiClient.post(`/blog/${blogId}/${type}`, { status });
         return response.data;
     } catch (error) {

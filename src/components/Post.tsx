@@ -6,6 +6,8 @@ import {
   Heart,
   MessageCircle,
 } from 'lucide-react-native';
+import { fetchReactionBlog } from '../request/DataRequest';
+import { format } from 'date-fns';
 
 interface PostProps {
   item: any;
@@ -19,18 +21,14 @@ const Post: React.FC<PostProps> = ({
   const [save, setSave] = useState(false);
 
   const onPressBookMark = () => {
-    setSave(!save);
+    const newSave = !save;
+    setSave(newSave);
+    fetchReactionBlog(item.id, 'save', newSave);
   };
 
   useEffect(() => {
     setSave(item.saved);
   }, [item.saved]);
-
-  const date = Intl.DateTimeFormat('vi-VN', { 
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  }).format(new Date(item.created_at));
 
   return (
     <Pressable
@@ -57,7 +55,7 @@ const Post: React.FC<PostProps> = ({
           <Image source={{uri: item.avatar}} style={styles.avatar} />
           <View>
             <Text style={styles.author}>{item.displayname}</Text>
-            <Text style={styles.date}>{date}</Text>
+            <Text style={styles.date}>{format(new Date(item.created_at), "dd/MM/yyyy")}</Text>
           </View>
         </View>
       </View>
