@@ -53,7 +53,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   const [editUrl, setEditUrl] = useState('');
   const [cntElements, setCntElements] = useState(0);
 
-  const handleImageSelected = (image) => {
+  const handleImageSelected = (image: any) => {
     if (editingElement) {
       setPostElements(prev =>
         prev.map(el => (el === editingElement ? image : el)),
@@ -192,7 +192,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   }, [navigation, postTitle, postElements]);
 
   function keyExtractor(item: any, index: number) {
-    return `${item.type}-${index}`;
+    return `${item.id}-${index}`;
   }
 
   function renderItem(info: DragListRenderItemInfo<any>) {
