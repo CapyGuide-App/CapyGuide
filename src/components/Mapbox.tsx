@@ -180,7 +180,7 @@ const Mapbox: React.FC<MapboxProps> = React.forwardRef(({ indexTab, placeData, f
               </View>
             </View>
             <View style={{flexDirection: 'row', gap: 10}}>
-                <TouchableOpacity onPress={() => navigation.navigate("Detail", { item: selectedFeature })}
+                <TouchableOpacity onPress={() => navigation.navigate("Detail", { poiID: selectedFeature.id, initItem: selectedFeature })}
                     style={[styles.markerButton, { backgroundColor: "#A1EEBD" }]}
                 >
                     <InfoIcon size={16} />

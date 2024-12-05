@@ -184,3 +184,73 @@ export const reloadData = async (request, saveData, setStatus) => {
       }
     });
 };
+
+export const fetchCreatePost = async (title, titleImage, elements) => { 
+    try {
+        const formData = new FormData();
+        formData.append('title', title);
+        {titleImage && formData.append('title_image', {
+            uri: titleImage.uri,
+            type: titleImage.type,
+            name: titleImage.fileName || 'titleImage',
+        })}
+
+        formData.append('elements', JSON.stringify(elements));
+        
+        elements.forEach((el, index) => {
+            if (el.type.startsWith('image') || el.type.startsWith('video')) {
+                formData.append(`media`, {
+                    uri: el.uri,
+                    type: el.type,
+                    name: el.fileName || `media${index}`,
+                });
+            }
+        });
+
+        const response = await apiClient.post('/post/create', formData, {
+            headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        return response.data;
+    }
+    catch (error) {
+        const message = handleError(error);
+        console.error('Failed to create post:', message);
+        throw new Error(message);
+    }
+};
+
+export const fetchBlogs = async (params, signal) => {
+    try {
+        const response = await apiClient.get('/blog', { params: params, signal: signal });
+        return response.data;
+    } catch (error) {
+        const message = handleError(error);
+        console.error('Failed to fetch blog posts:', message);
+        throw new Error(message);
+    }
+};
+
+export const fetchBlog = async (blogId, signal) => {
+    try {
+        const response = await apiClient.get(`/blog/${blogId}`, { signal: signal });
+        return response.data;
+    } catch (error) {
+        const message = handleError(error);
+        console.error('Failed to fetch blog post:', message);
+        throw new Error(message);
+    }
+};
+
+export const fetchReactionBlog = async (blogId, type, status) => {
+    try {
+        console.log('blogId:', blogId);
+        console.log('type:', type);
+        console.log('status:', status);
+        const response = await apiClient.post(`/blog/${blogId}/${type}`, { status });
+        return response.data;
+    } catch (error) {
+        const message = handleError(error);
+        console.error('Failed to react to blog post:', message);
+        throw new Error(message);
+    }
+};

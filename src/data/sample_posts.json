@@ -6,41 +6,41 @@
     "views": 123,
     "avatar": "https://randomuser.me/api/portraits/women/21.jpg",
     "title": "Món Phở Hà Nội",
-    "reactions": {"like": 200, "love": 150},
+    "reactions": 350,
     "commentsCount": 55,
     "category": "Ẩm thực",
     "titleImage": "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2023/2/25/1151545/Pho-Thin-13-Lo-Duc.jpeg",
     "elements": [
       {
-        "type": "text",
-        "content": "Phở Hà Nội không chỉ đơn thuần là một món ăn, mà còn là linh hồn của ẩm thực Việt Nam, được yêu thích trên khắp thế giới."
+        "content_type": "text",
+        "content_data": "Phở Hà Nội không chỉ đơn thuần là một món ăn, mà còn là linh hồn của ẩm thực Việt Nam, được yêu thích trên khắp thế giới."
       },
       {
-        "type": "image",
-        "src": "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2023/2/25/1151545/Pho-Thin-13-Lo-Duc.jpeg",
+        "content_type": "image",
+        "content_data": "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2023/2/25/1151545/Pho-Thin-13-Lo-Duc.jpeg",
         "alt": "Phở Hà Nội"
       },
       {
-        "type": "text",
-        "content": "Một tô phở chuẩn vị Hà Nội bao gồm nước dùng trong veo, ngọt tự nhiên được hầm từ xương bò cùng với các gia vị truyền thống như quế, hồi, gừng nướng. Bánh phở mềm mịn, sợi đều và không bị bở, kết hợp với thịt bò tái mỏng tang, chín tới, tạo nên cảm giác tươi ngon trong từng miếng. Đặc biệt, khi thưởng thức, người ăn không thể quên thêm vào chút chanh tươi, ớt đỏ, rau thơm như ngò gai, húng quế để làm dậy mùi vị."
+        "content_type": "text",
+        "content_data": "Một tô phở chuẩn vị Hà Nội bao gồm nước dùng trong veo, ngọt tự nhiên được hầm từ xương bò cùng với các gia vị truyền thống như quế, hồi, gừng nướng. Bánh phở mềm mịn, sợi đều và không bị bở, kết hợp với thịt bò tái mỏng tang, chín tới, tạo nên cảm giác tươi ngon trong từng miếng. Đặc biệt, khi thưởng thức, người ăn không thể quên thêm vào chút chanh tươi, ớt đỏ, rau thơm như ngò gai, húng quế để làm dậy mùi vị."
       },
       {
-        "type": "image",
-        "src": "https://bizweb.dktcdn.net/thumb/1024x1024/100/479/802/products/z5194061623055-ede48447ded9e0c2110fd134381c1f6d.jpg?v=1708933772720",
+        "content_type": "image",
+        "content_data": "https://bizweb.dktcdn.net/thumb/1024x1024/100/479/802/products/z5194061623055-ede48447ded9e0c2110fd134381c1f6d.jpg?v=1708933772720",
         "alt": "Phở Hà Nội"
       },
       {
-        "type": "image",
-        "src": "https://hotel84.com/hotel84-images/news/img1/pho-thin-day-du.jpg",
+        "content_type": "image",
+        "content_data": "https://hotel84.com/hotel84-images/news/img1/pho-thin-day-du.jpg",
         "alt": "Phở Hà Nội"
       },
       {
-        "type": "text",
-        "content": "Phở không chỉ là một món ăn sáng phổ biến, mà còn là biểu tượng của sự gắn bó và tự hào trong văn hóa Hà Nội, là ký ức đẹp của biết bao người xa quê hương."
+        "content_type": "text",
+        "content_data": "Phở không chỉ là một món ăn sáng phổ biến, mà còn là biểu tượng của sự gắn bó và tự hào trong văn hóa Hà Nội, là ký ức đẹp của biết bao người xa quê hương."
       },
       {
-        "type": "image",
-        "src": "https://thanhnien.mediacdn.vn/uploaded/hoangnam/2019_08_19/f011_MXTR.jpg?width=500",
+        "content_type": "image",
+        "content_data": "https://thanhnien.mediacdn.vn/uploaded/hoangnam/2019_08_19/f011_MXTR.jpg?width=500",
         "alt": "Phở Hà Nội"
       }
     ]
@@ -52,23 +52,23 @@
     "views": 145,
     "avatar": "https://randomuser.me/api/portraits/men/25.jpg",
     "title": "Bánh Mì Sài Gòn",
-    "reactions": {"like": 250, "love": 180},
+    "reactions": 430,
     "commentsCount": 63,
     "category": "Ẩm thực",
     "titleImage": "https://static.vinwonders.com/production/banh-mi-sai-gon-2.jpg",
     "elements": [
       {
-        "type": "text",
-        "content": "Bánh mì Sài Gòn không chỉ là một món ăn, mà còn là biểu tượng văn hóa, mang đậm hương vị của sự kết hợp giữa ẩm thực Pháp và Việt Nam. Chiếc bánh mì giòn tan, ruột mềm được nhồi đầy nhân như thịt nướng, chả lụa, pate, trứng, và rau sống. Kèm theo đó là nước sốt đặc trưng giúp món ăn thêm phần đậm đà. Bất kể sáng sớm, trưa hè hay chiều tà, một ổ bánh mì luôn là lựa chọn nhanh chóng, tiện lợi và đầy đủ dinh dưỡng cho mọi người."
+        "content_type": "text",
+        "content_data": "Bánh mì Sài Gòn không chỉ là một món ăn, mà còn là biểu tượng văn hóa, mang đậm hương vị của sự kết hợp giữa ẩm thực Pháp và Việt Nam. Chiếc bánh mì giòn tan, ruột mềm được nhồi đầy nhân như thịt nướng, chả lụa, pate, trứng, và rau sống. Kèm theo đó là nước sốt đặc trưng giúp món ăn thêm phần đậm đà. Bất kể sáng sớm, trưa hè hay chiều tà, một ổ bánh mì luôn là lựa chọn nhanh chóng, tiện lợi và đầy đủ dinh dưỡng cho mọi người."
       },
       {
-        "type": "image",
-        "src": "https://static.vinwonders.com/production/banh-mi-sai-gon-2.jpg",
+        "content_type": "image",
+        "content_data": "https://static.vinwonders.com/production/banh-mi-sai-gon-2.jpg",
         "alt": "Bánh Mì Sài Gòn"
       },
       {
-        "type": "image",
-        "src": "https://mms.img.susercontent.com/vn-11134513-7r98o-lsv8k31xzphgf6@resize_ss1242x600!@crop_w1242_h600_cT",
+        "content_type": "image",
+        "content_data": "https://mms.img.susercontent.com/vn-11134513-7r98o-lsv8k31xzphgf6@resize_ss1242x600!@crop_w1242_h600_cT",
         "alt": "Bánh Mì Sài Gòn"
       }
     ]
@@ -80,28 +80,28 @@
     "views": 189,
     "avatar": "https://randomuser.me/api/portraits/women/33.jpg",
     "title": "Cơm Tấm Sườn Bì Chả",
-    "reactions": {"like": 300, "love": 220},
+    "reactions": 520,
     "commentsCount": 80,
     "category": "Ẩm thực",
     "titleImage": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg/1200px-C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg",
     "elements": [
       {
-        "type": "text",
-        "content": "Cơm tấm là món ăn đặc trưng của miền Nam Việt Nam, nổi bật với sự kết hợp hài hòa của các thành phần như cơm trắng dẻo mềm, sườn nướng vàng óng, bì heo thái nhỏ trộn thính và chả trứng hấp thơm phức. Thêm vào đó là nước mắm chua ngọt đậm đà, dưa leo, cà chua và đồ chua, mang lại sự cân bằng hoàn hảo giữa các vị. Mỗi phần cơm tấm không chỉ ngon miệng mà còn là một tác phẩm nghệ thuật đầy màu sắc, hấp dẫn cả thị giác và vị giác."
+        "content_type": "text",
+        "content_data": "Cơm tấm là món ăn đặc trưng của miền Nam Việt Nam, nổi bật với sự kết hợp hài hòa của các thành phần như cơm trắng dẻo mềm, sườn nướng vàng óng, bì heo thái nhỏ trộn thính và chả trứng hấp thơm phức. Thêm vào đó là nước mắm chua ngọt đậm đà, dưa leo, cà chua và đồ chua, mang lại sự cân bằng hoàn hảo giữa các vị. Mỗi phần cơm tấm không chỉ ngon miệng mà còn là một tác phẩm nghệ thuật đầy màu sắc, hấp dẫn cả thị giác và vị giác."
       },
       {
-        "type": "image",
-        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg/1200px-C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg",
+        "content_type": "image",
+        "content_data": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg/1200px-C%C6%A1m_T%E1%BA%A5m%2C_Da_Nang%2C_Vietnam.jpg",
         "alt": "Cơm Tấm Sườn Bì Chả"
       },
       {
-        "type": "image",
-        "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYbc5sxnNQfo8RB3Tp6XxFUovD0zlQFzIYvA&s",
+        "content_type": "image",
+        "content_data": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYbc5sxnNQfo8RB3Tp6XxFUovD0zlQFzIYvA&s",
         "alt": "Cơm Tấm Sườn Bì Chả"
       },
       {
-        "type": "image",
-        "src": "https://product.hstatic.net/200000523823/product/com_tam_suon_bi_1e02dda4630a4d9fa3db1ea70f65a4dd.jpg",
+        "content_type": "image",
+        "content_data": "https://product.hstatic.net/200000523823/product/com_tam_suon_bi_1e02dda4630a4d9fa3db1ea70f65a4dd.jpg",
         "alt": "Cơm Tấm Sườn Bì Chả"
       }
     ]
@@ -113,18 +113,18 @@
     "views": 98,
     "avatar": "https://randomuser.me/api/portraits/men/41.jpg",
     "title": "Chè 3 Màu",
-    "reactions": {"like": 180, "love": 160},
+    "reactions": 240,
     "commentsCount": 45,
     "category": "Món tráng miệng",
     "titleImage": "https://cheori.vn/wp-content/uploads/2022/08/Che-buoi-hat-sen-scaled.jpg",
     "elements": [
       {
-        "type": "text",
-        "content": "Chè ba màu là một món tráng miệng dân dã được yêu thích ở khắp nơi tại Việt Nam. Với màu sắc rực rỡ của ba lớp chính gồm đậu xanh mịn màng, đậu đỏ ngọt bùi và thạch lá dứa xanh trong, món chè này không chỉ ngon mà còn rất bắt mắt. Phần nước cốt dừa béo ngậy kết hợp với đá bào mát lạnh tạo nên hương vị vừa ngọt vừa thanh, thích hợp để giải nhiệt vào những ngày hè oi bức. Đây thực sự là món ăn mang lại niềm vui nhỏ trong cuộc sống thường ngày."
+        "content_type": "text",
+        "content_data": "Chè ba màu là một món tráng miệng dân dã được yêu thích ở khắp nơi tại Việt Nam. Với màu sắc rực rỡ của ba lớp chính gồm đậu xanh mịn màng, đậu đỏ ngọt bùi và thạch lá dứa xanh trong, món chè này không chỉ ngon mà còn rất bắt mắt. Phần nước cốt dừa béo ngậy kết hợp với đá bào mát lạnh tạo nên hương vị vừa ngọt vừa thanh, thích hợp để giải nhiệt vào những ngày hè oi bức. Đây thực sự là món ăn mang lại niềm vui nhỏ trong cuộc sống thường ngày."
       },
       {
-        "type": "image",
-        "src": "https://cheori.vn/wp-content/uploads/2022/08/Che-buoi-hat-sen-scaled.jpg",
+        "content_type": "image",
+        "content_data": "https://cheori.vn/wp-content/uploads/2022/08/Che-buoi-hat-sen-scaled.jpg",
         "alt": "Chè 3 Màu"
       }
     ]
@@ -136,23 +136,23 @@
     "views": 130,
     "avatar": "https://randomuser.me/api/portraits/men/18.jpg",
     "title": "Trứng Cá Tầm",
-    "reactions": {"like": 320, "love": 290},
+    "reactions": 610,
     "commentsCount": 90,
     "category": "Đặc sản",
     "titleImage": "https://gofood.vn//upload/r/san-pham/trung-ca-tam/trung-ca-tam-caviar-anh-1.jpg",
     "elements": [
       {
-        "type": "text",
-        "content": "Trứng cá tầm là món ăn cao cấp, nổi tiếng với hương vị đậm đà và giá trị dinh dưỡng cao. Mỗi hạt trứng căng bóng, có vị bùi béo đặc trưng và tan ngay khi chạm lưỡi. Được chế biến một cách tinh tế, món ăn này thường được dùng kèm bánh mì nướng giòn, bơ, hoặc các loại hải sản khác, mang đến sự trải nghiệm sang trọng, hoàn hảo. Trứng cá tầm không chỉ là thực phẩm, mà còn là biểu tượng của sự xa hoa và đẳng cấp."
+        "content_type": "text",
+        "content_data": "Trứng cá tầm là món ăn cao cấp, nổi tiếng với hương vị đậm đà và giá trị dinh dưỡng cao. Mỗi hạt trứng căng bóng, có vị bùi béo đặc trưng và tan ngay khi chạm lưỡi. Được chế biến một cách tinh tế, món ăn này thường được dùng kèm bánh mì nướng giòn, bơ, hoặc các loại hải sản khác, mang đến sự trải nghiệm sang trọng, hoàn hảo. Trứng cá tầm không chỉ là thực phẩm, mà còn là biểu tượng của sự xa hoa và đẳng cấp."
       },
       {
-        "type": "image",
-        "src": "https://gofood.vn//upload/r/san-pham/trung-ca-tam/trung-ca-tam-caviar-anh-1.jpg",
+        "content_type": "image",
+        "content_data": "https://gofood.vn//upload/r/san-pham/trung-ca-tam/trung-ca-tam-caviar-anh-1.jpg",
         "alt": "Trứng Cá Tầm"
       },
       {
-        "type": "image",
-        "src": "https://thasofoods.com/wp-content/uploads/2022/05/5.jpg",
+        "content_type": "image",
+        "content_data": "https://thasofoods.com/wp-content/uploads/2022/05/5.jpg",
         "alt": "Trứng Cá Tầm"
       }
     ]
@@ -164,18 +164,18 @@
     "views": 155,
     "avatar": "https://randomuser.me/api/portraits/men/52.jpg",
     "title": "Xôi Cốm",
-    "reactions": {"like": 210, "love": 180},
+    "reactions": 390,
     "commentsCount": 50,
     "category": "Ẩm thực",
     "titleImage": "https://tiki.vn/blog/wp-content/uploads/2023/04/cach-nau-xoi-com.jpg",
     "elements": [
       {
-        "type": "text",
-        "content": "Xôi cốm là một món ăn truyền thống của Việt Nam, thường xuất hiện trong các dịp lễ hội hoặc mùa thu. Hạt cốm xanh non mềm dẻo kết hợp cùng hạt sen bùi bùi, dừa nạo thơm béo và đậu xanh mịn màng, tạo nên món ăn vừa ngọt vừa thanh. Mỗi miếng xôi như chứa đựng hương vị của làng quê Việt Nam, giản dị mà đầy tinh tế. Đây không chỉ là món ăn ngon mà còn là biểu tượng văn hóa, mang lại cảm giác ấm áp và thân thuộc."
+        "content_type": "text",
+        "content_data": "Xôi cốm là một món ăn truyền thống của Việt Nam, thường xuất hiện trong các dịp lễ hội hoặc mùa thu. Hạt cốm xanh non mềm dẻo kết hợp cùng hạt sen bùi bùi, dừa nạo thơm béo và đậu xanh mịn màng, tạo nên món ăn vừa ngọt vừa thanh. Mỗi miếng xôi như chứa đựng hương vị của làng quê Việt Nam, giản dị mà đầy tinh tế. Đây không chỉ là món ăn ngon mà còn là biểu tượng văn hóa, mang lại cảm giác ấm áp và thân thuộc."
       },
       {
-        "type": "image",
-        "src": "https://tiki.vn/blog/wp-content/uploads/2023/04/cah-nau-xoi-com.jpg",
+        "content_type": "image",
+        "content_data": "https://tiki.vn/blog/wp-content/uploads/2023/04/cah-nau-xoi-com.jpg",
         "alt": "Xôi Cốm"
       }
     ]

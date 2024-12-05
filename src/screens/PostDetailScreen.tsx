@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
   Dimensions,
   Pressable,
   TouchableWithoutFeedback,
+  Linking,
 } from 'react-native';
 import {
   Heart,
@@ -21,26 +22,32 @@ import {
   ArrowRight,
 } from 'lucide-react-native';
 import Share from 'react-native-share';
+import { fetchBlog, fetchReactionBlog, reloadData } from '../request/DataRequest';
 
 const {width} = Dimensions.get('window');
 
 const PostDetailScreen: React.FC<any> = ({route}) => {
-  const {post} = route.params;
+  const {postId} = route.params;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [loved, setLoved] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [post, setPost] = useState(null);
+  const [status, setStatus] = useState<'loading' | 'error' | 'success'>('loading');
 
-  const showNextImage = () => {
-    if (currentImageIndex < post.images.length - 1) {
-      setCurrentImageIndex(currentImageIndex + 1);
-    }
-  };
+  useEffect(() => {
+    const controller = new AbortController();
+    const request = fetchBlog(postId, controller.signal);
+    reloadData(request, setPost, setStatus);
 
-  const showPreviousImage = () => {
-    if (currentImageIndex > 0) {
-      setCurrentImageIndex(currentImageIndex - 1);
-    }
+    return () => {
+      controller.abort();
+    };
+  }, [postId]);
+
+  const reload = () => {
+    const request = fetchBlog(postId);
+    reloadData(request, setPost, setStatus);
   };
 
   const handleShare = async ({title, url}: {title: string; url?: string}) => {
@@ -49,11 +56,34 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
         title: 'Share Post',
         message: `Check out this post: ${title}`,
         url: url || '',
-      });
+      }).then(() => console.log('Share Success'));
     } catch (error) {
       console.log('Share Error: ', error);
     }
   };
+
+  const handleReactions = (type: string) => {
+    switch (type) {
+      case 'love':
+        const newLoved = !loved;
+        setLoved(newLoved);
+        fetchReactionBlog(postId, 'reaction', newLoved);
+        break;
+      case 'save':
+        setSaved(!saved);
+        fetchReactionBlog(postId, 'save', !saved);
+        break;
+      default:
+        break;
+    }
+  }
+
+  useEffect(() => {
+    if (post) {
+      setLoved(post.loved);
+      setSaved(post.saved);
+    }
+  }, [post]);
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
@@ -62,53 +92,59 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
     <View style={styles.container}>
       <View style={styles.imageWrapper}>
         <Pressable onPress={openModal}>
-          <Image source={{uri: post.titleImage}} style={styles.titleImage} />
+          {post?.picture && <Image source={{uri: post?.picture}} style={styles.titleImage} />}
         </Pressable>
       </View>
 
       <ScrollView style={styles.scrollContent}>
         <View style={styles.content}>
           <View style={styles.categoryContainer}>
-            <Text style={styles.category}>{post.category}</Text>
+            <Text style={styles.category}>{post?.category}</Text>
           </View>
-          <Text style={styles.title}>{post.title}</Text>
+          <Text style={styles.title}>{post?.title}</Text>
 
           <View style={styles.metadataRow}>
-            <Image source={{uri: post.avatar}} style={styles.avatar} />
+            <Image source={{uri: post?.avatar}} style={styles.avatar} />
             <View>
-              <Text style={styles.author}>{post.author}</Text>
+              <Text style={styles.author}>{post?.displayname}</Text>
               <Text style={styles.metadata}>
-                {post.date} • {post.views} views
+                {post?.created_at} • {post?.views} views
               </Text>
             </View>
           </View>
         </View>
-        {post.elements.map((element: any, index: number) => {
-          if (element.type === 'text') {
-            return (
-              <Text key={index} style={styles.textContent}>
-                {element.content}
-              </Text>
-            );
-          } else if (element.type === 'image') {
-            return (
-              <View style={styles.inlineImageContainer}>
-                  <Image
-                    key={index}
-                    source={{uri: element.src}}
-                    style={styles.inlineImage}
-                  />
-              </View>
-            );
+        {post?.content.map((element: any, index: number) => {
+          switch (element.content_type) {
+            case 'text':
+              return <Text style={styles.textContent}>{element.content_data}</Text>;
+            case 'image':
+              return (
+                <View style={styles.inlineImageContainer}>
+                  <Image source={{uri: element.content_data}} style={styles.inlineImage} />
+                </View>
+              );
+            case 'link':
+              return (
+                <Text style={{color: '#007BFF'}} onPress={() => Linking.openURL(element.content_data)}>
+                  {element.content_data}
+                </Text>
+              );
+            case 'video':
+              return (
+                <View>
+                  <Text>Video: {element.content_data}</Text>
+                </View>
+              );
+            default:
+              return null;
           }
-          return null;
         })}
       </ScrollView>
 
       <View style={styles.actionBar}>
         <TouchableOpacity
           style={styles.actionButton}
-          onPress={() => setLoved(!loved)}>
+          onPress={() => handleReactions('love')}>
           <Heart
             size={24}
             color={loved ? '#ff5050' : '#333'}
@@ -127,14 +163,14 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
 
         <TouchableOpacity
           style={styles.actionButton}
-          onPress={() => setSaved(!saved)}>
+          onPress={() => handleReactions('save')}>
           <Bookmark size={24} color="#333" fill={saved ? '#333' : 'white'} />
           <Text style={styles.actionText}>Save</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.actionButton}
-          onPress={() => handleShare({title: post.title, url: post.url})}>
+          onPress={() => handleShare({title: post?.title, url: post?.url})}>
           <Share2 size={24} color="#333" />
           <Text style={styles.actionText}>Share</Text>
         </TouchableOpacity>

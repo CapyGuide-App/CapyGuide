@@ -74,7 +74,6 @@ const CustomTabBarButton = ({children, navigation, style}) => {
   return (
     <TouchableOpacity
       style={{
-        top: -TAB_BAR_HEIGHT / 2,
         justifyContent: 'center',
         alignItems: 'center',
       }}
@@ -141,10 +140,11 @@ const MainTabNavigator: React.FC = () => {
               {...props}
               navigation={navigation}
               style={{
-                width: TAB_BAR_HEIGHT,
-                height: TAB_BAR_HEIGHT,
+                width: TAB_BAR_HEIGHT - 10,
+                height: TAB_BAR_HEIGHT - 10,
                 borderRadius: TAB_BAR_HEIGHT / 2,
                 backgroundColor: iconColor,
+                marginHorizontal: 15,
               }}
             />
           ),

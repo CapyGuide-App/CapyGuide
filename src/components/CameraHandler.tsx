@@ -17,9 +17,9 @@ const CameraHandler: React.FC<CameraHandlerProps> = ({
   const openCamera = async () => {
     const result = await launchCamera({
       mediaType: 'photo',
-      saveToPhotos: true,
+      saveToPhotos: false,
     });
-    if (result.assets && result.assets[0].uri) {
+    if (result.assets && result.assets[0]) {
       onImageSelected(result.assets[0]);
     }
     onClose();
@@ -30,7 +30,7 @@ const CameraHandler: React.FC<CameraHandlerProps> = ({
       mediaType: 'photo',
       selectionLimit: 1,
     });
-    if (result.assets && result.assets[0].uri) {
+    if (result.assets && result.assets[0]) {
       onImageSelected(result.assets[0]);
     }
     onClose();

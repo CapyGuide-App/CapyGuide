@@ -106,6 +106,27 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route, navigation }) => {
     );
   }, []);
 
+  const SearchBarMemo = React.useMemo(() => {
+    return (
+      <SearchBar
+        style={{ 
+          position: 'absolute', 
+          top: 20,
+          left: 20, right: 20,
+        }}
+        contentContainerStyle={{
+          padding: 20,
+        }}
+        clearOnClose={false}
+        ref={searchRef}
+        handleSearchData={handleSearch}
+        onSelected={handleMarkerPress}
+        type="poi"
+        data={placeData.concat(foodData)}
+      />
+    );
+  }, [placeData, foodData]);
+
   return (
     <View style={styles.page}>
       <Mapbox 
@@ -118,19 +139,7 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({ route, navigation }) => {
           <Locate size={24} />
         </TouchableOpacity>
       </Animated.View>
-      <SearchBar style={{ 
-        position: 'absolute', 
-        top: 20,
-        left: 20, right: 20,
-      }}
-        contentContainerStyle={{
-          padding: 20,
-        }}
-        clearOnClose={false}
-        ref={searchRef}
-        handleSearchData={handleSearch}
-        onSelected={handleMarkerPress}
-      />
+      {SearchBarMemo}
       <BottomSheet
         snapPoints={snapPoints}
         index={1}

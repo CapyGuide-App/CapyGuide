@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, Image, StyleSheet, Pressable} from 'react-native';
 import {
   Bookmark,
@@ -8,26 +8,12 @@ import {
 } from 'lucide-react-native';
 
 interface PostProps {
-  category: string;
-  author: string;
-  avatar: string;
-  title: string;
-  date: string;
-  titleImage: string;
-  reactionCount: number;
-  commentCount: number;
+  item: any;
   onPress: () => void;
 }
 
 const Post: React.FC<PostProps> = ({
-  category,
-  author,
-  avatar,
-  title,
-  date,
-  titleImage,
-  reactionCount,
-  commentCount,
+  item,
   onPress,
 }) => {
   const [save, setSave] = useState(false);
@@ -35,6 +21,16 @@ const Post: React.FC<PostProps> = ({
   const onPressBookMark = () => {
     setSave(!save);
   };
+
+  useEffect(() => {
+    setSave(item.saved);
+  }, [item.saved]);
+
+  const date = Intl.DateTimeFormat('vi-VN', { 
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).format(new Date(item.created_at));
 
   return (
     <Pressable
@@ -46,21 +42,21 @@ const Post: React.FC<PostProps> = ({
           opacity: pressed ? 0.8 : 1,
         },
       ]}>
-      <Image source={{uri: titleImage}} style={styles.thumbnail} />
+      <Image source={{uri: item.picture}} style={styles.thumbnail} />
 
       <View style={styles.textContainer}>
         <View style={styles.categoryContainer}>
-          <Text style={styles.categoryLabel}>{category}</Text>
+          <Text style={styles.categoryLabel}>{item.category}</Text>
         </View>
 
         <Text style={styles.title} numberOfLines={2}>
-          {title}
+          {item.title}
         </Text>
 
         <View style={styles.infoRow}>
-          <Image source={{uri: avatar}} style={styles.avatar} />
+          <Image source={{uri: item.avatar}} style={styles.avatar} />
           <View>
-            <Text style={styles.author}>{author}</Text>
+            <Text style={styles.author}>{item.displayname}</Text>
             <Text style={styles.date}>{date}</Text>
           </View>
         </View>
@@ -75,11 +71,11 @@ const Post: React.FC<PostProps> = ({
           />
         <View style={[styles.reactionRow, {marginTop: 46}]}>
           <Heart size={12} color="#f44" />
-          <Text style={styles.reactionText}>{reactionCount}</Text>
+          <Text style={styles.reactionText}>{item.reactions}</Text>
         </View>
         <View style={styles.reactionRow}>
           <MessageCircle size={12} color="#555" />
-          <Text style={styles.commentText}>{commentCount}</Text>
+          <Text style={styles.commentText}>{item.commentCount}</Text>
         </View>
       </View>
     </Pressable>

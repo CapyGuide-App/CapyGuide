@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
   const login = async () => {
     const tokens = await KeychainService.getTokens();
     if (tokens?.refreshToken) {
+      console.log(tokens);
       setIsUserLoggedIn(true);
     }
   };
