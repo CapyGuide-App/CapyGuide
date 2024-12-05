@@ -67,7 +67,7 @@ const CustomTabBarBackground = () => {
   );
 };
 
-const CustomTabBarButton = ({children, navigation, style}) => {
+const CustomTabBarButton: React.FC<{children: React.ReactNode, navigation: any, style?: any}> = ({children, navigation, style}) => {
   const onPress = () => {
     navigation.navigate('AddPost');
   };

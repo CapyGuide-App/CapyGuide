@@ -25,8 +25,8 @@ import AddVideoHandler from '../components/AddVideoHandler';
 import AddLinkHandler from '../components/AddLinkHandler';
 import Video from 'react-native-video';
 import {NavigationProp} from '@react-navigation/native';
-import { fetchCreatePost } from '../request/DataRequest';
-import { useTheme } from '@rneui/themed';
+import {fetchCreatePost} from '../request/DataRequest';
+import {useTheme} from '@rneui/themed';
 
 interface AddPostScreenProps {
   navigation: NavigationProp<any>;
@@ -34,6 +34,7 @@ interface AddPostScreenProps {
 
 const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
   const [postTitle, setPostTitle] = useState('');
   const [selectedTitleImage, setSelectedTitleImage] = useState<any | null>(
     null,
@@ -60,10 +61,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
       setEditingElement(null);
     } else {
       setCntElements(cntElements + 1);
-      setPostElements(prev => [
-        ...prev,
-        {id: cntElements, ...image,}
-      ]);
+      setPostElements(prev => [...prev, {id: cntElements, ...image}]);
     }
     setIsCameraHandlerVisible(false);
   };
@@ -80,10 +78,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
       setEditingElement(null);
     } else {
       setCntElements(cntElements + 1);
-      setPostElements(prev => [
-        ...prev,
-        {id: cntElements, ...video,}
-      ]);
+      setPostElements(prev => [...prev, {id: cntElements, ...video}]);
     }
     setIsVideoHandlerVisible(false);
   };
@@ -108,7 +103,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   };
 
   const handleDeleteElement = (item: any) => {
-    setPostElements(prev => prev.filter((i) => i.id !== item.id));
+    setPostElements(prev => prev.filter(i => i.id !== item.id));
   };
 
   const handlePostSubmit = () => {
@@ -198,7 +193,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
     const {item, onDragStart, onDragEnd, isActive} = info;
 
     return (
-      <View style={[styles.previewElement, {backgroundColor: theme.colors.element}]}>
+      <View style={styles.previewElement}>
         <TouchableOpacity
           style={styles.deleteButton}
           onPress={() => handleDeleteElement(item)}>
@@ -217,7 +212,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
         </TouchableOpacity>
 
         {item.type === 'text' && (
-          <Text style={[styles.textPreview, {color: theme.colors.black}]}>{item.content}</Text>
+          <Text style={styles.textPreview}>{item.content}</Text>
         )}
         {item.type.startsWith('image') && (
           <Image source={{uri: item.uri}} style={styles.imagePreview} />
@@ -261,26 +256,33 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   }
 
   return (
-    <View style={[styles.container, {backgroundColor: theme.colors.background}]}>
+    <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.previewContainer}>
         <View style={styles.header}>
           <TouchableOpacity
             style={[
               styles.imagePicker,
-              {backgroundColor: selectedTitleImage ? 'transparent' : theme.colors.element},
+              {
+                backgroundColor: selectedTitleImage
+                  ? 'transparent'
+                  : theme.colors.element,
+              },
             ]}
             onPress={() => setIsTitleImageHandlerVisible(true)}>
             {selectedTitleImage ? (
               <Image
                 source={{uri: selectedTitleImage.uri}}
-                style={[styles.titleImagePreview, {backgroundColor: theme.colors.black}]}
+                style={[
+                  styles.titleImagePreview,
+                  {backgroundColor: theme.colors.black},
+                ]}
               />
             ) : (
-              <Text style={[styles.imagePickerText, {color: theme.colors.black}]}>Chọn ảnh</Text>
+              <Text style={styles.imagePickerText}>Chọn ảnh</Text>
             )}
           </TouchableOpacity>
           <TextInput
-            style={[styles.titleInput, {color: theme.colors.black, borderBottomColor: theme.colors.grey1}]}
+            style={styles.titleInput}
             placeholder="Tiêu đề bài viết"
             placeholderTextColor={theme.colors.grey1}
             value={postTitle}
@@ -297,13 +299,23 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
 
         <View style={styles.contentSection}>
           <TouchableOpacity
-            style={[styles.roundButton, newTextContent.trim() && {borderColor: theme.colors.primary}]}
+            style={[
+              styles.roundButton,
+              newTextContent.trim() && {borderColor: theme.colors.primary},
+            ]}
             onPress={handleDoneAddingText}>
-            <Plus color={newTextContent.trim() ? theme.colors.primary : theme.colors.disabled} size={24} />
+            <Plus
+              color={
+                newTextContent.trim()
+                  ? theme.colors.primary
+                  : theme.colors.disabled
+              }
+              size={24}
+            />
           </TouchableOpacity>
-          <View style={[styles.textInputContainer, {backgroundColor: theme.colors.background, borderBottomColor: theme.colors.grey1}]}>
+          <View style={styles.textInputContainer}>
             <TextInput
-              style={[styles.textArea, {color: theme.colors.black}]}
+              style={styles.textArea}
               placeholder="Nhập nội dung ..."
               placeholderTextColor={theme.colors.grey0}
               multiline
@@ -368,7 +380,9 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
-              {editingElement?.type === 'text' ? 'Chỉnh sửa văn bản' : 'Chỉnh sửa liên kết'}
+              {editingElement?.type === 'text'
+                ? 'Chỉnh sửa văn bản'
+                : 'Chỉnh sửa liên kết'}
             </Text>
 
             <TextInput
@@ -395,12 +409,12 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
 
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                style={[styles.saveButton, {backgroundColor: theme.colors.primary}]}
+                style={styles.saveButton}
                 onPress={handleSaveElement}>
                 <Text style={styles.saveButtonText}>Lưu</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={[styles.cancelButton, {backgroundColor: theme.colors.disabled}]}
+                style={styles.cancelButton}
                 onPress={() => setIsModalVisible(false)}>
                 <Text style={styles.cancelButtonText}>Hủy</Text>
               </TouchableOpacity>
@@ -414,241 +428,249 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
 
 export default AddPostScreen;
 
-const styles = StyleSheet.create({
-  headerButton: {
-    marginRight: 15,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerButtonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginBottom: 10,
-  },
-  imagePicker: {
-    padding: 10,
-    borderRadius: 5,
-    marginRight: 10,
-    minWidth: 100,
-    minHeight: 100,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 1,
-    borderColor: '#ddd',
-  },
-  titleImagePreview: {
-    width: 100,
-    height: 100,
-    borderRadius: 5,
-  },
-  imagePickerText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  titleInput: {
-    flex: 1,
-    fontSize: 18,
-    borderBottomWidth: 1,
-    paddingBottom: 5,
-  },
-  shortDescriptionInput: {
-    fontSize: 16,
-    color: '#333',
-    borderColor: '#ddd',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-    minHeight: 100,
-    textAlignVertical: 'top',
-  },
-  contentSection: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    marginTop: 10,
-  },
-  roundButton: {
-    width: 25,
-    height: 25,
-    borderRadius: '50%',
-    borderWidth: 2,
-    borderColor: '#ddd',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-    marginTop: 12,
-  },
-  textInputContainer: {
-    flex: 1,
-    borderBottomWidth: 1,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-  },
-  textArea: {
-    fontSize: 16,
-    minHeight: 40,
-    maxHeight: 200,
-    textAlignVertical: 'center',
-  },
-  addContentButton: {
-    marginBottom: 10,
-  },
-  actionButtons: {
-    flexDirection: 'row',
-    justifyContent: 'flex-start',
-    marginTop: 10,
-    marginBottom: 20,
-    borderRadius: 50,
-    height: 45,
-  },
-  actionButton: {
-    color: '#000',
-    padding: 10,
-    borderRadius: 5,
-  },
-  previewContainer: {},
-  previewElement: {
-    marginBottom: 10,
-    backgroundColor: '#f9f9f9',
-    padding: 20,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    position: 'relative',
-  },
-  deleteButton: {
-    position: 'absolute',
-    top: 5,
-    right: 10,
-    zIndex: 1,
-    padding: 5,
-    borderRadius: 50,
-  },
-  editButton: {
-    position: 'absolute',
-    top: 5,
-    right: 40,
-    zIndex: 1,
-    padding: 5,
-    borderRadius: 50,
-  },
-  dragButton: {
-    position: 'absolute',
-    top: 5,
-    left: 10,
-    zIndex: 1,
-    padding: 5,
-    borderRadius: 50,
-  },
-  upArrowButton: {
-    position: 'absolute',
-    top: 7,
-    right: 90,
-  },
-  downArrowButton: {
-    position: 'absolute',
-    top: 7,
-    right: 130,
-  },
-  textPreview: {
-    fontSize: 16,
-    marginTop: 20,
-  },
-  imagePreview: {
-    width: '100%',
-    height: 200,
-    borderRadius: 10,
-    marginTop: 20,
-  },
-  videoContainer: {
-    marginVertical: 10,
-    width: '100%',
-    height: 200,
-    borderRadius: 10,
-    overflow: 'hidden',
-    backgroundColor: '#000',
-    marginTop: 20,
-  },
-  linkTitle: {
-    fontSize: 16,
-    color: '#007BFF',
-    textDecorationLine: 'underline',
-    marginTop: 20,
-  },
-  videoPreview: {
-    width: '100%',
-    height: '100%',
-  },
-  linkUrl: {
-    fontSize: 14,
-    color: '#555',
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderRadius: 10,
-    width: '80%',
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  modalInput: {
-    width: '100%',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
-    color: '#333',
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-    marginTop: 20,
-  },
-  saveButton: {
-    backgroundColor: '#007BFF',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    flex: 1,
-    marginRight: 5,
-  },
-  cancelButton: {
-    backgroundColor: '#ccc',
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    flex: 1,
-    marginLeft: 5,
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  cancelButtonText: {
-    color: '#333',
-    fontWeight: 'bold',
-  },
-});
+const dynamicStyles = (theme: any) =>
+  StyleSheet.create({
+    headerButton: {
+      marginRight: 15,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 20,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    headerButtonText: {
+      fontSize: 16,
+      fontWeight: 'bold',
+    },
+    container: {
+      flex: 1,
+      padding: 16,
+      backgroundColor: theme.colors.background,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginBottom: 10,
+    },
+    imagePicker: {
+      padding: 10,
+      borderRadius: 5,
+      marginRight: 10,
+      minWidth: 100,
+      minHeight: 100,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1,
+      borderColor: '#ddd',
+    },
+    titleImagePreview: {
+      width: 100,
+      height: 100,
+      borderRadius: 5,
+    },
+    imagePickerText: {
+      fontSize: 16,
+      color: theme.colors.text,
+    },
+    titleInput: {
+      flex: 1,
+      fontSize: 18,
+      borderBottomWidth: 1,
+      paddingBottom: 5,
+      color: theme.colors.text,
+      borderBottomColor: theme.colors.grey1,
+    },
+    shortDescriptionInput: {
+      fontSize: 16,
+      color: '#333',
+      borderColor: '#ddd',
+      borderWidth: 1,
+      borderRadius: 5,
+      padding: 10,
+      marginBottom: 10,
+      minHeight: 100,
+      textAlignVertical: 'top',
+    },
+    contentSection: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      marginTop: 10,
+    },
+    roundButton: {
+      width: 25,
+      height: 25,
+      borderRadius: '50%',
+      borderWidth: 2,
+      borderColor: '#ddd',
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 10,
+      marginTop: 12,
+    },
+    textInputContainer: {
+      flex: 1,
+      borderBottomWidth: 1,
+      borderRadius: 5,
+      paddingHorizontal: 10,
+      backgroundColor: theme.colors.background,
+      borderBottomColor: theme.colors.grey1,
+    },
+    textArea: {
+      fontSize: 16,
+      minHeight: 40,
+      maxHeight: 200,
+      textAlignVertical: 'center',
+      color: theme.colors.text,
+    },
+    addContentButton: {
+      marginBottom: 10,
+    },
+    actionButtons: {
+      flexDirection: 'row',
+      justifyContent: 'flex-start',
+      marginTop: 10,
+      marginBottom: 20,
+      borderRadius: 50,
+      height: 45,
+    },
+    actionButton: {
+      color: '#000',
+      padding: 10,
+      borderRadius: 5,
+    },
+    previewContainer: {},
+    previewElement: {
+      marginBottom: 10,
+      backgroundColor: theme.colors.element,
+      padding: 20,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: '#ddd',
+      position: 'relative',
+    },
+    deleteButton: {
+      position: 'absolute',
+      top: 5,
+      right: 10,
+      zIndex: 1,
+      padding: 5,
+      borderRadius: 50,
+    },
+    editButton: {
+      position: 'absolute',
+      top: 5,
+      right: 40,
+      zIndex: 1,
+      padding: 5,
+      borderRadius: 50,
+    },
+    dragButton: {
+      position: 'absolute',
+      top: 5,
+      left: 10,
+      zIndex: 1,
+      padding: 5,
+      borderRadius: 50,
+    },
+    upArrowButton: {
+      position: 'absolute',
+      top: 7,
+      right: 90,
+    },
+    downArrowButton: {
+      position: 'absolute',
+      top: 7,
+      right: 130,
+    },
+    textPreview: {
+      fontSize: 16,
+      marginTop: 20,
+      color: theme.colors.text,
+    },
+    imagePreview: {
+      width: '100%',
+      height: 200,
+      borderRadius: 10,
+      marginTop: 20,
+    },
+    videoContainer: {
+      marginVertical: 10,
+      width: '100%',
+      height: 200,
+      borderRadius: 10,
+      overflow: 'hidden',
+      backgroundColor: '#000',
+      marginTop: 20,
+    },
+    linkTitle: {
+      fontSize: 16,
+      color: '#007BFF',
+      textDecorationLine: 'underline',
+      marginTop: 20,
+    },
+    videoPreview: {
+      width: '100%',
+      height: '100%',
+    },
+    linkUrl: {
+      fontSize: 14,
+      color: '#555',
+    },
+    modalOverlay: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+      backgroundColor: '#fff',
+      padding: 20,
+      borderRadius: 10,
+      width: '80%',
+      alignItems: 'center',
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 10,
+    },
+    modalInput: {
+      width: '100%',
+      borderWidth: 1,
+      borderColor: '#ddd',
+      borderRadius: 5,
+      padding: 10,
+      marginBottom: 10,
+      color: '#333',
+    },
+    modalButtons: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: '100%',
+      marginTop: 20,
+    },
+    saveButton: {
+      backgroundColor: theme.colors.primary,
+      padding: 10,
+      borderRadius: 5,
+      alignItems: 'center',
+      flex: 1,
+      marginRight: 5,
+    },
+    cancelButton: {
+      backgroundColor: theme.colors.disabled,
+      padding: 10,
+      borderRadius: 5,
+      alignItems: 'center',
+      flex: 1,
+      marginLeft: 5,
+    },
+    saveButtonText: {
+      color: '#fff',
+      fontWeight: 'bold',
+    },
+    cancelButtonText: {
+      color: '#333',
+      fontWeight: 'bold',
+    },
+  });

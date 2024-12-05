@@ -281,7 +281,7 @@ const dynamicStyles = (theme: any) =>
     title: {
       fontSize: 22,
       fontWeight: 'bold',
-      color: theme.colors.normalText,
+      color: theme.colors.text,
       marginBottom: 15,
     },
     metadataRow: {
@@ -298,7 +298,7 @@ const dynamicStyles = (theme: any) =>
     author: {
       fontSize: 16,
       fontWeight: 'bold',
-      color: theme.colors.normalText,
+      color: theme.colors.text,
     },
     metadata: {
       fontSize: 14,
@@ -310,7 +310,7 @@ const dynamicStyles = (theme: any) =>
     textContent: {
       fontSize: 16,
       lineHeight: 24,
-      color: theme.colors.normalText,
+      color: theme.colors.text,
       marginBottom: 20,
     },
     inlineImageContainer: {
@@ -341,7 +341,7 @@ const dynamicStyles = (theme: any) =>
     },
     actionText: {
       fontSize: 12,
-      color: theme.colors.normalText,
+      color: theme.colors.text,
       marginTop: 4,
       width: 60,
       textAlign: 'center',

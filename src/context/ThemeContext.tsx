@@ -6,12 +6,14 @@ declare module '@rneui/themed' {
   export interface Colors {
     text: string;
     element: string;
+    element2: string;
     button: string;
     background2: string;
     link: string;
     normalText: string;
     dimText: string;
     border: string;
+    selected: string;
   }
 }
 
@@ -54,22 +56,26 @@ const CustomThemeProvider: React.FC<{children: React.ReactNode}> = ({
     lightColors: {
       primary: '#ea940c',
       element: '#f9f9f9',
+      element2: '#fff',
       button: '#ffaa00',
       background2: '#f9f9f9',
       link: '#ffaa00',
-      normalText: '#333',
+      text: '#333',
       dimText: '#666',
       border: '#eee',
+      selected: '#FFDD77',
     },
     darkColors: {
       primary: '#3D90CF',
       element: '#2e2e2e',
+      element2: '#6B6B6B',
       button: '#3D90CF',
       background2: '#000000',
       link: '#3D90CF',
-      normalText: '#fff',
+      text: '#fff',
       dimText: '#f3f3f3',
       border: '#333',
+      selected: '#2e2e2e',
     },
     mode: isDarkMode ? 'dark' : 'light',
   });
