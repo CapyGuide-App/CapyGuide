@@ -22,6 +22,7 @@ import {
 } from 'lucide-react-native';
 import {useAuth} from '../context/AuthContext';
 import { fetchProfile } from '../request/DataRequest';
+import { useTheme } from '@rneui/themed';
 
 type SettingsScreenNavigationProp = {
   navigate: (
@@ -41,6 +42,8 @@ type SettingsScreenNavigationProp = {
 
 const SettingsScreen: React.FC = () => {
   const {currentUser} = useAuth();
+  const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
 
   const navigation = useNavigation<SettingsScreenNavigationProp>();
   const {logout} = useAuth();
@@ -124,60 +127,60 @@ const SettingsScreen: React.FC = () => {
           style={[styles.option, styles.topOption]}
           onPress={navigateToAccountScreen}>
           <View style={styles.optionContent}>
-            <User size={24} color="#ffaa00" />
+            <User size={24} color={theme.colors.primary} />
             <Text style={styles.optionText}>Tài khoản</Text>
           </View>
-          <ChevronRight size={24} color="#ffaa00" />
+          <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.option}
           onPress={navigateToNotificationsScreen}>
           <View style={styles.optionContent}>
-            <Bell size={24} color="#ffaa00" />
+            <Bell size={24} color={theme.colors.primary} />
             <Text style={styles.optionText}>Thông báo</Text>
           </View>
-          <ChevronRight size={24} color="#ffaa00" />
+          <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.option}
           onPress={navigateToAppearanceScreen}>
           <View style={styles.optionContent}>
-            <Eye size={24} color="#ffaa00" />
+            <Eye size={24} color={theme.colors.primary} />
             <Text style={styles.optionText}>Appearance</Text>
           </View>
-          <ChevronRight size={24} color="#ffaa00" />
+          <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.option}
           onPress={navigateToSecurityScreen}>
           <View style={styles.optionContent}>
-            <Lock size={24} color="#ffaa00" />
+            <Lock size={24} color={theme.colors.primary} />
             <Text style={styles.optionText}>Bảo mật</Text>
           </View>
-          <ChevronRight size={24} color="#ffaa00" />
+          <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.option}
           onPress={navigateToHelpScreen}>
           <View style={styles.optionContent}>
-            <Headphones size={24} color="#ffaa00" />
+            <Headphones size={24} color={theme.colors.primary} />
             <Text style={styles.optionText}>Trợ giúp</Text>
           </View>
-          <ChevronRight size={24} color="#ffaa00" />
+          <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
 
         <TouchableOpacity
           style={[styles.option, styles.bottomOption]}
           onPress={navigateToAboutScreen}>
           <View style={styles.optionContent}>
-            <Info size={24} color="#ffaa00" />
+            <Info size={24} color={theme.colors.primary} />
             <Text style={styles.optionText}>Về CapyGuide</Text>
           </View>
-          <ChevronRight size={24} color="#ffaa00" />
+          <ChevronRight size={24} color={theme.colors.primary} />
         </TouchableOpacity>
       </View>
 
@@ -189,14 +192,14 @@ const SettingsScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const dynamicStyles = (theme: any) =>StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff9f3',
+    backgroundColor: theme.colors.background2,
     padding: 20,
   },
   profileContainer: {
-    backgroundColor: '#fff9e6',
+    backgroundColor: theme.colors.element,
     borderRadius: 10,
     padding: 20,
     shadowColor: '#000',
@@ -216,7 +219,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#f0c17d',
+    backgroundColor: theme.colors.placeholder,
     marginRight: 15,
   },
 
@@ -227,12 +230,12 @@ const styles = StyleSheet.create({
   profileName: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.colors.text,
   },
 
   profileHandle: {
     fontSize: 14,
-    color: '#888',
+    color: theme.colors.dimText
   },
 
   editButton: {
@@ -276,12 +279,12 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: theme.colors.text,
   },
 
   statLabel: {
     fontSize: 12,
-    color: '#888',
+    color: theme.colors.dimText,
     width: '100%',
     textAlign: 'center',
   },
@@ -289,11 +292,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ffaa00',
+    color: theme.colors.primary,
     marginBottom: 20,
   },
   optionsContainer: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.element,
     borderRadius: 10,
     overflow: 'hidden',
     marginBottom: 20,
@@ -326,7 +329,7 @@ const styles = StyleSheet.create({
   },
   optionText: {
     fontSize: 16,
-    color: '#333',
+    color: theme.colors.text,
     marginLeft: 10,
     width: '60%',
   },
@@ -334,7 +337,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffaa00',
+    backgroundColor: theme.colors.primary,
     padding: 15,
     borderRadius: 10,
   },

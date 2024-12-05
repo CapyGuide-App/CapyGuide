@@ -1,7 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import {useTheme} from '@rneui/themed';
 
 const AboutScreen: React.FC = () => {
+  const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Về CapyGuide</Text>
@@ -44,29 +47,30 @@ const AboutScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const dynamicStyles = (theme: any) =>
+  StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: '#fff9f3',
+    backgroundColor: theme.colors.background,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ffaa00',
+    color: theme.colors.primary,
     marginBottom: 20,
     textAlign: 'center',
   },
   content: {
     fontSize: 16,
-    color: '#333',
+    color: theme.colors.dimText,
     marginBottom: 20,
     lineHeight: 24,
     textAlign: 'justify',
   },
   section: {
     marginBottom: 20,
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.element,
     borderRadius: 10,
     padding: 15,
     shadowColor: '#000',
@@ -77,16 +81,16 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffaa00',
+    color: theme.colors.primary,
     marginBottom: 10,
   },
   sectionContent: {
     fontSize: 16,
-    color: '#555',
+    color: theme.colors.dimText,
     lineHeight: 22,
   },
   link: {
-    color: '#0066cc',
+    color: theme.colors.link,
     textDecorationLine: 'underline',
   },
 });
