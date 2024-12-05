@@ -9,7 +9,6 @@ import {
   TouchableOpacity,
   Linking,
   Modal,
-  Pressable,
 } from 'react-native';
 import {
   Plus,
@@ -18,8 +17,6 @@ import {
   Link,
   Edit,
   X,
-  ArrowUp,
-  ArrowDown,
   Menu,
 } from 'lucide-react-native';
 import DragList, {DragListRenderItemInfo} from 'react-native-draglist';
@@ -27,14 +24,16 @@ import CameraHandler from '../components/CameraHandler';
 import AddVideoHandler from '../components/AddVideoHandler';
 import AddLinkHandler from '../components/AddLinkHandler';
 import Video from 'react-native-video';
-import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {NavigationProp} from '@react-navigation/native';
 import { fetchCreatePost } from '../request/DataRequest';
+import { useTheme } from '@rneui/themed';
 
 interface AddPostScreenProps {
   navigation: NavigationProp<any>;
 }
 
 const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
+  const {theme} = useTheme();
   const [postTitle, setPostTitle] = useState('');
   const [selectedTitleImage, setSelectedTitleImage] = useState<any | null>(
     null,
@@ -63,7 +62,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
       setCntElements(cntElements + 1);
       setPostElements(prev => [
         ...prev,
-        {...image,}
+        {id: cntElements, ...image,}
       ]);
     }
     setIsCameraHandlerVisible(false);
@@ -83,7 +82,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
       setCntElements(cntElements + 1);
       setPostElements(prev => [
         ...prev,
-        {...video,}
+        {id: cntElements, ...video,}
       ]);
     }
     setIsVideoHandlerVisible(false);
@@ -93,7 +92,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
     setCntElements(cntElements + 1);
     setPostElements(prev => [
       ...prev,
-      {type: 'link', title: link.title, url: link.url},
+      {id: cntElements, type: 'link', title: link.title, url: link.url},
     ]);
   };
 
@@ -102,14 +101,14 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
       setCntElements(cntElements + 1);
       setPostElements(prev => [
         ...prev,
-        {type: 'text', content: newTextContent},
+        {id: cntElements, type: 'text', content: newTextContent},
       ]);
     }
     setNewTextContent('');
   };
 
-  const handleDeleteElement = (index: number) => {
-    setPostElements(prev => prev.filter((_, i) => i !== index));
+  const handleDeleteElement = (item: any) => {
+    setPostElements(prev => prev.filter((i) => i.id !== item.id));
   };
 
   const handlePostSubmit = () => {
@@ -167,8 +166,8 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
             {
               backgroundColor:
                 postElements.length > 0 && postTitle.trim()
-                  ? '#007BFF'
-                  : '#ccc',
+                  ? theme.colors.primary
+                  : theme.colors.disabled,
             },
           ]}
           onPress={
@@ -199,26 +198,26 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
     const {item, onDragStart, onDragEnd, isActive} = info;
 
     return (
-      <View style={styles.previewElement}>
+      <View style={[styles.previewElement, {backgroundColor: theme.colors.element}]}>
         <TouchableOpacity
           style={styles.deleteButton}
           onPress={() => handleDeleteElement(item)}>
-          <X color="#000" size={22} />
+          <X color={theme.colors.black} size={22} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.editButton}
           onPress={() => handleEditElement(item)}>
-          <Edit color="#000" size={20} />
+          <Edit color={theme.colors.black} size={20} />
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.dragButton}
           onPressIn={onDragStart}
           onPressOut={onDragEnd}>
-          <Menu color="#000" size={20} />
+          <Menu color={theme.colors.black} size={20} />
         </TouchableOpacity>
 
         {item.type === 'text' && (
-          <Text style={styles.textPreview}>{item.content}</Text>
+          <Text style={[styles.textPreview, {color: theme.colors.black}]}>{item.content}</Text>
         )}
         {item.type.startsWith('image') && (
           <Image source={{uri: item.uri}} style={styles.imagePreview} />
@@ -262,28 +261,28 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, {backgroundColor: theme.colors.background}]}>
       <ScrollView contentContainerStyle={styles.previewContainer}>
         <View style={styles.header}>
           <TouchableOpacity
             style={[
               styles.imagePicker,
-              selectedTitleImage && {backgroundColor: 'transparent'},
+              {backgroundColor: selectedTitleImage ? 'transparent' : theme.colors.element},
             ]}
             onPress={() => setIsTitleImageHandlerVisible(true)}>
             {selectedTitleImage ? (
               <Image
                 source={{uri: selectedTitleImage.uri}}
-                style={styles.titleImagePreview}
+                style={[styles.titleImagePreview, {backgroundColor: theme.colors.black}]}
               />
             ) : (
-              <Text style={styles.imagePickerText}>Chọn ảnh</Text>
+              <Text style={[styles.imagePickerText, {color: theme.colors.black}]}>Chọn ảnh</Text>
             )}
           </TouchableOpacity>
           <TextInput
-            style={styles.titleInput}
+            style={[styles.titleInput, {color: theme.colors.black, borderBottomColor: theme.colors.grey1}]}
             placeholder="Tiêu đề bài viết"
-            placeholderTextColor="#aaa"
+            placeholderTextColor={theme.colors.grey1}
             value={postTitle}
             onChangeText={setPostTitle}
             multiline
@@ -298,15 +297,15 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
 
         <View style={styles.contentSection}>
           <TouchableOpacity
-            style={styles.roundButton}
+            style={[styles.roundButton, newTextContent.trim() && {borderColor: theme.colors.primary}]}
             onPress={handleDoneAddingText}>
-            <Plus color="#ddd" size={24} />
+            <Plus color={newTextContent.trim() ? theme.colors.primary : theme.colors.disabled} size={24} />
           </TouchableOpacity>
-          <View style={styles.textInputContainer}>
+          <View style={[styles.textInputContainer, {backgroundColor: theme.colors.background, borderBottomColor: theme.colors.grey1}]}>
             <TextInput
-              style={styles.textArea}
+              style={[styles.textArea, {color: theme.colors.black}]}
               placeholder="Nhập nội dung ..."
-              placeholderTextColor="#aaa"
+              placeholderTextColor={theme.colors.grey0}
               multiline
               value={newTextContent}
               onChangeText={setNewTextContent}
@@ -316,24 +315,24 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
 
         <View style={styles.actionButtons}>
           <TouchableOpacity style={styles.roundButton}>
-            <Plus color="#ddd" size={24} />
+            <Plus color={theme.colors.disabled} size={24} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => {
               setIsCameraHandlerVisible(true);
             }}>
-            <ImageIcon color="#000" size={30} />
+            <ImageIcon color={theme.colors.black} size={30} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => setIsVideoHandlerVisible(true)}>
-            <VideoIcon color="#000" size={30} />
+            <VideoIcon color={theme.colors.black} size={30} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => setIsLinkHandlerVisible(true)}>
-            <Link color="#000" size={30} />
+            <Link color={theme.colors.black} size={30} />
           </TouchableOpacity>
         </View>
       </ScrollView>
@@ -369,7 +368,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
             <Text style={styles.modalTitle}>
-              {editingElement?.type === 'text' ? 'Edit Text' : 'Edit Link'}
+              {editingElement?.type === 'text' ? 'Chỉnh sửa văn bản' : 'Chỉnh sửa liên kết'}
             </Text>
 
             <TextInput
@@ -396,14 +395,14 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({navigation}) => {
 
             <View style={styles.modalButtons}>
               <TouchableOpacity
-                style={styles.saveButton}
+                style={[styles.saveButton, {backgroundColor: theme.colors.primary}]}
                 onPress={handleSaveElement}>
-                <Text style={styles.saveButtonText}>Save</Text>
+                <Text style={styles.saveButtonText}>Lưu</Text>
               </TouchableOpacity>
               <TouchableOpacity
-                style={styles.cancelButton}
+                style={[styles.cancelButton, {backgroundColor: theme.colors.disabled}]}
                 onPress={() => setIsModalVisible(false)}>
-                <Text style={styles.cancelButtonText}>Cancel</Text>
+                <Text style={styles.cancelButtonText}>Hủy</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -431,7 +430,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: '#fff',
   },
   header: {
     flexDirection: 'row',
@@ -439,7 +437,6 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   imagePicker: {
-    backgroundColor: '#ddd',
     padding: 10,
     borderRadius: 5,
     marginRight: 10,
@@ -447,6 +444,8 @@ const styles = StyleSheet.create({
     minHeight: 100,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#ddd',
   },
   titleImagePreview: {
     width: 100,
@@ -460,9 +459,7 @@ const styles = StyleSheet.create({
   titleInput: {
     flex: 1,
     fontSize: 18,
-    color: '#333',
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
     paddingBottom: 5,
   },
   shortDescriptionInput: {
@@ -482,26 +479,24 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   roundButton: {
-    width: 45,
-    height: 45,
+    width: 25,
+    height: 25,
     borderRadius: '50%',
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: '#ddd',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 10,
+    marginTop: 12,
   },
   textInputContainer: {
     flex: 1,
     borderBottomWidth: 1,
-    borderColor: '#ddd',
     borderRadius: 5,
     paddingHorizontal: 10,
-    backgroundColor: '#fff',
   },
   textArea: {
     fontSize: 16,
-    color: '#333',
     minHeight: 40,
     maxHeight: 200,
     textAlignVertical: 'center',
@@ -568,7 +563,6 @@ const styles = StyleSheet.create({
   },
   textPreview: {
     fontSize: 16,
-    color: '#333',
     marginTop: 20,
   },
   imagePreview: {

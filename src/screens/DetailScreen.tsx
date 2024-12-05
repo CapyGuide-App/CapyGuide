@@ -29,11 +29,12 @@ import {
   HotelIcon,
   BlocksIcon,
 } from 'lucide-react-native';
-import Comment, { CommentItem } from '../components/Comment';
+import Comment, {CommentItem} from '../components/Comment';
 import {MapView, Camera, MarkerView} from '@rnmapbox/maps';
 import PlacePin from '../assets/place-pin.png';
 import FoodPin from '../assets/food-pin.png';
 import Share from 'react-native-share';
+import {useTheme} from '@rneui/themed';
 
 const reactions = [
   {id: 'great', label: 'Tuyệt vời', icon: <SmilePlus color="#333" size={24} />},
@@ -44,10 +45,13 @@ const reactions = [
 
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
-import { googleMapRoute } from '../request/GoogleMapRequest';
-import { fetchPOI, reloadData } from '../request/DataRequest';
+import {googleMapRoute} from '../request/GoogleMapRequest';
+import {fetchPOI, reloadData} from '../request/DataRequest';
 
-type DetailScreenRouteProp = RouteProp<{Detail: {poiID: string; initItem: any}}, 'Detail'>;
+type DetailScreenRouteProp = RouteProp<
+  {Detail: {poiID: string; initItem: any}},
+  'Detail'
+>;
 type DetailScreenNavigationProp = StackNavigationProp<any, 'Detail'>;
 
 type Props = {
@@ -56,6 +60,7 @@ type Props = {
 };
 
 const DetailScreen: React.FC<Props> = ({route, navigation}) => {
+  const {theme} = useTheme();
   const {poiID, initItem} = route.params;
   const [item, setItem] = useState<any>({});
   const [selectedReaction, setSelectedReaction] = React.useState<string | null>(
@@ -69,7 +74,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
   const closeModal = () => setModalVisible(false);
 
   const markerIcon = item.type === 'travel' ? PlacePin : FoodPin;
-    
+
   const reload = (poiID: string, setItem: any, controller: AbortController) => {
     const request = fetchPOI(poiID, controller.signal);
     reloadData(request, setItem);
@@ -103,12 +108,9 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
     <View style={styles.container}>
       <ScrollView style={styles.container}>
         <Pressable onPress={openModal}>
-          <Image
-            source={{uri: initItem.picture}}
-            style={styles.mainImage}
-          />
+          <Image source={{uri: initItem.picture}} style={styles.mainImage} />
         </Pressable>
-  
+
         <View style={styles.infoContainer}>
           <Text style={styles.title}>{initItem.name}</Text>
           <View style={styles.statsRow}>
@@ -134,18 +136,16 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
             </View>
           </View>
         </View>
-  
+
         <View style={styles.sectionContainer}>
           <View style={styles.row}>
-            <View style={{flex: 1}} >
+            <View style={{flex: 1}}>
               <Text style={styles.sectionTitle}>Thông tin về địa điểm</Text>
               <View style={styles.row}>
                 <MapPin size={20} color="#000" style={styles.icon2} />
-                <Text style={styles.text}>
-                  {initItem.address}
-                </Text>
+                <Text style={styles.text}>{initItem.address}</Text>
               </View>
-      
+
               <View style={styles.row}>
                 <Map size={20} color="#4CAF50" style={styles.icon2} />
                 <Text style={styles.text}>
@@ -155,25 +155,34 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
                   {' (From current location)'}
                 </Text>
               </View>
-      
+
               <View style={styles.row}>
-                {initItem.type === 'place' ? 
-                  (<BlocksIcon size={20} color="#000" style={styles.icon2} />) : 
-                  (<Utensils size={20} color="#000" style={styles.icon2} />)
-                }
-                <Text style={styles.text}>Loại hình: {initItem.type === 'place' ? 'Địa điểm' : 'Ẩm thực'}</Text>
+                {initItem.type === 'place' ? (
+                  <BlocksIcon size={20} color="#000" style={styles.icon2} />
+                ) : (
+                  <Utensils size={20} color="#000" style={styles.icon2} />
+                )}
+                <Text style={styles.text}>
+                  Loại hình:{' '}
+                  {initItem.type === 'place' ? 'Địa điểm' : 'Ẩm thực'}
+                </Text>
               </View>
             </View>
-            <TouchableOpacity style={{borderRadius: 50, backgroundColor: '#1b6ff4', padding: 8, 
-              alignContent: 'center', justifyContent: 'center', alignItems: 'center',
-              transform: [{rotate: '45deg'}]
-            }}
-              onPress={() => googleMapRoute(item)}
-            >
+            <TouchableOpacity
+              style={{
+                borderRadius: 50,
+                backgroundColor: '#1b6ff4',
+                padding: 8,
+                alignContent: 'center',
+                justifyContent: 'center',
+                alignItems: 'center',
+                transform: [{rotate: '45deg'}],
+              }}
+              onPress={() => googleMapRoute(item)}>
               <Navigation2 size={20} color="white" fill="white" />
             </TouchableOpacity>
           </View>
-  
+
           <View style={styles.mapContainer}>
             <MapView
               style={styles.map}
@@ -186,21 +195,21 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
               rotateEnabled={false}
               pitchEnabled={false}
               compassEnabled={false}
-              scaleBarEnabled={false}
-            >
-            {initItem.longitude && initItem.latitude && <Camera
-              centerCoordinate={[initItem.longitude, initItem.latitude]}
-              zoomLevel={15}
-              animationDuration={0}
-            />}
-            <MarkerView
-              coordinate={[initItem.longitude, initItem.latitude]}>
-              <Image source={markerIcon} style={styles.markerIcon} />
-            </MarkerView>
+              scaleBarEnabled={false}>
+              {initItem.longitude && initItem.latitude && (
+                <Camera
+                  centerCoordinate={[initItem.longitude, initItem.latitude]}
+                  zoomLevel={15}
+                  animationDuration={0}
+                />
+              )}
+              <MarkerView coordinate={[initItem.longitude, initItem.latitude]}>
+                <Image source={markerIcon} style={styles.markerIcon} />
+              </MarkerView>
             </MapView>
           </View>
         </View>
-  
+
         <View style={styles.reactionsRow}>
           {reactions.map(reaction => (
             <TouchableOpacity
@@ -215,58 +224,69 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
             </TouchableOpacity>
           ))}
         </View>
-  
-      <Comment poiId={item.id} data={item.reviews} />
+
+        <Comment poiId={item.id} data={item.reviews} />
       </ScrollView>
-        <View style={styles.actionBar}>
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => setLoved(!loved)}>
-            <Heart
-              size={24}
-              color={loved ? '#ff5050' : '#333'}
-              fill={loved ? '#ff5050' : 'none'}
-            />
-            <Text
-              style={[styles.actionText, {color: loved ? '#ff5050' : '#333'}]}>
-              Love
-            </Text>
-          </TouchableOpacity>
-  
-          <TouchableOpacity style={styles.actionButton}>
-            <MessageCircle size={24} color="#333" />
-            <Text style={styles.actionText}>Comment</Text>
-          </TouchableOpacity>
-  
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => setSaved(!saved)}>
-            <Bookmark size={24} color="#333" fill={saved ? '#333' : 'white'} />
-            <Text style={styles.actionText}>Save</Text>
-          </TouchableOpacity>
-  
-          <TouchableOpacity
-            style={styles.actionButton}
-            onPress={() => handleShare({title: item.name, url: item.url})}>
-            <Share2 size={24} color="#333" />
-            <Text style={styles.actionText}>Share</Text>
-          </TouchableOpacity>
-        </View>
-        <Modal visible={modalVisible} transparent={true} animationType="fade">
-          <TouchableWithoutFeedback onPress={closeModal}>
-            <View style={styles.modalContainer}>
-              <TouchableOpacity style={styles.closeModal} onPress={closeModal}>
-                <ArrowLeft size={40} color="#fff" />
-              </TouchableOpacity>
-              <View style={styles.innerContainer}>
-                <Image
-                  source={{uri: item.picture}}
-                  style={styles.fullImage}
-                />
-              </View>
+      <View
+        style={[styles.actionBar, {backgroundColor: theme.colors.background}]}>
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => setLoved(!loved)}>
+          <Heart
+            size={24}
+            color={loved ? '#ff5050' : theme.colors.black}
+            fill={loved ? '#ff5050' : 'none'}
+          />
+          <Text
+            style={[
+              styles.actionText,
+              {color: loved ? '#ff5050' : theme.colors.black},
+            ]}>
+            Love
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.actionButton}>
+          <MessageCircle size={24} color={theme.colors.black} />
+          <Text style={[styles.actionText, {color: theme.colors.black}]}>
+            Comment
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => setSaved(!saved)}>
+          <Bookmark
+            size={24}
+            color={theme.colors.black}
+            fill={saved ? theme.colors.black : 'transparent'}
+          />
+          <Text style={[styles.actionText, {color: theme.colors.black}]}>
+            Save
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.actionButton}
+          onPress={() => handleShare({title: item.name, url: item.url})}>
+          <Share2 size={24} color={theme.colors.black} />
+          <Text style={[styles.actionText, {color: theme.colors.black}]}>
+            Share
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <Modal visible={modalVisible} transparent={true} animationType="fade">
+        <TouchableWithoutFeedback onPress={closeModal}>
+          <View style={styles.modalContainer}>
+            <TouchableOpacity style={styles.closeModal} onPress={closeModal}>
+              <ArrowLeft size={40} color="#fff" />
+            </TouchableOpacity>
+            <View style={styles.innerContainer}>
+              <Image source={{uri: item.picture}} style={styles.fullImage} />
             </View>
-          </TouchableWithoutFeedback>
-        </Modal>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };

@@ -85,7 +85,6 @@ const CustomTabBarButton = ({children, navigation, style}) => {
 
 const MainTabNavigator: React.FC = () => {
   const {theme} = useTheme();
-  const iconColor = theme.colors.primary;
 
   return (
     <>
@@ -117,7 +116,7 @@ const MainTabNavigator: React.FC = () => {
         headerShown: false,
         tabBarShowIcon: true,
         tabBarInactiveTintColor: 'gray',
-        tabBarActiveTintColor: iconColor,
+        tabBarActiveTintColor: theme.colors.primary,
         tabBarShowLabel: false,
         tabBarStyle: {
           height: TAB_BAR_HEIGHT,
@@ -143,7 +142,7 @@ const MainTabNavigator: React.FC = () => {
                 width: TAB_BAR_HEIGHT - 10,
                 height: TAB_BAR_HEIGHT - 10,
                 borderRadius: TAB_BAR_HEIGHT / 2,
-                backgroundColor: iconColor,
+                backgroundColor: theme.colors.primary,
                 marginHorizontal: 15,
               }}
             />
