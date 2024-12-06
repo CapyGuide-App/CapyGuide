@@ -1,18 +1,25 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
-import {ChevronRight, Info} from 'lucide-react-native';
+import {ChevronLeft, ChevronRight, Info} from 'lucide-react-native';
 import {useTheme} from '@rneui/themed';
+import {useNavigation} from '@react-navigation/native';
 
 const HelpScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
+  const navigation = useNavigation();
   const handlePress = (option: string) => {
     Alert.alert(option, `Bạn đã chọn: ${option}`);
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Trợ giúp</Text>
+      <View style={styles.titleContainer}>
+        <TouchableOpacity onPress={navigation.goBack}>
+          <ChevronLeft size={24} color={theme.colors.primary} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Trợ giúp</Text>
+      </View>
 
       <View style={styles.optionsContainer}>
         <TouchableOpacity
@@ -67,11 +74,17 @@ const HelpScreen: React.FC = () => {
 const dynamicStyles = (theme: any) =>
   StyleSheet.create({
     container: {flex: 1, padding: 20, backgroundColor: theme.colors.background},
+    titleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+    },
     title: {
       fontSize: 24,
       fontWeight: 'bold',
       color: theme.colors.primary,
-      marginBottom: 20,
+      width: '90%',
     },
     optionsContainer: {
       backgroundColor: theme.colors.element,

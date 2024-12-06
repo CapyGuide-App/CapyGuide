@@ -14,9 +14,12 @@ import avatar from '../assets/avatar.jpg';
 import CameraHandler from '../components/CameraHandler';
 import { fetchProfile, fetchUpdateProfile } from '../request/DataRequest';
 import { useAuth } from '../context/AuthContext';
-
+import { useTheme } from '@rneui/themed';
+import { th } from 'date-fns/locale';
 
 const ProfileSettingsScreen = ({ navigation }: { navigation: any }) => {
+  const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
   const {currentUser, setCurrentUser} = useAuth();
   const [image, setImage] = useState<{ uri: string, type?: string, name?: string } | null>(null);
   const [name, setName] = useState<string | null>(null); 
@@ -128,10 +131,10 @@ const ProfileSettingsScreen = ({ navigation }: { navigation: any }) => {
   );
 };
 
-const styles = StyleSheet.create({
+const dynamicStyles = (theme: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F9F9F9',
+    backgroundColor: theme.colors.background,
     padding: 16,
     alignItems: 'center',
   },
@@ -139,7 +142,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
+    color: theme.colors.primary,
   },
   avatarContainer: {
     position: 'relative',
@@ -151,13 +154,13 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     borderWidth: 3,
-    borderColor: '#E0E0E0',
+    borderColor: theme.colors.border,
   },
   editIcon: {
     position: 'absolute',
     bottom: 0,
     right: 10,
-    backgroundColor: '#ffaa00',
+    backgroundColor: theme.colors.primary,
     width: 35,
     height: 35,
     borderRadius: 17.5,
@@ -169,7 +172,7 @@ const styles = StyleSheet.create({
   editIconText: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#FFF',
+    color: theme.colors.text,
   },
   formContainer: {
     width: '100%',
@@ -179,32 +182,32 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666',
+    color: theme.colors.text,
     marginBottom: 5,
   },
   input: {
-    backgroundColor: '#FFF',
+    backgroundColor: theme.colors.element,
     borderWidth: 1,
-    borderColor: '#DDD',
+    borderColor: theme.colors.border,
     borderRadius: 8,
     paddingHorizontal: 15,
     paddingVertical: 10,
     fontSize: 16,
     marginBottom: 15,
-    color: '#333',
+    color: theme.colors.text,
   },
   textArea: {
     height: 80,
     textAlignVertical: 'top',
   },
   saveButton: {
-    backgroundColor: '#ffaa00',
+    backgroundColor: theme.colors.primary,
     paddingVertical: 15,
     paddingHorizontal: 60,
     borderRadius: 30,
   },
   saveButtonText: {
-    color: '#FFF',
+    color: theme.colors.text,
     fontSize: 16,
     fontWeight: '600',
   },

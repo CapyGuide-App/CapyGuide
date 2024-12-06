@@ -1,11 +1,12 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
-import {ChevronRight} from 'lucide-react-native';
+import {ChevronLeft, ChevronRight} from 'lucide-react-native';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '@rneui/themed';
 
 type SettingsScreenNavigationProp = {
   navigate: (screen: 'ChangePasswordScreen') => void;
+  goBack: () => void;
 };
 
 const SecurityScreen: React.FC = () => {
@@ -23,7 +24,12 @@ const SecurityScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Bảo mật</Text>
+      <View style={styles.titleContainer}>
+        <TouchableOpacity onPress={navigation.goBack}>
+          <ChevronLeft size={24} color={theme.colors.primary} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Bảo mật</Text>
+      </View>
 
       <View style={styles.optionsContainer}>
         <TouchableOpacity
@@ -78,11 +84,17 @@ const SecurityScreen: React.FC = () => {
 const dynamicStyles = (theme: any) =>
   StyleSheet.create({
     container: {flex: 1, padding: 20, backgroundColor: theme.colors.background},
+    titleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+    },
     title: {
       fontSize: 24,
       fontWeight: 'bold',
       color: theme.colors.primary,
-      marginBottom: 20,
+      width: '90%',
     },
     optionsContainer: {
       backgroundColor: theme.colors.element,

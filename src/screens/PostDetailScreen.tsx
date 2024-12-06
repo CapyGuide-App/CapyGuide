@@ -15,9 +15,8 @@ import {
   MessageCircle,
   Bookmark,
   Share2,
-  ArrowLeft,
-  ArrowRight,
   PencilLineIcon,
+  ChevronLeft,
 } from 'lucide-react-native';
 import Share from 'react-native-share';
 import {fetchBlog, fetchReactionBlog, reloadData} from '../request/DataRequest';
@@ -30,8 +29,6 @@ import {formatRelativeTime} from '../styles/Methods';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Video from 'react-native-video';
 import {useTheme} from '@rneui/themed';
-import {BackgroundImage} from '@rneui/base';
-
 const {width} = Dimensions.get('window');
 
 const PostContent = ({post}: any) => {
@@ -183,23 +180,6 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => {
-        if (!post?.owner) return null;
-        return (
-          <TouchableOpacity
-            style={{marginRight: 20}}
-            onPress={() =>
-              navigation.navigate('AddPost', {title: 'Edit Post', post})
-            }>
-            <PencilLineIcon size={24} color="#333" />
-          </TouchableOpacity>
-        );
-      },
-    });
-  }, [navigation, post]);
-
   useFocusEffect(
     React.useCallback(() => {
       reload();
@@ -258,6 +238,18 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
 
   return (
     <View style={styles.container}>
+    <View style={styles.fixedHeader}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerButton}>
+        <ChevronLeft size={24} color={theme.colors.white}/>
+      </TouchableOpacity>
+      {post?.owner && (
+        <TouchableOpacity
+          onPress={() => navigation.navigate('AddPost', {title: 'Edit Post', post})}
+          style={styles.headerButton}>
+          <PencilLineIcon size={24} color={theme.colors.white} />
+        </TouchableOpacity>
+      )}
+    </View>
       <View style={styles.imageWrapper}>
         <Pressable onPress={openModal}>
           {post?.picture && (
@@ -291,6 +283,29 @@ const dynamicStyles = (theme: any) =>
     container: {
       flex: 1,
       backgroundColor: '#f9f9f9',
+    },
+    fixedHeader: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 10,
+      paddingVertical: 10,
+      backgroundColor: 'transparent',
+      zIndex: 1000,
+      elevation: 5,
+      shadowColor: '#000',
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      shadowOffset: {width: 0, height: 2},
+    },
+    headerButton: {
+      padding: 10,
+      borderRadius: '50%',
+      backgroundColor: `${theme.colors.black}90`,
     },
     titleImage: {
       width: '100%',

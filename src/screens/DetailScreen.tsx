@@ -28,6 +28,7 @@ import {
   Navigation2,
   HotelIcon,
   BlocksIcon,
+  ChevronLeft,
 } from 'lucide-react-native';
 import Comment, {CommentItem} from '../components/Comment';
 import {MapView, Camera, MarkerView} from '@rnmapbox/maps';
@@ -123,6 +124,11 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
+    <View style={styles.fixedHeader}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerButton}>
+        <ChevronLeft size={24} color={theme.colors.white}/>
+      </TouchableOpacity>
+    </View>
       <ScrollView style={styles.container}>
         <Pressable onPress={openModal}>
           <Image source={{uri: initItem.picture}} style={styles.mainImage} />
@@ -308,6 +314,29 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
 const dynamicStyles = (theme: any) =>
   StyleSheet.create({
     container: {flex: 1, backgroundColor: theme.colors.background},
+    fixedHeader: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 10,
+      paddingVertical: 10,
+      backgroundColor: 'transparent',
+      zIndex: 1000,
+      elevation: 5,
+      shadowColor: '#000',
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      shadowOffset: {width: 0, height: 2},
+    },
+    headerButton: {
+      padding: 10,
+      borderRadius: '50%',
+      backgroundColor: `${theme.colors.black}90`,
+    },
     topBar: {
       flexDirection: 'row',
       justifyContent: 'space-between',
