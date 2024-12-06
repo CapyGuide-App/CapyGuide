@@ -1,13 +1,21 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import {useTheme} from '@rneui/themed';
+import { ChevronLeft } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const AboutScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
+  const navigation = useNavigation();
   return (
     <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.titleContainer}>
+      <TouchableOpacity onPress={navigation.goBack}>
+        <ChevronLeft size={24} color={theme.colors.primary} />
+      </TouchableOpacity>
       <Text style={styles.title}>Về CapyGuide</Text>
+    </View>
       <Text style={styles.content}>
         CapyGuide là ứng dụng hướng dẫn người dùng với giao diện thân thiện, giúp bạn ???
       </Text>
@@ -54,12 +62,17 @@ const dynamicStyles = (theme: any) =>
     padding: 20,
     backgroundColor: theme.colors.background,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 15,
+  },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     color: theme.colors.primary,
-    marginBottom: 20,
-    textAlign: 'center',
+    width: '90%',
   },
   content: {
     fontSize: 16,

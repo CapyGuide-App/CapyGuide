@@ -22,6 +22,8 @@ import Geolocation from '@react-native-community/geolocation';
 import Mapbox from '@rnmapbox/maps';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {MAPBOX_ACCESS_TOKEN, GOOGLE_CLIENT_ID} from '@env';
+import { StyleSheet } from 'react-native';
+import { useTheme } from '@rneui/themed';
 
 const Stack = createStackNavigator();
 
@@ -41,6 +43,8 @@ const AuthStack = () => (
 );
 
 const MainStack = () => {
+  const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
   const {saveLocation, updateLocation} = useLocation();
 
   useEffect(() => {
@@ -76,21 +80,21 @@ const MainStack = () => {
         options={{
           headerTitleAlign: 'center',
           headerStyle: {
-            backgroundColor: '#fff',
+            backgroundColor: styles.header.backgroundColor,
           },
-          headerTintColor: '#000',
+          headerTintColor: styles.headerTitle.color,
           presentation: 'modal',
         }}
       />
       <Stack.Screen
         name="Detail"
         component={DetailScreen}
-        options={{title: 'Chi tiết'}}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="PostDetailScreen"
         component={PostDetailScreen}
-        options={{title: 'Chi tiết bài viết'}}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="ProfileScreen"
@@ -111,32 +115,32 @@ const MainStack = () => {
       <Stack.Screen
         name="AccountScreen"
         component={AccountScreen}
-        options={{title: 'Tài khoản'}}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="NotificationsScreen"
         component={NotificationsScreen}
-        options={{title: 'Thông báo'}}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="AppearanceScreen"
         component={AppearanceScreen}
-        options={{title: 'Giao diện'}}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="SecurityScreen"
         component={SecurityScreen}
-        options={{title: 'Bảo mật'}}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="HelpScreen"
         component={HelpScreen}
-        options={{title: 'Trợ giúp'}}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="AboutScreen"
         component={AboutScreen}
-        options={{title: 'Về CapyGuide'}}
+        options={{headerShown: false}}
       />
     </Stack.Navigator>
   );
@@ -157,5 +161,14 @@ const MainContainer = () => {
     </NavigationContainer>
   );
 };
+
+const dynamicStyles = (theme: any) => StyleSheet.create({
+  header: {
+    backgroundColor: theme.colors.background,
+  },
+  headerTitle: {
+    color: theme.colors.text,
+  },
+});
 
 export default MainContainer;

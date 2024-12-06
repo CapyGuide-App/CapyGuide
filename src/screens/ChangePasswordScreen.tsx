@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -7,24 +7,25 @@ import {
   TextInput,
   Modal,
 } from 'react-native';
+import {useTheme} from '@rneui/themed';
+import {th} from 'date-fns/locale';
 
 const ChangePasswordScreen: React.FC = () => {
+  const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
   const [curPass, setCurPass] = useState('');
   const [newPass, setNewPass] = useState('');
   const [conNewPass, setConNewPass] = useState('');
-  const [isModalVisible, setIsModalVisible] = useState(false); 
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const savePass = () => {
-    
     if (newPass !== conNewPass) {
-      setIsModalVisible(true); 
+      setIsModalVisible(true);
       return;
     }
 
-    
     setIsModalVisible(true);
 
-    
     setCurPass('');
     setNewPass('');
     setConNewPass('');
@@ -40,7 +41,7 @@ const ChangePasswordScreen: React.FC = () => {
           style={styles.textInput}
           placeholder="Nhập mật khẩu hiện tại"
           secureTextEntry={true}
-          onChangeText={(newValue) => setCurPass(newValue)}
+          onChangeText={newValue => setCurPass(newValue)}
           value={curPass}
         />
       </View>
@@ -51,7 +52,7 @@ const ChangePasswordScreen: React.FC = () => {
           style={styles.textInput}
           placeholder="Nhập mật khẩu mới"
           secureTextEntry={true}
-          onChangeText={(newValue) => setNewPass(newValue)}
+          onChangeText={newValue => setNewPass(newValue)}
           value={newPass}
         />
       </View>
@@ -62,7 +63,7 @@ const ChangePasswordScreen: React.FC = () => {
           style={styles.textInput}
           placeholder="Nhập lại mật khẩu mới"
           secureTextEntry={true}
-          onChangeText={(newValue) => setConNewPass(newValue)}
+          onChangeText={newValue => setConNewPass(newValue)}
           value={conNewPass}
         />
       </View>
@@ -74,9 +75,8 @@ const ChangePasswordScreen: React.FC = () => {
       <Modal
         visible={isModalVisible}
         transparent
-        animationType="slide"
-        onRequestClose={() => setIsModalVisible(false)}
-      >
+        animationType="fade"
+        onRequestClose={() => setIsModalVisible(false)}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContainer}>
             <Text style={styles.modalText}>
@@ -86,8 +86,7 @@ const ChangePasswordScreen: React.FC = () => {
             </Text>
             <TouchableOpacity
               style={styles.modalButton}
-              onPress={() => setIsModalVisible(false)}
-            >
+              onPress={() => setIsModalVisible(false)}>
               <Text style={styles.modalButtonText}>Đóng</Text>
             </TouchableOpacity>
           </View>
@@ -97,84 +96,85 @@ const ChangePasswordScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingHorizontal: 20,
-    paddingTop: 40,
-    backgroundColor: '#FFF',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FF9800',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  groupInput: {
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    marginBottom: 8,
-  },
-  textInput: {
-    backgroundColor: '#F9F9F9',
-    borderWidth: 1,
-    borderColor: '#DDD',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    fontSize: 16,
-    color: '#333',
-  },
-  saveButton: {
-    backgroundColor: '#FF9800',
-    borderRadius: 30,
-    paddingVertical: 15,
-    paddingHorizontal: 50,
-    alignSelf: 'center',
-    marginTop: 20,
-  },
-  saveButtonText: {
-    fontSize: 16,
-    color: '#FFF',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContainer: {
-    backgroundColor: '#FFF',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-    width: 300,
-  },
-  modalText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#333',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  modalButton: {
-    backgroundColor: '#FF9800',
-    borderRadius: 20,
-    paddingVertical: 10,
-    paddingHorizontal: 40,
-  },
-  modalButtonText: {
-    fontSize: 16,
-    color: '#FFF',
-    fontWeight: 'bold',
-  },
-});
+const dynamicStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingHorizontal: 20,
+      paddingTop: 40,
+      backgroundColor: theme.colors.background,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: theme.colors.primary,
+      textAlign: 'center',
+      marginBottom: 20,
+    },
+    groupInput: {
+      marginBottom: 20,
+    },
+    label: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.text,
+      marginBottom: 8,
+    },
+    textInput: {
+      backgroundColor: theme.colors.element,
+      borderWidth: 1,
+      borderColor: '#DDD',
+      borderRadius: 8,
+      paddingHorizontal: 15,
+      paddingVertical: 10,
+      fontSize: 16,
+      color: theme.colors.text,
+    },
+    saveButton: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: 30,
+      paddingVertical: 15,
+      paddingHorizontal: 50,
+      alignSelf: 'center',
+      marginTop: 20,
+    },
+    saveButtonText: {
+      fontSize: 16,
+      color: theme.colors.text,
+      fontWeight: 'bold',
+      textAlign: 'center',
+    },
+    modalOverlay: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: `${theme.colors.black}80`,
+    },
+    modalContainer: {
+      backgroundColor: theme.colors.background,
+      padding: 20,
+      borderRadius: 10,
+      alignItems: 'center',
+      width: 300,
+    },
+    modalText: {
+      fontSize: 16,
+      fontWeight: '600',
+      color: theme.colors.text,
+      textAlign: 'center',
+      marginBottom: 20,
+    },
+    modalButton: {
+      backgroundColor: theme.colors.primary,
+      borderRadius: 20,
+      paddingVertical: 10,
+      paddingHorizontal: 40,
+    },
+    modalButtonText: {
+      fontSize: 16,
+      color: theme.colors.text,
+      fontWeight: 'bold',
+    },
+  });
 
 export default ChangePasswordScreen;

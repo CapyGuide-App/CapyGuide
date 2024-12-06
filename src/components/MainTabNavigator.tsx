@@ -5,7 +5,7 @@ import HomeScreen from '../screens/HomeScreen';
 import ExploreScreen from '../screens/ExploreScreen';
 import BlogScreen from '../screens/BlogScreen';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {Dimensions, TouchableOpacity, View} from 'react-native';
+import {Dimensions, StyleSheet, TouchableOpacity, View} from 'react-native';
 import Svg, {Path} from 'react-native-svg';
 import SettingsScreen from '../screens/SettingsScreen';
 import { PortalHost } from '@gorhom/portal';
@@ -21,9 +21,10 @@ const PROFILE_NAME = 'Profile';
 const {width, height} = Dimensions.get('window');
 
 const TAB_BAR_HEIGHT = 60;
-const tabBarColor = 'white';
 
 const CustomTabBarBackground = () => {
+  const theme = useTheme();
+  const styles = dynamicStyles(theme);
   const borderWidth = 10;
   const halfHeight = TAB_BAR_HEIGHT / 2;
   const halfWidth = width / 2;
@@ -60,7 +61,7 @@ const CustomTabBarBackground = () => {
           } ${offset}
                         Z
                     `}
-          fill={tabBarColor}
+          fill={styles.tabBar.backgroundColor}
         />
       </Svg>
     </View>
@@ -85,6 +86,7 @@ const CustomTabBarButton: React.FC<{children: React.ReactNode, navigation: any, 
 
 const MainTabNavigator: React.FC = () => {
   const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
 
   return (
     <>
@@ -120,9 +122,9 @@ const MainTabNavigator: React.FC = () => {
         tabBarShowLabel: false,
         tabBarStyle: {
           height: TAB_BAR_HEIGHT,
-          borderTopLeftRadius: TAB_BAR_HEIGHT / 3,
-          borderTopRightRadius: TAB_BAR_HEIGHT / 3,
-          backgroundColor: tabBarColor,
+          // borderTopLeftRadius: TAB_BAR_HEIGHT / 3,
+          // borderTopRightRadius: TAB_BAR_HEIGHT / 3,
+          backgroundColor: styles.tabBar.backgroundColor,
           elevation: 0,
           shadowOpacity: 0,
         },
@@ -156,5 +158,12 @@ const MainTabNavigator: React.FC = () => {
     </>
   );
 };
+
+const dynamicStyles = (theme: any) =>
+  StyleSheet.create({
+    tabBar: {
+      backgroundColor: theme.colors.tabBar,
+    },
+  });
 
 export default MainTabNavigator;

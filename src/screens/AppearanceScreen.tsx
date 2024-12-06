@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -7,13 +7,15 @@ import {
   Alert,
   Switch,
 } from 'react-native';
-import {ChevronRight, Eye} from 'lucide-react-native';
+import {ChevronLeft, ChevronRight} from 'lucide-react-native';
 import {useTheme} from '@rneui/themed';
 import {useThemeContext} from '../context/ThemeContext';
+import {useNavigation} from '@react-navigation/native';
 
 const AppearanceScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
+  const navigation = useNavigation();
   const {isDarkMode, toggleTheme} = useThemeContext();
   const handlePress = (option: string) => {
     Alert.alert(option, `Bạn đã chọn: ${option}`);
@@ -21,7 +23,12 @@ const AppearanceScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Appearance</Text>
+      <View style={styles.titleContainer}>
+        <TouchableOpacity onPress={navigation.goBack}>
+          <ChevronLeft size={24} color={theme.colors.primary} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Giao diện</Text>
+      </View>
 
       <View style={styles.optionsContainer}>
         <TouchableOpacity
@@ -88,11 +95,17 @@ const AppearanceScreen: React.FC = () => {
 const dynamicStyles = (theme: any) =>
   StyleSheet.create({
     container: {flex: 1, padding: 20, backgroundColor: theme.colors.background},
+    titleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+    },
     title: {
       fontSize: 24,
       fontWeight: 'bold',
       color: theme.colors.primary,
-      marginBottom: 20,
+      width: '90%',
     },
     optionsContainer: {
       backgroundColor: theme.colors.element,

@@ -1,16 +1,22 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { useTheme } from '@rneui/themed';
+import { useAuth } from '../context/AuthContext';
+import { th } from 'date-fns/locale';
 
 const ProfileScreen: React.FC = () => {
+  const { theme } = useTheme();
+  const styles = dynamicStyles(theme);
+  const {currentUser} = useAuth();
   return (
     <View style={styles.container}>
 
       <View style={styles.avatarContainer}>
         <Image
           style={styles.avatar}
-          source={{ uri: 'https://via.placeholder.com/80' }}
+          source={{uri: currentUser?.avatar}}
         />
-        <Text style={styles.username}>loilon504</Text>
+        <Text style={styles.username}>{currentUser?.displayname}</Text>
       </View>
 
       <View style={styles.tabs}>
@@ -20,34 +26,28 @@ const ProfileScreen: React.FC = () => {
 
       <View style={styles.posts}>
         <View style={styles.post}>
-          <Text style={styles.postUser}>loilon504</Text>
+          <Text style={styles.postUser}>{currentUser?.displayname}</Text>
           <Text style={styles.postTime}>5.6</Text>
           <Text style={styles.postContent}>Nội dung</Text>
           <View style={styles.reactions}>
-            <Text>❤️ Thích</Text>
-            <Text>💬 Thảo luận</Text>
           </View>
         </View>
 
         <View style={styles.post}>
-          <Text style={styles.postUser}>loilon504</Text>
+          <Text style={styles.postUser}>{currentUser?.displayname}</Text>
           <Text style={styles.postTime}>8.2</Text>
           <Text style={styles.postContent}>Nội dung</Text>
-          <View style={styles.reactions}>
-            <Text>❤️ Thích</Text>
-            <Text>💬 Thảo luận</Text>
-          </View>
         </View>
       </View>
     </View>
   );
 };
 
-const styles = StyleSheet.create({
+const dynamicStyles = (theme: any) =>StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: theme.colors.background,
   },
   header: {
     flexDirection: 'row',
@@ -57,11 +57,11 @@ const styles = StyleSheet.create({
   },
   backButton: {
     fontSize: 18,
-    color: '#555',
+    color: theme.colors.grey2,
   },
   menuButton: {
     fontSize: 18,
-    color: '#555',
+    color: theme.colors.grey2,
   },
   username: {
     fontSize: 20,
@@ -84,18 +84,18 @@ const styles = StyleSheet.create({
   },
   tab: {
     fontSize: 16,
-    color: '#aaa',
+    color: theme.colors.grey2,
   },
   tabActive: {
     fontSize: 16,
-    color: '#000',
+    color: theme.colors.text,
     fontWeight: 'bold',
   },
   posts: {
     marginTop: 10,
   },
   post: {
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.element,
     borderRadius: 8,
     padding: 15,
     marginBottom: 10,
@@ -109,15 +109,16 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     marginBottom: 5,
+    color: theme.colors.text,
   },
   postTime: {
     fontSize: 12,
-    color: '#aaa',
+    color: theme.colors.dimText,
     marginBottom: 10,
   },
   postContent: {
     fontSize: 14,
-    color: '#555',
+    color: theme.colors.text,
     marginBottom: 10,
   },
   reactions: {
