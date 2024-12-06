@@ -1,10 +1,21 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {useTheme} from '@rneui/themed';
+import { ChevronLeft } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const AboutScreen: React.FC = () => {
+  const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
+  const navigation = useNavigation();
   return (
     <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.titleContainer}>
+      <TouchableOpacity onPress={navigation.goBack}>
+        <ChevronLeft size={24} color={theme.colors.primary} />
+      </TouchableOpacity>
       <Text style={styles.title}>Về CapyGuide</Text>
+    </View>
       <Text style={styles.content}>
         CapyGuide là ứng dụng hướng dẫn người dùng với giao diện thân thiện, giúp bạn ???
       </Text>
@@ -44,29 +55,35 @@ const AboutScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const dynamicStyles = (theme: any) =>
+  StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: '#fff9f3',
+    backgroundColor: theme.colors.background,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 15,
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#ffaa00',
-    marginBottom: 20,
-    textAlign: 'center',
+    color: theme.colors.primary,
+    width: '90%',
   },
   content: {
     fontSize: 16,
-    color: '#333',
+    color: theme.colors.dimText,
     marginBottom: 20,
     lineHeight: 24,
     textAlign: 'justify',
   },
   section: {
     marginBottom: 20,
-    backgroundColor: '#fff',
+    backgroundColor: theme.colors.element,
     borderRadius: 10,
     padding: 15,
     shadowColor: '#000',
@@ -77,16 +94,16 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffaa00',
+    color: theme.colors.primary,
     marginBottom: 10,
   },
   sectionContent: {
     fontSize: 16,
-    color: '#555',
+    color: theme.colors.dimText,
     lineHeight: 22,
   },
   link: {
-    color: '#0066cc',
+    color: theme.colors.link,
     textDecorationLine: 'underline',
   },
 });

@@ -4,7 +4,7 @@ import MainTabNavigator from './components/MainTabNavigator';
 import {createStackNavigator} from '@react-navigation/stack';
 import AddPostScreen from './screens/AddPostScreen';
 import {LocationProvider, useLocation} from './context/LocationContext';
-import { AuthProvider, useAuth } from "./context/AuthContext";
+import {useAuth} from './context/AuthContext';
 import DetailScreen from './screens/DetailScreen';
 import PostDetailScreen from './screens/PostDetailScreen';
 import ProfileScreen from './screens/ProfileScreen';
@@ -20,8 +20,10 @@ import HelpScreen from './screens/HelpScreen';
 import AboutScreen from './screens/AboutScreen';
 import Geolocation from '@react-native-community/geolocation';
 import Mapbox from '@rnmapbox/maps';
-import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {MAPBOX_ACCESS_TOKEN, GOOGLE_CLIENT_ID} from '@env';
+import { StyleSheet } from 'react-native';
+import { useTheme } from '@rneui/themed';
 
 const Stack = createStackNavigator();
 
@@ -32,28 +34,32 @@ GoogleSignin.configure({
 });
 
 const AuthStack = () => (
-  <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+  <Stack.Navigator
+    initialRouteName="Login"
+    screenOptions={{headerShown: false}}>
     <Stack.Screen name="LoginScreen" component={LoginScreen} />
     <Stack.Screen name="SignUpScreen" component={SignUpScreen} />
   </Stack.Navigator>
 );
 
 const MainStack = () => {
-  const { saveLocation, updateLocation } = useLocation();
+  const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
+  const {saveLocation, updateLocation} = useLocation();
 
   useEffect(() => {
     updateLocation();
     const watchId = Geolocation.watchPosition(
-      (position) => {
+      position => {
         saveLocation(position);
       },
-      (error) => console.error("Error watching position:", error.message),
+      error => console.error('Error watching position:', error.message),
       {
         enableHighAccuracy: true,
         distanceFilter: 200,
         interval: 15000,
         fastestInterval: 10000,
-      }
+      },
     );
 
     return () => {
@@ -66,44 +72,76 @@ const MainStack = () => {
       <Stack.Screen
         name="MainTabNavigator"
         component={MainTabNavigator}
-        options={{ headerShown: false }}
+        options={{headerShown: false}}
       />
       <Stack.Screen
         name="AddPost"
         component={AddPostScreen}
         options={{
-          headerTitleAlign: "center",
+          headerTitleAlign: 'center',
           headerStyle: {
-            backgroundColor: "#fff",
+            backgroundColor: styles.header.backgroundColor,
           },
-          headerTintColor: "#000",
-          presentation: "modal",
+          headerTintColor: styles.headerTitle.color,
+          presentation: 'modal',
         }}
       />
-      <Stack.Screen name="Detail" component={DetailScreen} options={{ title: "Chi tiết" }} />
+      <Stack.Screen
+        name="Detail"
+        component={DetailScreen}
+        options={{headerShown: false}}
+      />
       <Stack.Screen
         name="PostDetailScreen"
         component={PostDetailScreen}
-        options={{ title: "Chi tiết bài viết" }}
+        options={{headerShown: false}}
       />
-      <Stack.Screen name="ProfileScreen" component={ProfileScreen} options={{ title: "Hồ sơ" }} />
+      <Stack.Screen
+        name="ProfileScreen"
+        component={ProfileScreen}
+        options={{title: 'Hồ sơ'}}
+      />
       <Stack.Screen
         name="ProfileSettingScreen"
         component={ProfileSettingsScreen}
-        options={{ title: "Chỉnh sửa hồ sơ" }}
+        options={{title: 'Chỉnh sửa hồ sơ'}}
       />
       <Stack.Screen
         name="ChangePasswordScreen"
         component={ChangePasswordScreen}
-        options={{ title: "Thay đổi mật khẩu" }}
+        options={{title: 'Thay đổi mật khẩu'}}
       />
 
-        <Stack.Screen name="AccountScreen" component={AccountScreen} options={{ title: 'Tài khoản' }} />
-        <Stack.Screen name="NotificationsScreen" component={NotificationsScreen} options={{ title: 'Thông báo' }} />
-        <Stack.Screen name="AppearanceScreen" component={AppearanceScreen} options={{ title: 'Giao diện' }} />
-        <Stack.Screen name="SecurityScreen" component={SecurityScreen} options={{ title: 'Bảo mật' }} />
-        <Stack.Screen name="HelpScreen" component={HelpScreen} options={{ title: 'Trợ giúp' }} />
-        <Stack.Screen name="AboutScreen" component={AboutScreen} options={{ title: 'Về CapyGuide' }} />
+      <Stack.Screen
+        name="AccountScreen"
+        component={AccountScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="NotificationsScreen"
+        component={NotificationsScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AppearanceScreen"
+        component={AppearanceScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="SecurityScreen"
+        component={SecurityScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="HelpScreen"
+        component={HelpScreen}
+        options={{headerShown: false}}
+      />
+      <Stack.Screen
+        name="AboutScreen"
+        component={AboutScreen}
+        options={{headerShown: false}}
+      />
     </Stack.Navigator>
   );
 };
@@ -112,16 +150,25 @@ const MainContainer = () => {
   const {isUserLoggedIn} = useAuth();
 
   return (
-      <NavigationContainer>
-        {isUserLoggedIn ? (
-          <LocationProvider>
-            <MainStack />
-          </LocationProvider>
-        ) : (
-          <AuthStack />
-        )}
-      </NavigationContainer>
+    <NavigationContainer>
+      {isUserLoggedIn ? (
+        <LocationProvider>
+          <MainStack />
+        </LocationProvider>
+      ) : (
+        <AuthStack />
+      )}
+    </NavigationContainer>
   );
 };
+
+const dynamicStyles = (theme: any) => StyleSheet.create({
+  header: {
+    backgroundColor: theme.colors.background,
+  },
+  headerTitle: {
+    color: theme.colors.text,
+  },
+});
 
 export default MainContainer;

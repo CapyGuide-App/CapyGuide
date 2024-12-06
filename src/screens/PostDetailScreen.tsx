@@ -4,13 +4,9 @@ import {
   Text,
   Image,
   StyleSheet,
-  ScrollView,
   TouchableOpacity,
-  Modal,
-  FlatList,
   Dimensions,
   Pressable,
-  TouchableWithoutFeedback,
   Linking,
   ActivityIndicator,
 } from 'react-native';
@@ -19,83 +15,116 @@ import {
   MessageCircle,
   Bookmark,
   Share2,
-  ArrowLeft,
-  ArrowRight,
   PencilLineIcon,
+  ChevronLeft,
 } from 'lucide-react-native';
 import Share from 'react-native-share';
-import { fetchBlog, fetchReactionBlog, reloadData } from '../request/DataRequest';
+import {fetchBlog, fetchReactionBlog, reloadData} from '../request/DataRequest';
 import ErrorContent from '../components/ErrorContent';
-import BottomSheet, { BottomSheetFooter, BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { formatRelativeTime } from '../styles/Methods';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import BottomSheet, {
+  BottomSheetFooter,
+  BottomSheetScrollView,
+} from '@gorhom/bottom-sheet';
+import {formatRelativeTime} from '../styles/Methods';
+import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Video from 'react-native-video';
-
+import {useTheme} from '@rneui/themed';
 const {width} = Dimensions.get('window');
 
 const PostContent = ({post}: any) => {
+  const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
   return (
     <View style={{paddingBottom: 90}}>
       <View style={styles.content}>
-          <View style={styles.categoryContainer}>
-            <Text style={styles.category}>{post.category}</Text>
-          </View>
-          <Text style={styles.title}>{post.title}</Text>
+        <View style={styles.categoryContainer}>
+          <Text style={styles.category}>{post.category}</Text>
+        </View>
+        <Text style={styles.title}>{post.title}</Text>
 
-          <View style={styles.metadataRow}>
-            <Image source={{uri: post.avatar}} style={styles.avatar} />
-            <View>
-              <Text style={styles.author}>{post.displayname}</Text>
-              <Text style={styles.metadata}>
-                {post && formatRelativeTime(post.created_at)} • {post.views} views
-              </Text>
-            </View>
+        <View style={styles.metadataRow}>
+          <Image source={{uri: post.avatar}} style={styles.avatar} />
+          <View>
+            <Text style={styles.author}>{post.displayname}</Text>
+            <Text style={styles.metadata}>
+              {post && formatRelativeTime(post.created_at)} • {post.views} views
+            </Text>
           </View>
         </View>
-        {post.content.map((element: any, index: number) => {
-          switch (element.content_type) {
-            case 'text':
-              return <Text key={index} style={styles.textContent}>{element.content_data}</Text>;
-            case 'image':
-              return (
-                <View style={styles.inlineImageContainer} key={index}>
-                  <Image source={{uri: element.content_data}} style={styles.inlineImage} />
-                </View>
-              );
-            case 'link':
-              return (
-                <Text style={{color: '#007BFF'}} onPress={() => Linking.openURL(element.content_data)} key={index}>
-                  {element.content_data}
-                </Text>
-              );
-            case 'video':
-              return (
-                <View key={index}>
-                  <Video
-                    source={{uri: element.content_data}}
-                    style={{width: width - 40, height: 200}}
-                    controls
-                    paused
-                  />
-                </View>
-              );
-            default:
-              return null;
-          }
-        })}
+      </View>
+      {post.content.map((element: any, index: number) => {
+        switch (element.content_type) {
+          case 'text':
+            return (
+              <Text key={index} style={styles.textContent}>
+                {element.content_data}
+              </Text>
+            );
+          case 'image':
+            return (
+              <View style={styles.inlineImageContainer} key={index}>
+                <Image
+                  source={{uri: element.content_data}}
+                  style={styles.inlineImage}
+                />
+              </View>
+            );
+          case 'link':
+            return (
+              <Text
+                style={{color: '#007BFF'}}
+                onPress={() => Linking.openURL(element.content_data)}
+                key={index}>
+                {element.content_data}
+              </Text>
+            );
+          case 'video':
+            return (
+              <View key={index}>
+                <Video
+                  source={{uri: element.content_data}}
+                  style={{width: width - 40, height: 200}}
+                  controls
+                  paused
+                />
+              </View>
+            );
+          default:
+            return null;
+        }
+      })}
     </View>
   );
 };
 
 const PostDetailScreen: React.FC<any> = ({route}) => {
   const navigation = useNavigation();
+  const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
   const {postId} = route.params;
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [modalVisible, setModalVisible] = useState(false);
   const [loved, setLoved] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [post, setPost] = useState(null);
-  const [status, setStatus] = useState<'loading' | 'error' | 'success'>('loading');
+
+  interface Post {
+    picture?: string;
+    category?: string;
+    title?: string;
+    avatar?: string;
+    displayname?: string;
+    created_at?: string;
+    views?: number;
+    content: Array<{content_type: string; content_data: string}>;
+    loved?: boolean;
+    saved?: boolean;
+    url?: string;
+  }
+
+  const [post, setPost] = useState<Post | null>(null);
+  const [status, setStatus] = useState<'loading' | 'error' | 'success'>(
+    'loading',
+  );
 
   useEffect(() => {
     const controller = new AbortController();
@@ -138,37 +167,23 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
       default:
         break;
     }
-  }
+  };
 
   useEffect(() => {
     if (post) {
-      setLoved(post.loved);
-      setSaved(post.saved);
+      console.log(post);
+      setLoved(post.loved ?? false);
+      setSaved(post.saved ?? false);
     }
   }, [post]);
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerRight: () => {
-        if (!post?.owner) return null;
-        return (
-          <TouchableOpacity
-            style={{marginRight: 20}}
-            onPress={() => navigation.navigate('AddPost', {title: 'Edit Post', post})}>
-            <PencilLineIcon size={24} color="#333" />
-          </TouchableOpacity>
-        );
-      }
-    });
-  }, [navigation, post]);
-
   useFocusEffect(
     React.useCallback(() => {
       reload();
-    }, [])
+    }, []),
   );
 
   const renderFooter = (props: any) => {
@@ -180,42 +195,66 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
             onPress={() => handleReactions('love')}>
             <Heart
               size={24}
-              color={loved ? '#ff5050' : '#333'}
+              color={loved ? '#ff5050' : theme.colors.black}
               fill={loved ? '#ff5050' : 'none'}
             />
             <Text
-              style={[styles.actionText, {color: loved ? '#ff5050' : '#333'}]}>
+              style={[
+                styles.actionText,
+                {color: loved ? '#ff5050' : theme.colors.black},
+              ]}>
               Love
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionButton}>
-            <MessageCircle size={24} color="#333" />
+            <MessageCircle size={24} color={theme.colors.black} />
             <Text style={styles.actionText}>Comment</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => handleReactions('save')}>
-            <Bookmark size={24} color="#333" fill={saved ? '#333' : 'white'} />
+            <Bookmark
+              size={24}
+              color={theme.colors.black}
+              fill={saved ? theme.colors.black : 'transparent'}
+            />
             <Text style={styles.actionText}>Save</Text>
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.actionButton}
-            onPress={() => handleShare({title: post?.title, url: post?.picture})}>
-            <Share2 size={24} color="#333" />
+            onPress={() =>
+              handleShare({title: post?.title ?? '', url: post?.picture ?? ''})
+            }>
+            <Share2 size={24} color={theme.colors.black} />
             <Text style={styles.actionText}>Share</Text>
           </TouchableOpacity>
         </View>
       </BottomSheetFooter>
-  )}
+    );
+  };
 
   return (
     <View style={styles.container}>
+    <View style={styles.fixedHeader}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerButton}>
+        <ChevronLeft size={24} color={theme.colors.white}/>
+      </TouchableOpacity>
+      {post?.owner && (
+        <TouchableOpacity
+          onPress={() => navigation.navigate('AddPost', {title: 'Edit Post', post})}
+          style={styles.headerButton}>
+          <PencilLineIcon size={24} color={theme.colors.white} />
+        </TouchableOpacity>
+      )}
+    </View>
       <View style={styles.imageWrapper}>
         <Pressable onPress={openModal}>
-          {post?.picture && <Image source={{uri: post?.picture}} style={styles.titleImage} />}
+          {post?.picture && (
+            <Image source={{uri: post?.picture}} style={styles.titleImage} />
+          )}
         </Pressable>
       </View>
 
@@ -225,10 +264,15 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
         footerComponent={renderFooter}
         animateOnMount={false}
         overDragResistanceFactor={1}
-      >
+        backgroundStyle={{borderRadius: 20, backgroundColor: theme.colors.background}}
+        handleIndicatorStyle={{
+          backgroundColor: theme.colors.text,
+        }}>
         <BottomSheetScrollView style={styles.scrollContent}>
           <View>
-            {status === 'loading' && <ActivityIndicator size="large" color="#007BFF" />}
+            {status === 'loading' && (
+              <ActivityIndicator size="large" color="#007BFF" />
+            )}
             {status === 'error' && <ErrorContent onRetry={reload} />}
             {status === 'success' && <PostContent post={post} />}
           </View>
@@ -238,140 +282,170 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f9f9f9',
-  },
-  titleImage: {
-    width: '100%',
-    height: 230,
-    resizeMode: 'cover',
-  },
-  imageWrapper: {
-    position: 'relative',
-  },
-  image: {
-    width: '100%',
-    height: 200,
-    resizeMode: 'cover',
-  },
-  thumbnail: {
-    width: 60,
-    height: 60,
-    borderRadius: 5,
-    marginRight: 10,
-  },
-  activeThumbnail: {
-    borderWidth: 2,
-    borderColor: '#007BFF',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-  },
-  fullImage: {
-    width: '90%',
-    height: '70%',
-    resizeMode: 'contain',
-  },
-  scrollContent: {
-    padding: 20,
-    marginTop: -20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    backgroundColor: '#fff',
-    overflow: 'hidden',
-  },
-  content: {
-    backgroundColor: '#fff',
-    borderBottomColor: '#eee',
-    borderBottomWidth: 2,
-    marginBottom: 20,
-  },
-  categoryContainer: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#f6f6f6',
-    borderRadius: 12,
-    paddingVertical: 4,
-    paddingHorizontal: 8,
-    marginBottom: 10,
-  },
-  category: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#EA9400',
-  },
-  title: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
-  },
-  metadataRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    marginRight: 10,
-  },
-  author: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  metadata: {
-    fontSize: 14,
-    color: '#666',
-    marginTop: 2,
-    minWidth: '100%',
-  },
+const dynamicStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: '#f9f9f9',
+    },
+    fixedHeader: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 10,
+      paddingVertical: 10,
+      backgroundColor: 'transparent',
+      zIndex: 1000,
+      elevation: 5,
+      shadowColor: '#000',
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      shadowOffset: {width: 0, height: 2},
+    },
+    headerButton: {
+      padding: 10,
+      borderRadius: '50%',
+      backgroundColor: `${theme.colors.black}90`,
+    },
+    titleImage: {
+      width: '100%',
+      height: 200,
+      resizeMode: 'cover',
+    },
+    imageWrapper: {
+      position: 'relative',
+    },
+    image: {
+      width: '100%',
+      height: 200,
+      resizeMode: 'cover',
+    },
+    thumbnail: {
+      width: 60,
+      height: 60,
+      borderRadius: 5,
+      marginRight: 10,
+    },
+    activeThumbnail: {
+      borderWidth: 2,
+      borderColor: '#007BFF',
+    },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    },
+    closeModal: {
+      position: 'absolute',
+      top: 40,
+      left: 20,
+      zIndex: 2,
+    },
+    fullImage: {
+      width: '90%',
+      height: '70%',
+      resizeMode: 'contain',
+    },
+    scrollContent: {
+      padding: 20,
+      marginTop: -20,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      paddingHorizontal: 20,
+      overflow: 'hidden',
+      backgroundColor: theme.colors.background,
+    },
+    content: {
+      borderBottomWidth: 2,
+      marginBottom: 20,
+      borderBottomColor: theme.colors.border,
+    },
+    categoryContainer: {
+      alignSelf: 'flex-start',
+      backgroundColor: theme.colors.element,
+      borderRadius: 12,
+      paddingVertical: 4,
+      paddingHorizontal: 8,
+      marginBottom: 10,
+    },
+    category: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: theme.colors.primary,
+    },
+    title: {
+      fontSize: 22,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+      marginBottom: 15,
+    },
+    metadataRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    avatar: {
+      width: 40,
+      height: 40,
+      borderRadius: 20,
+      marginRight: 10,
+    },
+    author: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+    },
+    metadata: {
+      fontSize: 14,
+      color: theme.colors.dimText,
+      marginTop: 2,
+      minWidth: '100%',
+    },
 
-  textContent: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#444',
-    marginBottom: 20,
-  },
-  inlineImageContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 10,
-  },
-  inlineImage: {
-    width: '80%',
-    height: 200,
-    resizeMode: 'cover',
-    borderRadius: 8,
-  },
-
-  actionBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#eee',
-    backgroundColor: '#fff',
-  },
-  actionButton: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  actionText: {
-    fontSize: 12,
-    color: '#333',
-    marginTop: 4,
-    width: 60,
-    textAlign: 'center',
-  },
-});
+    textContent: {
+      fontSize: 16,
+      lineHeight: 24,
+      color: theme.colors.text,
+      marginBottom: 20,
+    },
+    inlineImageContainer: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: 10,
+    },
+    inlineImage: {
+      width: '80%',
+      height: 200,
+      resizeMode: 'cover',
+      borderRadius: 8,
+    },
+    link: {color: theme.colors.link},
+    actionBar: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      alignItems: 'center',
+      paddingVertical: 10,
+      borderTopWidth: 1,
+      borderTopColor: '#eee',
+      backgroundColor: theme.colors.background,
+    },
+    actionButton: {
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    actionText: {
+      fontSize: 12,
+      color: theme.colors.text,
+      marginTop: 4,
+      width: 60,
+      textAlign: 'center',
+    },
+  });
 
 export default PostDetailScreen;

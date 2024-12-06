@@ -158,9 +158,21 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
       {!isSignUp && (
         <View style={styles.socialContainer}>
+        <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
+          <Image
+            source={require("../assets/google.png")}
+            style={styles.socialIcon}
+          />
+        </TouchableOpacity>
           <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
             <Image
-              source={require("../assets/google.png")}
+              source={require("../assets/facebook.png")}
+              style={styles.socialIcon}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
+            <Image
+              source={require("../assets/apple.png")}
               style={styles.socialIcon}
             />
           </TouchableOpacity>
@@ -227,7 +239,7 @@ const styles = StyleSheet.create({
   },
   socialContainer: {
     flexDirection: "row",
-    justifyContent: "center",
+    justifyContent: "space-between",
     width: "80%",
   },
   socialButton: {
