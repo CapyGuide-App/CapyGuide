@@ -263,7 +263,11 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
         index={0}
         footerComponent={renderFooter}
         animateOnMount={false}
-        overDragResistanceFactor={1}>
+        overDragResistanceFactor={1}
+        backgroundStyle={{borderRadius: 20, backgroundColor: theme.colors.background}}
+        handleIndicatorStyle={{
+          backgroundColor: theme.colors.text,
+        }}>
         <BottomSheetScrollView style={styles.scrollContent}>
           <View>
             {status === 'loading' && (
