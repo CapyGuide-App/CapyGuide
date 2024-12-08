@@ -58,7 +58,7 @@ const AppearanceScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Cỡ chữ</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.button} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -67,7 +67,7 @@ const AppearanceScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Màu nền</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.button} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -76,7 +76,7 @@ const AppearanceScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Phong cách hiển thị</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.button} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -85,7 +85,7 @@ const AppearanceScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Hình nền ứng dụng</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.button} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
       </View>
     </View>

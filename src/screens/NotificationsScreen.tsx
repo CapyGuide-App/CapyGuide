@@ -26,35 +26,35 @@ const NotificationsScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Thông báo ứng dụng</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.option} onPress={() => handlePress('Thông báo email')}>
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Thông báo email</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.option} onPress={() => handlePress('Thông báo đẩy')}>
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Thông báo đẩy</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.option} onPress={() => handlePress('Lịch sử thông báo')}>
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Lịch sử thông báo</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity style={[styles.option, styles.bottomOption]} onPress={() => handlePress('Tần suất thông báo')}>
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Tần suất thông báo</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
       </View>
     </View>

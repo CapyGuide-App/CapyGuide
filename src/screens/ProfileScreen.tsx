@@ -28,7 +28,7 @@ const ProfileScreen: React.FC = () => {
         <View style={styles.post}>
           <Text style={styles.postUser}>{currentUser?.displayname}</Text>
           <Text style={styles.postTime}>5.6</Text>
-          <Text style={styles.postContent}>Nội dung</Text>
+          <Text style={styles.postContent}>Tuy đẹp nhưng rất đông</Text>
           <View style={styles.reactions}>
           </View>
         </View>
@@ -36,7 +36,7 @@ const ProfileScreen: React.FC = () => {
         <View style={styles.post}>
           <Text style={styles.postUser}>{currentUser?.displayname}</Text>
           <Text style={styles.postTime}>8.2</Text>
-          <Text style={styles.postContent}>Nội dung</Text>
+          <Text style={styles.postContent}>Địa điểm này khá là chilll</Text>
         </View>
       </View>
     </View>
@@ -64,17 +64,18 @@ const dynamicStyles = (theme: any) =>StyleSheet.create({
     color: theme.colors.grey2,
   },
   username: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   avatarContainer: {
     alignItems: 'center',
+    marginTop: 20,
     marginBottom: 20,
   },
   avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     marginBottom: 10,
   },
   tabs: {
@@ -83,11 +84,11 @@ const dynamicStyles = (theme: any) =>StyleSheet.create({
     marginBottom: 20,
   },
   tab: {
-    fontSize: 16,
+    fontSize: 18,
     color: theme.colors.grey2,
   },
   tabActive: {
-    fontSize: 16,
+    fontSize: 18,
     color: theme.colors.text,
     fontWeight: 'bold',
   },
@@ -106,13 +107,13 @@ const dynamicStyles = (theme: any) =>StyleSheet.create({
     elevation: 1,
   },
   postUser: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: 'bold',
     marginBottom: 5,
     color: theme.colors.text,
   },
   postTime: {
-    fontSize: 12,
+    fontSize: 13,
     color: theme.colors.dimText,
     marginBottom: 10,
   },

@@ -107,7 +107,7 @@ const ProfileSettingsScreen = ({ navigation }: { navigation: any }) => {
 
       
       <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
-        <Text style={styles.saveButtonText}>Save changes</Text>
+        <Text style={styles.saveButtonText}>Lưu Thay Đổi</Text>
       </TouchableOpacity>
 
       <Modal visible={modalVisible} transparent={true} animationType="fade">
@@ -146,6 +146,7 @@ const dynamicStyles = (theme: any) => StyleSheet.create({
   },
   avatarContainer: {
     position: 'relative',
+    marginTop: 30,
     marginBottom: 30,
     alignItems: 'center',
   },
@@ -180,7 +181,7 @@ const dynamicStyles = (theme: any) => StyleSheet.create({
     marginBottom: 20,
   },
   label: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
     color: theme.colors.text,
     marginBottom: 5,
@@ -207,8 +208,8 @@ const dynamicStyles = (theme: any) => StyleSheet.create({
     borderRadius: 30,
   },
   saveButtonText: {
-    color: theme.colors.text,
-    fontSize: 16,
+    color: '#fff',
+    fontSize: 17,
     fontWeight: '600',
   },
   modalContainer: {

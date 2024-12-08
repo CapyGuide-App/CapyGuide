@@ -28,7 +28,7 @@ const HelpScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Câu hỏi thường gặp</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -37,7 +37,7 @@ const HelpScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Hướng dẫn sử dụng</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -46,7 +46,7 @@ const HelpScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Liên hệ hỗ trợ</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -55,7 +55,7 @@ const HelpScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Phản hồi</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -64,7 +64,7 @@ const HelpScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Điều khoản và chính sách</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
       </View>
     </View>
