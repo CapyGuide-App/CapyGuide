@@ -22,25 +22,22 @@ import {
   MapPin,
   Map,
   Utensils,
-  Heart,
-  MessageCircle,
-  Share2,
   Navigation2,
-  HotelIcon,
   BlocksIcon,
   ChevronLeft,
 } from 'lucide-react-native';
-import Comment, {CommentItem} from '../components/Comment';
+import Comment from '../components/Comment';
 import {MapView, Camera, MarkerView} from '@rnmapbox/maps';
 import PlacePin from '../assets/place-pin.png';
 import FoodPin from '../assets/food-pin.png';
-import Share from 'react-native-share';
 import {useTheme} from '@rneui/themed';
+import BottomBar from '../components/BottomBar';
 
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {googleMapRoute} from '../request/GoogleMapRequest';
 import {fetchPOI, reloadData} from '../request/DataRequest';
+import ModalComment from '../components/ModalComment';
 
 type DetailScreenRouteProp = RouteProp<
   {Detail: {poiID: string; initItem: any}},
@@ -62,8 +59,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
     null,
   );
   const [modalVisible, setModalVisible] = useState(false);
-  const [loved, setLoved] = useState(false);
-  const [saved, setSaved] = useState(false);
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
@@ -106,29 +102,19 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
     };
   }, [poiID]);
 
-  const handleShare = async ({title, url}: {title: string; url?: string}) => {
-    try {
-      await Share.open({
-        title: 'Share Post',
-        message: `Check out this post: ${title}`,
-        url: url || '',
-      });
-    } catch (error) {
-      console.log('Share Error: ', error);
-    }
-  };
-
   if (!item) {
     return null;
   }
 
   return (
     <View style={styles.container}>
-    <View style={styles.fixedHeader}>
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerButton}>
-        <ChevronLeft size={24} color={theme.colors.white}/>
-      </TouchableOpacity>
-    </View>
+      <View style={styles.fixedHeader}>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.headerButton}>
+          <ChevronLeft size={24} color={theme.colors.white} />
+        </TouchableOpacity>
+      </View>
       <ScrollView style={styles.container}>
         <Pressable onPress={openModal}>
           <Image source={{uri: initItem.picture}} style={styles.mainImage} />
@@ -254,47 +240,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
 
         <Comment poiId={item.id} data={item.reviews} />
       </ScrollView>
-      <View style={styles.actionBar}>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => setLoved(!loved)}>
-          <Heart
-            size={24}
-            color={loved ? '#ff5050' : theme.colors.black}
-            fill={loved ? '#ff5050' : 'none'}
-          />
-          <Text
-            style={[
-              styles.actionText,
-              {color: loved ? '#ff5050' : theme.colors.black},
-            ]}>
-            Love
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton}>
-          <MessageCircle size={24} color={theme.colors.black} />
-          <Text style={styles.actionText}>Comment</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => setSaved(!saved)}>
-          <Bookmark
-            size={24}
-            color={theme.colors.black}
-            fill={saved ? theme.colors.black : 'transparent'}
-          />
-          <Text style={styles.actionText}>Save</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => handleShare({title: item.name, url: item.url})}>
-          <Share2 size={24} color={theme.colors.black} />
-          <Text style={styles.actionText}>Share</Text>
-        </TouchableOpacity>
-      </View>
+      <BottomBar item={item} onComment={() => setCommentModalVisible(true)} />
       <Modal visible={modalVisible} transparent={true} animationType="fade">
         <TouchableWithoutFeedback onPress={closeModal}>
           <View style={styles.modalContainer}>
@@ -307,6 +253,14 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+      <ModalComment
+        visible={commentModalVisible}
+        onClose={() => setCommentModalVisible(false)}
+        onSubmit={comment => {
+          console.log('Bình luận:', comment);
+          setCommentModalVisible(false);
+        }}
+      />
     </View>
   );
 };

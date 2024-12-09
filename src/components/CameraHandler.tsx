@@ -126,6 +126,7 @@ const styles = StyleSheet.create({
     color: '#000',
     marginLeft: 10,
     textAlign: 'center',
+    width: '60%',
   },
   modalCancel: {
     marginTop: 10,
