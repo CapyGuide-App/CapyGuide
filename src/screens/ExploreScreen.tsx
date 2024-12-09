@@ -19,6 +19,16 @@ import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {hexToRGBA} from '../styles/Methods';
 
+import {useBottomSheetSpringConfigs} from '@gorhom/bottom-sheet';
+import Animated, {
+  Extrapolation,
+  interpolate,
+  ReduceMotion,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
+import SearchBar from '../components/SearchBar';
+
 type ExploreScreenProps = {
   route: RouteProp<{params: {indexTab?: number}}, 'params'>;
   navigation: StackNavigationProp<any>;
@@ -265,16 +275,6 @@ const dynamicStyles = (theme: any) =>
       alignItems: 'center',
     },
   });
-
-import {useBottomSheetSpringConfigs} from '@gorhom/bottom-sheet';
-import Animated, {
-  Extrapolation,
-  interpolate,
-  ReduceMotion,
-  useAnimatedStyle,
-  useSharedValue,
-} from 'react-native-reanimated';
-import SearchBar from '../components/SearchBar';
 
 export function useBottomSheetIOSReduceMotionOverride() {
   const animationConfigs = useBottomSheetSpringConfigs({

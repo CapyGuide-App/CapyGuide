@@ -1,44 +1,48 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { useTheme } from '@rneui/themed';
 import { useAuth } from '../context/AuthContext';
+import { Tab, useTheme } from '@rneui/themed';
 import { th } from 'date-fns/locale';
 
 const ProfileScreen: React.FC = () => {
-  const { theme } = useTheme();
-  const styles = dynamicStyles(theme);
   const {currentUser} = useAuth();
+  const [indexTab, setIndexTab] = React.useState(0);
+  const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
+
   return (
     <View style={styles.container}>
-
       <View style={styles.avatarContainer}>
         <Image
           style={styles.avatar}
-          source={{uri: currentUser?.avatar}}
+          source={{ uri: currentUser?.avatar }}
         />
-        <Text style={styles.username}>{currentUser?.displayname}</Text>
+        <Text style={styles.displayname}>{currentUser?.displayname}</Text>
+        <Text style={styles.username}>@{currentUser?.username}</Text>
       </View>
 
-      <View style={styles.tabs}>
-        <Text style={styles.tabActive}>Hoạt động</Text>
-        <Text style={styles.tab}>Sưu tập</Text>
-      </View>
+      <Tab
+        value={indexTab}
+        onChange={setIndexTab}
+        indicatorStyle={{ backgroundColor: theme.colors.primary }}
+        titleStyle={{
+          fontSize: 15,
+          fontWeight: 'bold',
+          color: theme.colors.primary,
+        }}
+        dense
+      >
+        <Tab.Item
+          title="Hoạt động"
+        />
+        <Tab.Item
+          title="Đã lưu"
+        />
+        <Tab.Item
+          title="Bộ sưu tập"
+        />
+      </Tab>
 
-      <View style={styles.posts}>
-        <View style={styles.post}>
-          <Text style={styles.postUser}>{currentUser?.displayname}</Text>
-          <Text style={styles.postTime}>5.6</Text>
-          <Text style={styles.postContent}>Tuy đẹp nhưng rất đông</Text>
-          <View style={styles.reactions}>
-          </View>
-        </View>
-
-        <View style={styles.post}>
-          <Text style={styles.postUser}>{currentUser?.displayname}</Text>
-          <Text style={styles.postTime}>8.2</Text>
-          <Text style={styles.postContent}>Địa điểm này khá là chilll</Text>
-        </View>
-      </View>
     </View>
   );
 };
@@ -63,9 +67,13 @@ const dynamicStyles = (theme: any) =>StyleSheet.create({
     fontSize: 18,
     color: theme.colors.grey2,
   },
-  username: {
-    fontSize: 22,
+  displayname: {
+    fontSize: 20,
     fontWeight: 'bold',
+  },
+  username: {
+    fontSize: 15,
+    color: '#aaa',
   },
   avatarContainer: {
     alignItems: 'center',

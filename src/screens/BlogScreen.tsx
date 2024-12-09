@@ -50,39 +50,31 @@ const BlogScreen: React.FC = () => {
   }, [isFocused]);
 
   return (
-    <View style={styles.container}>
-      <SearchBar
-        backgroundColor={hexToRGBA(theme.colors.primary, 0.15)}
-        contentContainerStyle={styles.container}
-        placeholder="Tìm kiếm bài viết"
-        type="article"
-        isModal={false}
-        data={data}
-        searchField="title"
-        handleSearchData={handleSearch}
-      />
-      {status === 'loading' && (
-        <ActivityIndicator size="large" color={theme.colors.primary} />
-      )}
-      {status === 'error' && (
-        <ErrorContent
-          onRetry={() => reloadData(fetchBlogs, setData, setStatus)}
+      <View style={styles.container}>
+        <SearchBar
+          backgroundColor={hexToRGBA(theme.colors.primary, 0.15)}
+          contentContainerStyle={styles.container}
+          placeholder="Tìm kiếm bài viết"
+          type="article"
+          isModal={false}
+          data={data}
+          searchField="title"
+          handleSearchData={handleSearch}
         />
-      )}
-      {status === 'success' && (
-        <FlashList
-          refreshing={status === 'loading'}
-          onRefresh={() => reloadData(fetchBlogs(), setData, setStatus)}
-          data={searchData}
-          renderItem={({item}) => (
-            <Post item={item} onPress={() => handlePostPress(item)} />
-          )}
-          keyExtractor={item => item.id.toString()}
-          removeClippedSubviews={true}
-          estimatedItemSize={300}
-        />
-      )}
-    </View>
+        {status === "error" ? <ErrorContent onRetry={() => reloadData(fetchBlogs, setData, setStatus)} />
+          : <FlashList
+            refreshing={status === "loading"}
+            onRefresh={() => reloadData(fetchBlogs(), setData, setStatus)}
+            data={searchData}
+            renderItem={({ item }) => (
+              <Post item={item} onPress={() => handlePostPress(item)} />
+            )}
+            keyExtractor={(item) => item.id.toString()}
+            removeClippedSubviews={true}
+            estimatedItemSize={300}
+          />
+        }
+      </View>
   );
 };
 
