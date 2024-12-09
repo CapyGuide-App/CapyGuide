@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   StyleSheet,
   Image,
   Alert,
+  ImageBackground,
+  Keyboard,
 } from "react-native";
 import { Eye, EyeOff } from "lucide-react-native";
 import { hexToRGBA } from "../styles/Methods";
@@ -48,13 +50,40 @@ const AuthForm: React.FC<AuthFormProps> = ({
     confirmPassword: "",
   });
   const {login} = useAuth();
+  const [focusedFields, setFocusedFields] = useState<{ [key: string]: boolean }>(
+    {}
+  );
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const showSubscription = Keyboard.addListener("keyboardDidShow", () => {
+      setKeyboardVisible(true);
+    });
+    const hideSubscription = Keyboard.addListener("keyboardDidHide", () => {
+      setKeyboardVisible(false);
+    });
+  
+    return () => {
+      showSubscription.remove();
+      hideSubscription.remove();
+    };
+  }, []);
+
+  const handleFocus = (fieldName: string) => {
+    setFocusedFields((prev) => ({ ...prev, [fieldName]: true }));
+  };
+  
+  const handleBlur = (fieldName: string) => {
+    setFocusedFields((prev) => ({ ...prev, [fieldName]: false }));
+  };
 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!isPasswordVisible);
   };
 
   const { theme } = useTheme();
-  const placeholderTextColor = hexToRGBA(theme.colors.primary, 0.3);
+  // const placeholderTextColor = hexToRGBA(theme.colors.primary, 0.3);
+  const placeholderTextColor = "#aaa";
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -74,133 +103,194 @@ const AuthForm: React.FC<AuthFormProps> = ({
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>{title}</Text>
-      {isSignUp && (
-        <View style={styles.inputContainer}>
+    <ImageBackground
+      source={require('./../assets/capy1.jpg')} // Đường dẫn đến ảnh nền
+      style={styles.background}
+      imageStyle={styles.image}>
+      <View style={styles.container}>
+        <Text style={styles.header}>{title}</Text>
+
+        {(!isSignUp || !isKeyboardVisible) && (
+          <View style={styles.inlineContainer}>
+            <Text style={styles.promptText}>{promptText} </Text>
+            <Text style={styles.switchText} onPress={onSwitch}>
+              {switchText}
+            </Text>
+          </View>
+        )}
+
+        {isSignUp && (
+          <View
+            style={[
+              styles.inputContainer,
+              focusedFields["name"] && styles.inputContainerOnSelected,
+            ]}
+          >
+            <TextInput
+              placeholder="Name"
+              style={styles.input}
+              placeholderTextColor={placeholderTextColor}
+              onChangeText={(value) => handleChange("displayName", value)}
+              value={formData.displayName}
+              onFocus={() => handleFocus("name")}
+              onBlur={() => handleBlur("name")}
+            />
+          </View>
+        )}
+
+        {isSignUp && (
+          <View
+            style={[
+              styles.inputContainer,
+              focusedFields["email"] && styles.inputContainerOnSelected,
+            ]}
+          >
+            <TextInput
+              placeholder="Email address"
+              style={styles.input}
+              placeholderTextColor={placeholderTextColor}
+              onChangeText={(value) => handleChange("email", value)}
+              value={formData.email}
+              onFocus={() => handleFocus("email")}
+              onBlur={() => handleBlur("email")}
+            />
+          </View>
+        )}
+
+        <View
+          style={[
+            styles.inputContainer,
+            focusedFields["username"] && styles.inputContainerOnSelected,
+          ]}
+        >
           <TextInput
-            placeholder="Name"
+            placeholder="Username"
             style={styles.input}
             placeholderTextColor={placeholderTextColor}
-            onChangeText={(value) => handleChange("displayName", value)}
-            value={formData.displayName}
+            onChangeText={(value) => handleChange("username", value)}
+            value={formData.username}
+            onFocus={() => handleFocus("username")}
+            onBlur={() => handleBlur("username")}
           />
         </View>
-      )}
 
-      {isSignUp && (
-        <View style={styles.inputContainer}>
+        <View
+          style={[
+            styles.inputContainer,
+            focusedFields["password"] && styles.inputContainerOnSelected,
+          ]}
+        >
           <TextInput
-            placeholder="Email address"
-            style={styles.input}
-            placeholderTextColor={placeholderTextColor}
-            onChangeText={(value) => handleChange("email", value)}
-            value={formData.email}
-          />
-        </View>
-      )}
-
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Username"
-          style={styles.input}
-          placeholderTextColor={placeholderTextColor}
-          onChangeText={(value) => handleChange("username", value)}
-          value={formData.username}
-        />
-      </View>
-
-      <View style={styles.inputContainer}>
-        <TextInput
-          placeholder="Password"
-          secureTextEntry={!isPasswordVisible}
-          style={styles.input}
-          placeholderTextColor={placeholderTextColor}
-          onChangeText={(value) => handleChange("password", value)}
-          value={formData.password}
-        />
-        <TouchableOpacity onPress={togglePasswordVisibility}>
-          {isPasswordVisible ? (
-            <Eye color="#f5a623" size={20} />
-          ) : (
-            <EyeOff color="#f5a623" size={20} />
-          )}
-        </TouchableOpacity>
-      </View>
-
-      {isSignUp && (
-        <View style={styles.inputContainer}>
-          <TextInput
-            placeholder="Confirm Password"
+            placeholder="Password"
             secureTextEntry={!isPasswordVisible}
             style={styles.input}
             placeholderTextColor={placeholderTextColor}
-            onChangeText={(value) => handleChange("confirmPassword", value)}
-            value={formData.confirmPassword}
+            onChangeText={(value) => handleChange("password", value)}
+            value={formData.password}
+            onFocus={() => handleFocus("password")}
+            onBlur={() => handleBlur("password")}
           />
           <TouchableOpacity onPress={togglePasswordVisibility}>
             {isPasswordVisible ? (
-              <Eye color="#f5a623" size={20} />
+              <Eye color="#000" size={20} />
             ) : (
-              <EyeOff color="#f5a623" size={20} />
+              <EyeOff color="#666" size={20} />
             )}
           </TouchableOpacity>
         </View>
-      )}
 
-      <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>{buttonText}</Text>
-      </TouchableOpacity>
+        {isSignUp && (
+          <View
+            style={[
+              styles.inputContainer,
+              focusedFields["confirm"] && styles.inputContainerOnSelected,
+            ]}
+          >
+            <TextInput
+              placeholder="Confirm Password"
+              secureTextEntry={!isPasswordVisible}
+              style={styles.input}
+              placeholderTextColor={placeholderTextColor}
+              onChangeText={(value) => handleChange("confirmPassword", value)}
+              value={formData.confirmPassword}
+              onFocus={() => handleFocus("confirm")}
+              onBlur={() => handleBlur("confirm")}
+            />
+            <TouchableOpacity onPress={togglePasswordVisibility}>
+              {isPasswordVisible ? (
+                <Eye color="#000" size={20} />
+              ) : (
+                <EyeOff color="#666" size={20} />
+              )}
+            </TouchableOpacity>
+          </View>
+        )}
 
-      {!isSignUp && <Text style={styles.orText}>
-        or sign in with
-      </Text>}
-
-      {!isSignUp && (
-        <View style={styles.socialContainer}>
-        <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
-          <Image
-            source={require("../assets/google.png")}
-            style={styles.socialIcon}
-          />
+        <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+          <Text style={styles.buttonText}>{buttonText}</Text>
         </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
-            <Image
-              source={require("../assets/facebook.png")}
-              style={styles.socialIcon}
-            />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
-            <Image
-              source={require("../assets/apple.png")}
-              style={styles.socialIcon}
-            />
-          </TouchableOpacity>
-        </View>
-      )}
 
-      <View style={styles.inlineContainer}>
-        <Text style={styles.promptText}>{promptText} </Text>
-        <Text style={styles.switchText} onPress={onSwitch}>
-          {switchText}
-        </Text>
+        {!isSignUp && <Text style={styles.orText}>
+          or sign in with
+        </Text>}
+
+        {!isSignUp && (
+          <View style={styles.socialContainer}>
+          <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
+            <Image
+              source={require("../assets/google.png")}
+              style={styles.socialIcon}
+            />
+          </TouchableOpacity>
+            <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
+              <Image
+                source={require("../assets/facebook.png")}
+                style={styles.socialIcon}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.socialButton} onPress={handleGoogleLogin}>
+              <Image
+                source={require("../assets/apple.png")}
+                style={styles.socialIcon}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* {!isKeyboardVisible && (
+          <View style={styles.inlineContainer}>
+            <Text style={styles.promptText}>{promptText} </Text>
+            <Text style={styles.switchText} onPress={onSwitch}>
+              {switchText}
+            </Text>
+          </View>
+        )} */}
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
+  background: {
+    flex: 1, // Phủ toàn bộ màn hình
+  },
+  image: {
+    opacity: 0.6, // Điều chỉnh độ mờ của ảnh nền
+  },
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "#FFF9F0",
+    // backgroundColor: "#FFF9F0",
+    // backgroundColor: "#f9f9f9",
+    backgroundColor: 'rgba(255, 255, 255, 0)',
     paddingHorizontal: 20,
   },
   header: {
     fontSize: 24,
     fontWeight: "bold",
-    color: "#F5A623",
+    // color: "#F5A623",
+    color: "#000",
     marginBottom: 30,
   },
   inputContainer: {
@@ -208,11 +298,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#ffffff",
     borderRadius: 10,
-    borderWidth: 1,
-    borderColor: "#F5A623",
+    borderWidth: 2,
+    // borderColor: "#F5A623",
+    borderColor: "#D8D8D8",
+    // borderColor: "#C5C5C8",
+    // borderColor: "#3D90CF",
     padding: 10,
     marginBottom: 20,
     width: "100%",
+  },
+  inputContainerOnSelected: {
+    borderColor: "#3D90CF",
   },
   input: {
     flex: 1,
@@ -220,7 +316,8 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   button: {
-    backgroundColor: "#F5A623",
+    backgroundColor: "#3D90CF",
+    // backgroundColor: "#4EA7FC",
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
@@ -233,7 +330,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   orText: {
-    color: "#aaa",
+    color: "#333",
     fontSize: 14,
     marginVertical: 20,
   },
@@ -262,15 +359,20 @@ const styles = StyleSheet.create({
   inlineContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    position: 'absolute',
+    bottom: 0,
+    marginBottom: 15,
+    justifyContent: 'space-between',
   },
   promptText: {
-    color: "#F5A623",
-    fontSize: 16,
+    color: "#000",
+    fontSize: 17,
     marginTop: 20,
   },
   switchText: {
-    color: "#F5A623",
-    fontSize: 16,
+    color: "#3D90CF",
+    // color: "#4EA7FC",
+    fontSize: 17,
     marginTop: 20,
     fontWeight: "bold",
   },
