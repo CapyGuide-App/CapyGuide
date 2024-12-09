@@ -56,13 +56,17 @@ const CustomThemeProvider: React.FC<{children: React.ReactNode}> = ({
 
   const theme = createTheme({
     lightColors: {
-      primary: '#ea940c',
+      // primary: '#ea940c',
+      primary: '#3D90CF',
       element: '#f9f9f9',
       element2: '#fff',
       element3: '#fff9e6',
-      button: '#ffaa00',
+      // button: '#ffaa00',
+      button: '#3D90CF',
       background2: '#f9f9f9',
-      link: '#ffaa00',
+      // background2: '#f5f5f5',
+      // link: '#ffaa00',
+      link: '#3D90CF',
       text: '#333',
       dimText: '#666',
       border: '#eee',

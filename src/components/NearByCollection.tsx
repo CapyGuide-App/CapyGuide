@@ -158,6 +158,8 @@ const dynamicStyles = (theme: any) =>
     descriptionText: {
       fontSize: 13,
       color: theme.colors.dimText,
+      minWidth: 20,
+      maxWidth: 50,
     },
   });
 

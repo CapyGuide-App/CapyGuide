@@ -8,6 +8,7 @@ import {
 import { fetchReactionBlog } from '../request/DataRequest';
 import { formatRelativeTime } from '../styles/Methods';
 import {useTheme} from '@rneui/themed';
+import { print } from '@gorhom/portal/lib/typescript/utilities/logger';
 
 interface PostProps {
   item: any;
@@ -72,7 +73,7 @@ const Post: React.FC<PostProps> = ({item, onPress}) => {
         </View>
         <View style={styles.reactionRow}>
           <MessageCircle size={12} color={theme.colors.black} fill={theme.colors.black} />
-          <Text style={styles.commentText}>{item.commentCount}</Text>
+          <Text style={styles.reactionText}>{item.comments}</Text>
         </View>
       </View>
     </Pressable>
@@ -157,6 +158,7 @@ const dynamicStyles = (theme: any) =>
       fontSize: 12,
       color: theme.colors.dimText,
       marginLeft: 4,
+      minWidth: 25,
     },
     commentText: {
       fontSize: 12,
