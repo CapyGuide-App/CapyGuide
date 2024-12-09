@@ -38,12 +38,12 @@ const AddVideoHandler: React.FC<AddVideoHandlerProps> = ({
 
   const videoOptions = [
     {
-      icon: <Camera size={24} color="#FF9800" />,
+      icon: <Camera size={24} color="#3D90CF" />,
       label: 'Quay video',
       action: recordVideo,
     },
     {
-      icon: <Folder size={24} color="#FF9800" />,
+      icon: <Folder size={24} color="#3D90CF" />,
       label: 'Thư viện',
       action: openLibrary,
     },
@@ -107,14 +107,14 @@ const styles = StyleSheet.create({
   modalButton: {
     width: '100%',
     padding: 15,
-    backgroundColor: '#FFFEF8',
+    backgroundColor: '#f2f2f2',
     borderRadius: 10,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 15,
     borderWidth: 1,
-    borderColor: '#FF9800',
+    // borderColor: '#FF9800',
   },
   modalOption: {
     flexDirection: 'row',
@@ -122,10 +122,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   modalButtonText: {
-    fontSize: 16,
-    color: '#FF9800',
+    fontSize: 18,
+    color: '#000',
     marginLeft: 10,
     textAlign: 'center',
+    width: '60%',
   },
   modalCancel: {
     marginTop: 10,
@@ -133,9 +134,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   modalCancelText: {
-    fontSize: 16,
+    fontSize: 20,
     fontWeight: 'bold',
-    color: '#FF9800',
+    color: '#3D90CF',
     textAlign: 'center',
   },
 });

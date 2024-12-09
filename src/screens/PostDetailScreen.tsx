@@ -29,6 +29,7 @@ import {formatRelativeTime} from '../styles/Methods';
 import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Video from 'react-native-video';
 import {useTheme} from '@rneui/themed';
+import ModalComment from '../components/ModalComment';
 const {width} = Dimensions.get('window');
 
 const PostContent = ({post}: any) => {
@@ -125,6 +126,7 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
   const [status, setStatus] = useState<'loading' | 'error' | 'success'>(
     'loading',
   );
+  const [commentModalVisible, setCommentModalVisible] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -207,7 +209,9 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.actionButton}>
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => setCommentModalVisible(true)}>
             <MessageCircle size={24} color={theme.colors.black} />
             <Text style={styles.actionText}>Comment</Text>
           </TouchableOpacity>
@@ -238,18 +242,22 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
 
   return (
     <View style={styles.container}>
-    <View style={styles.fixedHeader}>
-      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerButton}>
-        <ChevronLeft size={24} color={theme.colors.white}/>
-      </TouchableOpacity>
-      {post?.owner && (
+      <View style={styles.fixedHeader}>
         <TouchableOpacity
-          onPress={() => navigation.navigate('AddPost', {title: 'Edit Post', post})}
+          onPress={() => navigation.goBack()}
           style={styles.headerButton}>
-          <PencilLineIcon size={24} color={theme.colors.white} />
+          <ChevronLeft size={24} color={theme.colors.white} />
         </TouchableOpacity>
-      )}
-    </View>
+        {post?.owner && (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate('AddPost', {title: 'Edit Post', post})
+            }
+            style={styles.headerButton}>
+            <PencilLineIcon size={24} color={theme.colors.white} />
+          </TouchableOpacity>
+        )}
+      </View>
       <View style={styles.imageWrapper}>
         <Pressable onPress={openModal}>
           {post?.picture && (
@@ -264,7 +272,10 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
         footerComponent={renderFooter}
         animateOnMount={false}
         overDragResistanceFactor={1}
-        backgroundStyle={{borderRadius: 20, backgroundColor: theme.colors.background}}
+        backgroundStyle={{
+          borderRadius: 20,
+          backgroundColor: theme.colors.background,
+        }}
         handleIndicatorStyle={{
           backgroundColor: theme.colors.text,
         }}>
@@ -276,6 +287,15 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
             {status === 'error' && <ErrorContent onRetry={reload} />}
             {status === 'success' && <PostContent post={post} />}
           </View>
+          
+      <ModalComment
+        visible={commentModalVisible}
+        onClose={() => setCommentModalVisible(false)}
+        onSubmit={comment => {
+          console.log('Bình luận:', comment);
+          setCommentModalVisible(false);
+        }}
+      />
         </BottomSheetScrollView>
       </BottomSheet>
     </View>

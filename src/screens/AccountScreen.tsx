@@ -28,7 +28,7 @@ const AccountScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Thông tin cá nhân</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -37,7 +37,7 @@ const AccountScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Email và số điện thoại</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -46,7 +46,7 @@ const AccountScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Liên kết mạng xã hội</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -55,7 +55,7 @@ const AccountScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Quản lý thiết bị</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -64,7 +64,7 @@ const AccountScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Xóa tài khoản</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
       </View>
     </View>

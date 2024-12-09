@@ -85,8 +85,8 @@ const SettingsScreen: React.FC = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.title}>Profile</Text>
+  <ScrollView style={styles.container}>
+      <Text style={styles.title}>Tài khoản & Cài đặt</Text>
       <View style={styles.profileContainer}>
         <View style={styles.profileHeader}>
           <Image source={{uri: currentUser?.avatar}} style={styles.avatar} />
@@ -127,27 +127,29 @@ const SettingsScreen: React.FC = () => {
             <User size={24} color={theme.colors.primary} />
             <Text style={styles.optionText}>Tài khoản</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.option}
+          style={[styles.option, styles.bottomOption]}
           onPress={navigateToNotificationsScreen}>
           <View style={styles.optionContent}>
             <Bell size={24} color={theme.colors.primary} />
             <Text style={styles.optionText}>Thông báo</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
+      </View>
 
+      <View style={styles.optionsContainer}>
         <TouchableOpacity
-          style={styles.option}
+          style={[styles.option, styles.topOption]}
           onPress={navigateToAppearanceScreen}>
           <View style={styles.optionContent}>
             <Eye size={24} color={theme.colors.primary} />
             <Text style={styles.optionText}>Giao diện</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -157,7 +159,7 @@ const SettingsScreen: React.FC = () => {
             <Lock size={24} color={theme.colors.primary} />
             <Text style={styles.optionText}>Bảo mật</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.option} onPress={navigateToHelpScreen}>
@@ -165,7 +167,7 @@ const SettingsScreen: React.FC = () => {
             <Headphones size={24} color={theme.colors.primary} />
             <Text style={styles.optionText}>Trợ giúp</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -175,13 +177,13 @@ const SettingsScreen: React.FC = () => {
             <Info size={24} color={theme.colors.primary} />
             <Text style={styles.optionText}>Về CapyGuide</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
       </View>
 
       <TouchableOpacity style={styles.logout} onPress={logOutNavigate}>
         <LogOut size={24} color="#fff" />
-        <Text style={styles.logoutText}>Log Out</Text>
+        <Text style={styles.logoutText}>Đăng Xuất</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -191,7 +193,7 @@ const dynamicStyles = (theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.background2,
       padding: 20,
     },
     profileContainer: {
@@ -202,7 +204,7 @@ const dynamicStyles = (theme: any) =>
       shadowOpacity: 0.1,
       shadowRadius: 5,
       elevation: 2,
-      marginBottom: 10,
+      marginBottom: 20,
     },
 
     profileHeader: {
@@ -212,9 +214,9 @@ const dynamicStyles = (theme: any) =>
     },
 
     avatar: {
-      width: 60,
-      height: 60,
-      borderRadius: 30,
+      width: 70,
+      height: 70,
+      borderRadius: 35,
       backgroundColor: theme.colors.placeholder,
       marginRight: 15,
     },
@@ -279,14 +281,14 @@ const dynamicStyles = (theme: any) =>
     },
 
     statLabel: {
-      fontSize: 12,
+      fontSize: 14,
       color: theme.colors.dimText,
       width: '100%',
       textAlign: 'center',
     },
 
     title: {
-      fontSize: 24,
+      fontSize: 22,
       fontWeight: 'bold',
       color: theme.colors.primary,
       marginBottom: 20,
@@ -324,7 +326,7 @@ const dynamicStyles = (theme: any) =>
       alignItems: 'center',
     },
     optionText: {
-      fontSize: 16,
+      fontSize: 17,
       color: theme.colors.text,
       marginLeft: 10,
       width: '60%',
@@ -334,7 +336,7 @@ const dynamicStyles = (theme: any) =>
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: theme.colors.primary,
-      padding: 15,
+      padding: 13,
       borderRadius: 10,
     },
     logoutText: {

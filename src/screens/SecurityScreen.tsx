@@ -38,7 +38,7 @@ const SecurityScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Đổi mật khẩu</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -47,7 +47,7 @@ const SecurityScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Xác thực hai yếu tố</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -56,7 +56,7 @@ const SecurityScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Quyền riêng tư</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -65,7 +65,7 @@ const SecurityScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Hoạt động đăng nhập</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -74,7 +74,7 @@ const SecurityScreen: React.FC = () => {
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Cài đặt khóa ứng dụng</Text>
           </View>
-          <ChevronRight size={24} color={theme.colors.primary} />
+          <ChevronRight size={20} color={theme.colors.text} />
         </TouchableOpacity>
       </View>
     </View>
