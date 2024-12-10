@@ -73,8 +73,8 @@ const NearByCollection: React.FC<NearByCollectionProps> = ({
                     <View style={styles.description}>
                       {item.duration && (
                         <Text style={styles.descriptionText} numberOfLines={1}>
-                          {item.distance.toFixed(1)} km {'\uA78F'}{' '}
-                          {item.duration.toFixed(1)} phút
+                          {item.distance.toFixed(1)} km 
+                          {/* {'\uA78F'} {' '} {item.duration.toFixed(1)} phút */}
                         </Text>
                       )}
                       <View
@@ -158,8 +158,7 @@ const dynamicStyles = (theme: any) =>
     descriptionText: {
       fontSize: 13,
       color: theme.colors.dimText,
-      minWidth: 20,
-      maxWidth: 50,
+      minWidth: '70%',
     },
   });
 
