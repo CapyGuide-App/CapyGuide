@@ -54,7 +54,7 @@ const ModalComment: React.FC<ModalCommentProps> = ({
         <View style={styles.overlay}>
           <View style={styles.modalContent}>
             <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-              <ArrowLeft size={30} color={theme.colors.black} />
+              <ArrowLeft size={30} color={theme.colors.primary} />
             </TouchableOpacity>
 
             <View>

@@ -211,7 +211,8 @@ const dynamicStyles = (theme: any) =>
     infoContainer: {
       marginLeft: 10,
       flex: 1,
-      backgroundColor: theme.colors.grey5,
+      // backgroundColor: theme.colors.grey5,
+      backgroundColor: theme.colors.comment,
       paddingVertical: 10,
       paddingHorizontal: 15,
       borderRadius: 20,
