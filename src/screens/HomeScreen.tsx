@@ -99,6 +99,7 @@ const HomeScreen: React.FC = ({navigation}: any) => {
       <LocationPickerText />
       <SearchBar
         contentContainerStyle={[styles.container]}
+        placeholder="Tìm kiếm..."
         backgroundColor={hexToRGBA(theme.colors.primary, 0.15)}
         data={placeData.concat(foodData)}
         type="poi"

@@ -286,7 +286,7 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
       </View>
 
       <BottomSheet
-        snapPoints={['75%']}
+        snapPoints={['80%']}
         index={0}
         footerComponent={renderFooter}
         animateOnMount={false}

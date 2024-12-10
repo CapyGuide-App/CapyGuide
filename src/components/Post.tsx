@@ -67,7 +67,7 @@ const Post: React.FC<PostProps> = ({item, onPress}) => {
           fill={save ? theme.colors.primary : 'transparent'}
           onPress={onPressBookMark}
         />
-        <View style={[styles.reactionRow, {marginTop: 46}]}>
+        <View style={[styles.reactionRow, {marginTop: 44}]}>
           <Heart size={12} color="#f44" fill="#f44" />
           <Text style={styles.reactionText}>{item.reactions}</Text>
         </View>

@@ -187,18 +187,24 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({route, navigation}) => {
             value={indexTab}
             onChange={setIndexTab}
             indicatorStyle={{
-              backgroundColor: theme.colors.background,
-              height: 3,
+              backgroundColor: theme.colors.indicatorBar,
+              height: 2.2,
             }}
             variant="primary">
             {/* To-do: sửa lại UI cho nổi bật hơn */}
             <Tab.Item
               title="Địa điểm"
               titleStyle={{fontSize: 15, fontWeight: 'bold'}}
+              containerStyle={{
+                backgroundColor: indexTab === 0 ? '#3D90CF' : '#6FADE0', // Xanh nhạt khi được chọn
+              }}
             />
             <Tab.Item
               title="Đặc sản"
               titleStyle={{fontSize: 15, fontWeight: 'bold'}}
+              containerStyle={{
+                backgroundColor: indexTab === 1 ? '#3D90CF' : '#6FADE0', // Xanh nhạt khi được chọn
+              }}
             />
           </Tab>
           <TabView value={indexTab} onChange={setIndexTab} disableSwipe={true}>

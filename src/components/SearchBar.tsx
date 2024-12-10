@@ -91,7 +91,7 @@ interface SearchBarProps {
     searchField?: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentContainerStyle, clearOnClose = true, backgroundColor, handleSearchData, onSelected, placeholder = "Tìm kiếm", type, isModal = true, data, searchField }, ref) => {
+const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentContainerStyle, clearOnClose = true, backgroundColor, handleSearchData, onSelected, placeholder = "Tìm kiếm...", type, isModal = true, data, searchField }, ref) => {
     const { theme } = useTheme();
     const [isFocused, setIsFocused] = useState(false);
     const animationValue = useRef(new Animated.Value(0)).current;
@@ -252,7 +252,8 @@ const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentCo
             alignItems: "center",
         },
         input: {
-            color: theme.colors.primary,
+            // color: theme.colors.primary,
+            color: theme.colors.text,
             fontSize: 16,
             flex: 1,
         },
