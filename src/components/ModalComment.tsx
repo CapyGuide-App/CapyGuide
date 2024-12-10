@@ -44,6 +44,7 @@ const ModalComment: React.FC<ModalCommentProps> = ({
       onSubmit({rating, text: comment});
       setComment('');
       setRating(5);
+      onClose();
     }
   };
 
@@ -112,7 +113,7 @@ const ModalComment: React.FC<ModalCommentProps> = ({
 const dynamicStyles = (theme: any) => StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: `${theme.colors.black}90`,
+    backgroundColor: `${theme.colors.black}CC`,
     justifyContent: 'center',
     alignItems: 'center',
   },

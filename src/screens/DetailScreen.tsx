@@ -289,7 +289,7 @@ const dynamicStyles = (theme: any) =>
     headerButton: {
       padding: 10,
       borderRadius: '50%',
-      backgroundColor: `${theme.colors.black}90`,
+      backgroundColor: `${theme.colors.black}CC`,
     },
     topBar: {
       flexDirection: 'row',
@@ -471,7 +471,7 @@ const dynamicStyles = (theme: any) =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      backgroundColor: `${theme.colors.black}CC`,
     },
     innerContainer: {
       width: '95%',
