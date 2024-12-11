@@ -68,79 +68,74 @@ const MainStack = () => {
   }, []);
 
   return (
-    <Stack.Navigator>
+    <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen
         name="MainTabNavigator"
         component={MainTabNavigator}
-        options={{headerShown: false}}
+        
       />
       <Stack.Screen
         name="AddPost"
         component={AddPostScreen}
         options={{
-          headerTitleAlign: 'center',
-          headerStyle: {
-            backgroundColor: styles.header.backgroundColor,
-          },
-          headerTintColor: styles.headerTitle.color,
           presentation: 'modal',
         }}
       />
       <Stack.Screen
         name="Detail"
         component={DetailScreen}
-        options={{headerShown: false}}
+        
       />
       <Stack.Screen
         name="PostDetailScreen"
         component={PostDetailScreen}
-        options={{headerShown: false}}
+        
       />
       <Stack.Screen
         name="ProfileScreen"
         component={ProfileScreen}
-        options={{title: 'Hồ sơ'}}
+        
       />
       <Stack.Screen
         name="ProfileSettingScreen"
         component={ProfileSettingsScreen}
-        options={{title: 'Chỉnh sửa hồ sơ'}}
+        
       />
       <Stack.Screen
         name="ChangePasswordScreen"
         component={ChangePasswordScreen}
-        options={{title: 'Thay đổi mật khẩu'}}
+        
       />
 
       <Stack.Screen
         name="AccountScreen"
         component={AccountScreen}
-        options={{headerShown: false}}
+        
       />
       <Stack.Screen
         name="NotificationsScreen"
         component={NotificationsScreen}
-        options={{headerShown: false}}
+        
       />
       <Stack.Screen
         name="AppearanceScreen"
         component={AppearanceScreen}
-        options={{headerShown: false}}
+        
       />
       <Stack.Screen
         name="SecurityScreen"
         component={SecurityScreen}
-        options={{headerShown: false}}
+        
       />
       <Stack.Screen
         name="HelpScreen"
         component={HelpScreen}
-        options={{headerShown: false}}
+        
       />
       <Stack.Screen
         name="AboutScreen"
         component={AboutScreen}
-        options={{headerShown: false}}
+        
       />
     </Stack.Navigator>
   );

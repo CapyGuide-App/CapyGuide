@@ -18,6 +18,7 @@ import {
   Edit,
   X,
   Menu,
+  ChevronLeft,
 } from 'lucide-react-native';
 import DragList, {DragListRenderItemInfo} from 'react-native-draglist';
 import CameraHandler from '../components/CameraHandler';
@@ -30,7 +31,6 @@ import {
   fetchDeletePost,
   fetchUpdatePost,
 } from '../request/DataRequest';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 import {useTheme} from '@rneui/themed';
 
 interface AddPostScreenProps {
@@ -40,11 +40,13 @@ interface AddPostScreenProps {
 
 const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
   const post = route.params?.post;
-  const screenTitle = post ? 'Sửa bài viết' : 'Tạo bài viết';
+  const screenTitle = post ? 'Sửa blog' : 'Tạo blog';
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
   const [postTitle, setPostTitle] = useState('');
-  const [selectedTitleImage, setSelectedTitleImage] = useState(null);
+  const [selectedTitleImage, setSelectedTitleImage] = useState<{
+    uri: string;
+  } | null>(null);
   const [isTitleImageHandlerVisible, setIsTitleImageHandlerVisible] =
     useState(false);
   const [postElements, setPostElements] = useState<any[]>([]);
@@ -195,40 +197,6 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
     setIsModalVisible(false);
   };
 
-  React.useLayoutEffect(() => {
-    navigation.setOptions({
-      headerTitle: screenTitle,
-      headerRight: () => (
-        <TouchableOpacity
-          style={[
-            styles.headerButton,
-            {
-              backgroundColor:
-                postElements.length > 0 && postTitle.trim()
-                  ? theme.colors.primary
-                  : theme.colors.disabled,
-            },
-          ]}
-          onPress={
-            postElements.length > 0 && postTitle.trim()
-              ? handlePostSubmit
-              : undefined
-          }>
-          <Text
-            style={[
-              styles.headerButtonText,
-              {
-                color:
-                  postElements.length > 0 && postTitle.trim() ? '#fff' : '#888',
-              },
-            ]}>
-            Đăng
-          </Text>
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation, postTitle, postElements, selectedTitleImage]);
-
   function keyExtractor(item: any, index: number) {
     return `${item.id}-${index}`;
   }
@@ -302,6 +270,40 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.titleContainer}>
+        <TouchableOpacity
+          onPress={navigation.goBack}
+          style={styles.headerButton}>
+          <ChevronLeft size={24} color={theme.colors.text} />
+        </TouchableOpacity>
+        <Text style={styles.headerTitleText}>{screenTitle}</Text>
+        <TouchableOpacity
+          style={[
+            styles.submitButton,
+            {
+              backgroundColor:
+                postElements.length > 0 && postTitle.trim()
+                  ? theme.colors.primary
+                  : theme.colors.disabled,
+            },
+          ]}
+          onPress={
+            postElements.length > 0 && postTitle.trim()
+              ? handlePostSubmit
+              : undefined
+          }>
+          <Text
+            style={[
+              styles.headerButtonText,
+              {
+                color:
+                  postElements.length > 0 && postTitle.trim() ? '#fff' : '#888',
+              },
+            ]}>
+            Đăng
+          </Text>
+        </TouchableOpacity>
+      </View>
       <ScrollView contentContainerStyle={styles.previewContainer}>
         <View style={styles.header}>
           <TouchableOpacity
@@ -486,22 +488,42 @@ export default AddPostScreen;
 
 const dynamicStyles = (theme: any) =>
   StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: 16,
+      backgroundColor: theme.colors.background,
+    },
+    titleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingBottom: 10,
+      marginBottom: 15,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.colors.border,
+    },
     headerButton: {
-      marginRight: 15,
+      width: '20%',
+      borderRadius: 20,
+    },
+    submitButton: {
+      width: '20%',
       paddingHorizontal: 16,
       paddingVertical: 8,
       borderRadius: 20,
       justifyContent: 'center',
       alignItems: 'center',
     },
+    headerTitleText: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+      width: '60%',
+      textAlign: 'center',
+    },
     headerButtonText: {
       fontSize: 16,
       fontWeight: 'bold',
-    },
-    container: {
-      flex: 1,
-      padding: 16,
-      backgroundColor: theme.colors.background,
     },
     header: {
       flexDirection: 'row',

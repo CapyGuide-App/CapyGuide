@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -9,20 +9,25 @@ import {
   Alert,
   Modal,
 } from 'react-native';
-import {ArrowLeft} from 'lucide-react-native';
+import {ArrowLeft, ChevronLeft} from 'lucide-react-native';
 import avatar from '../assets/avatar.jpg';
 import CameraHandler from '../components/CameraHandler';
-import { fetchProfile, fetchUpdateProfile } from '../request/DataRequest';
-import { useAuth } from '../context/AuthContext';
-import { useTheme } from '@rneui/themed';
-import { th } from 'date-fns/locale';
+import {fetchUpdateProfile} from '../request/DataRequest';
+import {useAuth} from '../context/AuthContext';
+import {useTheme} from '@rneui/themed';
+import {useNavigation} from '@react-navigation/native';
 
-const ProfileSettingsScreen = ({ navigation }: { navigation: any }) => {
+const ProfileSettingsScreen = () => {
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
+  const navigation = useNavigation();
   const {currentUser, setCurrentUser} = useAuth();
-  const [image, setImage] = useState<{ uri: string, type?: string, name?: string } | null>(null);
-  const [name, setName] = useState<string | null>(null); 
+  const [image, setImage] = useState<{
+    uri: string;
+    type?: string;
+    name?: string;
+  } | null>(null);
+  const [name, setName] = useState<string | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [bio, setBio] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -37,20 +42,25 @@ const ProfileSettingsScreen = ({ navigation }: { navigation: any }) => {
       return;
     }
 
-    fetchUpdateProfile({
-      displayname: name,
-      username,
-      bio,
-    }, image).then((res) => {
-      setCurrentUser(res.user);
-      navigation.goBack();
-    }).catch((err) => {
-      Alert.alert('Error', err.message);
-    });
+    fetchUpdateProfile(
+      {
+        displayname: name,
+        username,
+        bio,
+      },
+      image,
+    )
+      .then(res => {
+        setCurrentUser(res.user);
+        navigation.goBack();
+      })
+      .catch(err => {
+        Alert.alert('Error', err.message);
+      });
   };
 
   const openCameraHandler = () => {
-    setCameraHandlerVisible(true); 
+    setCameraHandlerVisible(true);
   };
 
   const handleImageSelected = (image: any) => {
@@ -62,16 +72,23 @@ const ProfileSettingsScreen = ({ navigation }: { navigation: any }) => {
       setName(currentUser.displayname);
       setUsername(currentUser.username);
       setBio(currentUser.bio);
-      setImage({ uri: currentUser.avatar });
+      setImage({uri: currentUser.avatar});
     }
   }, []);
 
   return (
     <View style={styles.container}>
+      <View style={styles.titleContainer}>
+        <TouchableOpacity onPress={navigation.goBack}>
+          <ChevronLeft size={24} color={theme.colors.primary} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Chỉnh sửa hồ sơ</Text>
+      </View>
+
       <View style={styles.avatarContainer}>
         <TouchableOpacity onPress={openModal}>
           <Image
-            source={image?.uri ? { uri: image.uri } : avatar}
+            source={image?.uri ? {uri: image.uri} : avatar}
             style={styles.avatar}
           />
         </TouchableOpacity>
@@ -80,7 +97,6 @@ const ProfileSettingsScreen = ({ navigation }: { navigation: any }) => {
         </TouchableOpacity>
       </View>
 
-      
       <View style={styles.formContainer}>
         <Text style={styles.label}>NAME</Text>
         <TextInput
@@ -105,7 +121,6 @@ const ProfileSettingsScreen = ({ navigation }: { navigation: any }) => {
         />
       </View>
 
-      
       <TouchableOpacity style={styles.saveButton} onPress={handleSaveChanges}>
         <Text style={styles.saveButtonText}>Lưu Thay Đổi</Text>
       </TouchableOpacity>
@@ -116,7 +131,7 @@ const ProfileSettingsScreen = ({ navigation }: { navigation: any }) => {
             <ArrowLeft size={40} color="#fff" />
           </TouchableOpacity>
           <Image
-            source={image?.uri ? { uri: image.uri } : avatar}
+            source={image?.uri ? {uri: image.uri} : avatar}
             style={styles.fullImage}
           />
         </View>
@@ -131,104 +146,112 @@ const ProfileSettingsScreen = ({ navigation }: { navigation: any }) => {
   );
 };
 
-const dynamicStyles = (theme: any) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.colors.background,
-    padding: 16,
-    alignItems: 'center',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: theme.colors.primary,
-  },
-  avatarContainer: {
-    position: 'relative',
-    marginTop: 30,
-    marginBottom: 30,
-    alignItems: 'center',
-  },
-  avatar: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
-    borderWidth: 3,
-    borderColor: theme.colors.border,
-  },
-  editIcon: {
-    position: 'absolute',
-    bottom: 0,
-    right: 10,
-    backgroundColor: theme.colors.primary,
-    width: 35,
-    height: 35,
-    borderRadius: 17.5,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#FFF',
-  },
-  editIconText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: theme.colors.text,
-  },
-  formContainer: {
-    width: '100%',
-    paddingHorizontal: 20,
-    marginBottom: 20,
-  },
-  label: {
-    fontSize: 15,
-    fontWeight: '600',
-    color: theme.colors.text,
-    marginBottom: 5,
-  },
-  input: {
-    backgroundColor: theme.colors.element,
-    borderWidth: 1,
-    borderColor: theme.colors.border,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    fontSize: 16,
-    marginBottom: 15,
-    color: theme.colors.text,
-  },
-  textArea: {
-    height: 80,
-    textAlignVertical: 'top',
-  },
-  saveButton: {
-    backgroundColor: theme.colors.primary,
-    paddingVertical: 15,
-    paddingHorizontal: 60,
-    borderRadius: 30,
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 17,
-    fontWeight: '600',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.8)',
-  },
-  closeModal: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    zIndex: 2,
-  },
-  fullImage: {
-    width: '90%',
-    height: '70%',
-    resizeMode: 'contain',
-  },
-});
+const dynamicStyles = (theme: any) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.colors.background,
+      padding: 20,
+      alignItems: 'center',
+    },
+    titleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 15,
+      alignSelf: 'stretch',
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: theme.colors.primary,
+      width: '90%',
+    },
+    avatarContainer: {
+      position: 'relative',
+      marginTop: 30,
+      marginBottom: 30,
+      alignItems: 'center',
+    },
+    avatar: {
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      borderWidth: 3,
+      borderColor: theme.colors.border,
+    },
+    editIcon: {
+      position: 'absolute',
+      bottom: 0,
+      right: 10,
+      backgroundColor: theme.colors.primary,
+      width: 35,
+      height: 35,
+      borderRadius: 17.5,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: '#FFF',
+    },
+    editIconText: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: theme.colors.text,
+    },
+    formContainer: {
+      width: '100%',
+      paddingHorizontal: 20,
+      marginBottom: 20,
+    },
+    label: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: theme.colors.text,
+      marginBottom: 5,
+    },
+    input: {
+      backgroundColor: theme.colors.element,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      borderRadius: 8,
+      paddingHorizontal: 15,
+      paddingVertical: 10,
+      fontSize: 16,
+      marginBottom: 15,
+      color: theme.colors.text,
+    },
+    textArea: {
+      height: 80,
+      textAlignVertical: 'top',
+    },
+    saveButton: {
+      backgroundColor: theme.colors.primary,
+      paddingVertical: 15,
+      paddingHorizontal: 60,
+      borderRadius: 30,
+    },
+    saveButtonText: {
+      color: '#fff',
+      fontSize: 17,
+      fontWeight: '600',
+    },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    },
+    closeModal: {
+      position: 'absolute',
+      top: 40,
+      left: 20,
+      zIndex: 2,
+    },
+    fullImage: {
+      width: '90%',
+      height: '70%',
+      resizeMode: 'contain',
+    },
+  });
 
 export default ProfileSettingsScreen;
