@@ -8,11 +8,13 @@ import {
   Modal,
 } from 'react-native';
 import {useTheme} from '@rneui/themed';
-import {th} from 'date-fns/locale';
+import {useNavigation} from '@react-navigation/native';
+import {ChevronLeft} from 'lucide-react-native';
 
 const ChangePasswordScreen: React.FC = () => {
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
+  const navigation = useNavigation();
   const [curPass, setCurPass] = useState('');
   const [newPass, setNewPass] = useState('');
   const [conNewPass, setConNewPass] = useState('');
@@ -33,7 +35,12 @@ const ChangePasswordScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Đổi mật khẩu</Text>
+      <View style={styles.titleContainer}>
+        <TouchableOpacity onPress={navigation.goBack}>
+          <ChevronLeft size={24} color={theme.colors.primary} />
+        </TouchableOpacity>
+        <Text style={styles.title}>Đổi mật khẩu</Text>
+      </View>
 
       <View style={styles.groupInput}>
         <Text style={styles.label}>Mật khẩu hiện tại</Text>
@@ -100,16 +107,20 @@ const dynamicStyles = (theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: 20,
-      paddingTop: 40,
+      padding: 20,
       backgroundColor: theme.colors.background,
+    },
+    titleContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 15,
     },
     title: {
       fontSize: 24,
       fontWeight: 'bold',
       color: theme.colors.primary,
-      textAlign: 'center',
-      marginBottom: 20,
+      width: '90%',
     },
     groupInput: {
       marginBottom: 20,

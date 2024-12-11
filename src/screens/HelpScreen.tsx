@@ -1,6 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet, TouchableOpacity, Alert} from 'react-native';
-import {ChevronLeft, ChevronRight, Info} from 'lucide-react-native';
+import {ChevronLeft, ChevronRight} from 'lucide-react-native';
 import {useTheme} from '@rneui/themed';
 import {useNavigation} from '@react-navigation/native';
 
