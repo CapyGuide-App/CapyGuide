@@ -17,7 +17,7 @@ const AboutScreen: React.FC = () => {
       <Text style={styles.title}>Về CapyGuide</Text>
     </View>
       <Text style={styles.content}>
-        CapyGuide là ứng dụng hướng dẫn người dùng với giao diện thân thiện, giúp bạn ???
+        CapyGuide là ứng dụng hướng dẫn người dùng với giao diện thân thiện, giúp bạn dễ dàng tìm kiếm các địa điểm du lịch, đặc sản vùng miền trên khắp đất nước Việt Nam.
       </Text>
 
       <View style={styles.section}>

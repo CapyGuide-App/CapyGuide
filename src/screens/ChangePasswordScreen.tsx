@@ -148,7 +148,7 @@ const dynamicStyles = (theme: any) =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: `${theme.colors.black}80`,
+      backgroundColor: `${theme.colors.black}CC`,
     },
     modalContainer: {
       backgroundColor: theme.colors.background,

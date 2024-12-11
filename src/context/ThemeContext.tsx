@@ -16,6 +16,9 @@ declare module '@rneui/themed' {
     border: string;
     selected: string;
     tabBar: string;
+    searchBar: string;
+    comment: string;
+    indicatorBar: string;
   }
 }
 
@@ -70,8 +73,12 @@ const CustomThemeProvider: React.FC<{children: React.ReactNode}> = ({
       text: '#333',
       dimText: '#666',
       border: '#eee',
-      selected: '#FFDD77',
+      selected: '#FFE4B5',
       tabBar: '#fff',
+      searchBar: '#3D90CF',
+      // comment: '#E0E0E0',
+      comment: '#F0F2F5',
+      indicatorBar: '#000',
     },
     darkColors: {
       primary: '#3D90CF',
@@ -86,6 +93,9 @@ const CustomThemeProvider: React.FC<{children: React.ReactNode}> = ({
       border: '#333',
       selected: '#2e2e2e',
       tabBar: '#000',
+      searchBar: '#5BAEF5',
+      comment: '#333334',
+      indicatorBar: '#fff',
     },
     mode: isDarkMode ? 'dark' : 'light',
   });

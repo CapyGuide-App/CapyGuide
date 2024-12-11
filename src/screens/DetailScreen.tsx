@@ -124,17 +124,17 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
           <Text style={styles.title}>{initItem.name}</Text>
           <View style={styles.statsRow}>
             <View style={styles.statItemContainer}>
-              <MessageSquare color="#4caf50" size={20} />
+              <MessageSquare color="#4caf50" size={21} />
               <Text style={styles.statNumber}>157</Text>
               <Text style={styles.statLabel}>bình luận</Text>
             </View>
             <View style={styles.statItemContainer}>
-              <LucideImage color="#4caf50" size={20} />
+              <LucideImage color="#4caf50" size={21} />
               <Text style={styles.statNumber}>421</Text>
               <Text style={styles.statLabel}>hình ảnh</Text>
             </View>
             <View style={styles.statItemContainer}>
-              <Bookmark color="#4caf50" size={20} />
+              <Bookmark color="#4caf50" size={21} />
               <Text style={styles.statNumber}>502</Text>
               <Text style={styles.statLabel}>lưu lại</Text>
             </View>
@@ -152,7 +152,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
               <Text style={styles.sectionTitle}>Thông tin về địa điểm</Text>
               <View style={styles.row}>
                 <MapPin
-                  size={20}
+                  size={21}
                   color={theme.colors.black}
                   style={styles.icon2}
                 />
@@ -160,25 +160,25 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
               </View>
 
               <View style={styles.row}>
-                <Map size={20} color="#4CAF50" style={styles.icon2} />
+                <Map size={21} color="#4CAF50" style={styles.icon2} />
                 <Text style={styles.text}>
                   <Text style={styles.distance}>
                     {initItem.distance?.toFixed(2)}
                   </Text>
-                  {' (From current location)'}
+                  {' (Từ vị trí hiện tại)'}
                 </Text>
               </View>
 
               <View style={styles.row}>
                 {initItem.type === 'place' ? (
                   <BlocksIcon
-                    size={20}
+                    size={21}
                     color={theme.colors.black}
                     style={styles.icon2}
                   />
                 ) : (
                   <Utensils
-                    size={20}
+                    size={21}
                     color={theme.colors.black}
                     style={styles.icon2}
                   />
@@ -289,7 +289,7 @@ const dynamicStyles = (theme: any) =>
     headerButton: {
       padding: 10,
       borderRadius: '50%',
-      backgroundColor: `${theme.colors.black}90`,
+      backgroundColor: `${theme.colors.black}CC`,
     },
     topBar: {
       flexDirection: 'row',
@@ -336,12 +336,12 @@ const dynamicStyles = (theme: any) =>
       marginHorizontal: 10,
     },
     statNumber: {
-      fontSize: 16,
+      fontSize: 17,
       fontWeight: 'bold',
       color: theme.colors.text,
     },
     statLabel: {
-      fontSize: 12,
+      fontSize: 13,
       color: theme.colors.dimText,
       minWidth: 50,
       textAlign: 'center',
@@ -379,12 +379,12 @@ const dynamicStyles = (theme: any) =>
       marginRight: 10,
     },
     text: {
-      fontSize: 14,
+      fontSize: 15,
       color: theme.colors.text,
       flex: 1,
     },
     distance: {
-      fontSize: 14,
+      fontSize: 15,
       color: '#4CAF50',
       fontWeight: 'bold',
     },
@@ -414,7 +414,7 @@ const dynamicStyles = (theme: any) =>
     sectionTitle: {
       fontSize: 18,
       fontWeight: 'bold',
-      marginBottom: 10,
+      marginBottom: 14,
       color: theme.colors.text,
     },
     infoItem: {
@@ -471,7 +471,7 @@ const dynamicStyles = (theme: any) =>
       flex: 1,
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+      backgroundColor: `${theme.colors.black}CC`,
     },
     innerContainer: {
       width: '95%',

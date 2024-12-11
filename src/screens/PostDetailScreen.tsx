@@ -9,6 +9,8 @@ import {
   Pressable,
   Linking,
   ActivityIndicator,
+  Modal,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {
   Heart,
@@ -17,6 +19,7 @@ import {
   Share2,
   PencilLineIcon,
   ChevronLeft,
+  ArrowLeft,
 } from 'lucide-react-native';
 import Share from 'react-native-share';
 import {fetchBlog, fetchReactionBlog, reloadData} from '../request/DataRequest';
@@ -32,15 +35,19 @@ import {useTheme} from '@rneui/themed';
 import ModalComment from '../components/ModalComment';
 const {width} = Dimensions.get('window');
 
-const PostContent = ({post}: any) => {
+const PostContent: React.FC<{
+  post: any;
+  setCurrentImageUri: any;
+  openModal: any;
+}> = ({post, setCurrentImageUri, openModal}) => {
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
   return (
     <View style={{paddingBottom: 90}}>
       <View style={styles.content}>
-        <View style={styles.categoryContainer}>
+        {/* <View style={styles.categoryContainer}>
           <Text style={styles.category}>{post.category}</Text>
-        </View>
+        </View> */}
         <Text style={styles.title}>{post.title}</Text>
 
         <View style={styles.metadataRow}>
@@ -62,18 +69,25 @@ const PostContent = ({post}: any) => {
               </Text>
             );
           case 'image':
+            console.log(element);
             return (
               <View style={styles.inlineImageContainer} key={index}>
-                <Image
-                  source={{uri: element.content_data}}
-                  style={styles.inlineImage}
-                />
+                <TouchableOpacity
+                  onPress={() => {
+                    setCurrentImageUri(element.content_data);
+                    openModal();
+                  }}>
+                  <Image
+                    source={{uri: element.content_data}}
+                    style={styles.inlineImage}
+                  />
+                </TouchableOpacity>
               </View>
             );
           case 'link':
             return (
               <Text
-                style={{color: '#007BFF'}}
+                style={{color: theme.colors.link}}
                 onPress={() => Linking.openURL(element.content_data)}
                 key={index}>
                 {element.content_data}
@@ -103,7 +117,7 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
   const {postId} = route.params;
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [currentImageUri, setCurrentImageUri] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [loved, setLoved] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -120,6 +134,7 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
     loved?: boolean;
     saved?: boolean;
     url?: string;
+    owner?: boolean;
   }
 
   const [post, setPost] = useState<Post | null>(null);
@@ -173,7 +188,7 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
 
   useEffect(() => {
     if (post) {
-      console.log(post);
+      // console.log(post);
       setLoved(post.loved ?? false);
       setSaved(post.saved ?? false);
     }
@@ -259,7 +274,11 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
         )}
       </View>
       <View style={styles.imageWrapper}>
-        <Pressable onPress={openModal}>
+        <Pressable
+          onPress={() => {
+            setCurrentImageUri(post?.picture ?? null);
+            openModal();
+          }}>
           {post?.picture && (
             <Image source={{uri: post?.picture}} style={styles.titleImage} />
           )}
@@ -267,7 +286,7 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
       </View>
 
       <BottomSheet
-        snapPoints={['75%']}
+        snapPoints={['80%']}
         index={0}
         footerComponent={renderFooter}
         animateOnMount={false}
@@ -285,17 +304,43 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
               <ActivityIndicator size="large" color="#007BFF" />
             )}
             {status === 'error' && <ErrorContent onRetry={reload} />}
-            {status === 'success' && <PostContent post={post} />}
+            {status === 'success' && (
+              <PostContent
+                post={post}
+                setCurrentImageUri={setCurrentImageUri}
+                openModal={openModal}
+              />
+            )}
           </View>
-          
-      <ModalComment
-        visible={commentModalVisible}
-        onClose={() => setCommentModalVisible(false)}
-        onSubmit={comment => {
-          console.log('Bình luận:', comment);
-          setCommentModalVisible(false);
-        }}
-      />
+
+          <Modal visible={modalVisible} transparent={true} animationType="fade">
+            <TouchableWithoutFeedback onPress={closeModal}>
+              <View style={styles.modalContainer}>
+                <TouchableOpacity
+                  style={styles.closeModal}
+                  onPress={closeModal}>
+                  <ArrowLeft size={40} color="#fff" />
+                </TouchableOpacity>
+                <View style={styles.innerContainer}>
+                  {currentImageUri && (
+                    <Image
+                      source={{uri: currentImageUri}}
+                      style={styles.fullImage}
+                    />
+                  )}
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </Modal>
+
+          <ModalComment
+            visible={commentModalVisible}
+            onClose={() => setCommentModalVisible(false)}
+            onSubmit={comment => {
+              console.log('Bình luận:', comment);
+              setCommentModalVisible(false);
+            }}
+          />
         </BottomSheetScrollView>
       </BottomSheet>
     </View>
@@ -329,7 +374,7 @@ const dynamicStyles = (theme: any) =>
     headerButton: {
       padding: 10,
       borderRadius: '50%',
-      backgroundColor: `${theme.colors.black}90`,
+      backgroundColor: `${theme.colors.black}CC`,
     },
     titleImage: {
       width: '100%',
@@ -338,11 +383,6 @@ const dynamicStyles = (theme: any) =>
     },
     imageWrapper: {
       position: 'relative',
-    },
-    image: {
-      width: '100%',
-      height: 200,
-      resizeMode: 'cover',
     },
     thumbnail: {
       width: 60,
@@ -359,6 +399,12 @@ const dynamicStyles = (theme: any) =>
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: 'rgba(0, 0, 0, 0.8)',
+    },
+    innerContainer: {
+      width: '95%',
+      height: '90%',
+      justifyContent: 'center',
+      alignItems: 'center',
     },
     closeModal: {
       position: 'absolute',
