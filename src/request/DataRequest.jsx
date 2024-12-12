@@ -343,3 +343,14 @@ export const fetchReactionBlog = async (blogId, type, status) => {
     throw new Error(message);
   }
 };
+
+export const fetchReactionPOI = async (poiId, type, status) => {
+  try {
+    const response = await apiClient.post(`/poi/${poiId}/${type}`, {status});
+    return response.data;
+  } catch (error) {
+    const message = handleError(error);
+    console.error('Failed to react to POI:', message);
+    throw new Error(message);
+  }
+};

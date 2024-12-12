@@ -1,19 +1,28 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {Heart, MessageCircle, Bookmark, Share2} from 'lucide-react-native';
 import Share from 'react-native-share';
 import {useTheme} from '@rneui/themed';
+import { fetchReactionBlog, fetchReactionPOI } from '../request/DataRequest';
 
 interface PostProps {
   item: any;
   onComment: () => void;
+  type: string;
 }
 
-const BottomBar: React.FC<PostProps> = ({item, onComment}) => {
+const BottomBar: React.FC<PostProps> = ({item, onComment, type}) => {
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
   const [loved, setLoved] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  useEffect(() => {
+    if (item) {
+      setLoved(item.loved ?? false);
+      setSaved(item.saved ?? false);
+    }
+  }, [item]);
 
   const handleShare = async ({title, url}: {title: string; url?: string}) => {
     try {
@@ -27,11 +36,27 @@ const BottomBar: React.FC<PostProps> = ({item, onComment}) => {
     }
   };
 
+  const handleReactions = (reactionType: string) => {
+    switch (reactionType) {
+      case 'love':
+        const newLoved = !loved;
+        setLoved(newLoved);
+        (type === 'blog' ? fetchReactionBlog : fetchReactionPOI)(item.id, 'reaction', newLoved);
+        break;
+      case 'save':
+        setSaved(!saved);
+        (type === 'blog' ? fetchReactionBlog : fetchReactionPOI)(item.id, 'save', !saved);
+        break;
+      default:
+        break;
+    }
+  };
+
   return (
     <View style={styles.actionBar}>
       <TouchableOpacity
         style={styles.actionButton}
-        onPress={() => setLoved(!loved)}>
+        onPress={() => handleReactions('love')}>
         <Heart
           size={24}
           color={loved ? '#ff5050' : theme.colors.black}
@@ -53,7 +78,7 @@ const BottomBar: React.FC<PostProps> = ({item, onComment}) => {
 
       <TouchableOpacity
         style={styles.actionButton}
-        onPress={() => setSaved(!saved)}>
+        onPress={() => handleReactions('save')}>
         <Bookmark
           size={24}
           color={theme.colors.black}

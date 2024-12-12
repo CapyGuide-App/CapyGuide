@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ActivityIndicator, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Carousel from 'react-native-reanimated-carousel';
 import LinearGradient from 'react-native-linear-gradient';
 import { HeartIcon } from "lucide-react-native";
 import { useTheme } from "@rneui/themed";
+import { fetchReactionPOI } from "../request/DataRequest";
 
 interface SuggestionsCollectionProps {
     data: any;
@@ -23,6 +24,32 @@ const {width} = Dimensions.get('screen');
 
 const SuggestionsItem: React.FC<SuggestionsItemProps> = ({item, index, onPress, paddingHorizontal}) => {
     const {theme} = useTheme();
+    const [loved, setLoved] = React.useState(false);
+    const [saved, setSaved] = React.useState(false);
+
+    useEffect(() => {
+        if (item) {
+            setLoved(item.loved ?? false);
+            setSaved(item.saved ?? false);
+        }
+    }, [item]);
+
+    const handleReactions = (reactionType: string) => {
+        switch (reactionType) {
+          case 'love':
+            const newLoved = !loved;
+            setLoved(newLoved);
+            fetchReactionPOI(item.id, 'reaction', newLoved);
+            break;
+          case 'save':
+            setSaved(!saved);
+            fetchReactionPOI(item.id, 'save', !saved);
+            break;
+          default:
+            break;
+        }
+      };    
+
     return (
         <View style={[itemStyles.container, {paddingHorizontal}]}>
             <Image 
@@ -50,10 +77,12 @@ const SuggestionsItem: React.FC<SuggestionsItemProps> = ({item, index, onPress, 
                     </View>
                     <TouchableOpacity
                         style={itemStyles.icon}
+                        onPress={() => handleReactions('love')}
                     >
                         <HeartIcon 
                             size={24} 
-                            color="white" 
+                            color={loved ? '#ff5050' : theme.colors.white}
+                            fill={loved ? '#ff5050' : 'none'}
                         />
                     </TouchableOpacity>
                 </View>

@@ -134,7 +134,7 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
         }}
         footerComponent={(props) => (
           <BottomSheetFooter {...props}>
-            <BottomBar item={item} onComment={() => setCommentModalVisible(true)} />
+            <BottomBar item={item} onComment={() => setCommentModalVisible(true)} type='poi' />
           </BottomSheetFooter>
         )}
       >

@@ -35,6 +35,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation, route}) => {
   
   useEffect(() => {
     if (data) {
+      console.log(data);
       setGallery(data.collection);
     }
   }, [data]);
