@@ -140,6 +140,7 @@ const dynamicStyles = (theme: any) =>StyleSheet.create({
   displayname: {
     fontSize: 20,
     fontWeight: 'bold',
+    color: theme.colors.text,
   },
   username: {
     fontSize: 15,
