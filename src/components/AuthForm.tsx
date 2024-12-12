@@ -102,9 +102,11 @@ const AuthForm: React.FC<AuthFormProps> = ({
     }
   };
 
+  const styles = dynamicStyles(theme);
+
   return (
     <ImageBackground
-      source={require('./../assets/capy1.jpg')} // Đường dẫn đến ảnh nền
+      source={require('../assets/capy1.jpg')}
       style={styles.background}
       imageStyle={styles.image}>
       <View style={styles.container}>
@@ -270,27 +272,24 @@ const AuthForm: React.FC<AuthFormProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
+const dynamicStyles = (theme: any) =>
+  StyleSheet.create({
   background: {
     flex: 1, // Phủ toàn bộ màn hình
   },
   image: {
-    opacity: 0.6, // Điều chỉnh độ mờ của ảnh nền
+    opacity: 0.4, // Điều chỉnh độ mờ của ảnh nền
   },
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "#FFF9F0",
-    // backgroundColor: "#f9f9f9",
-    backgroundColor: 'rgba(255, 255, 255, 0)',
     paddingHorizontal: 20,
   },
   header: {
-    fontSize: 24,
+    fontSize: 30,
     fontWeight: "bold",
-    // color: "#F5A623",
-    color: "#000",
+    color: theme.colors.primary,
     marginBottom: 30,
   },
   inputContainer: {
@@ -316,8 +315,7 @@ const styles = StyleSheet.create({
     color: "#333",
   },
   button: {
-    backgroundColor: "#3D90CF",
-    // backgroundColor: "#4EA7FC",
+    backgroundColor: theme.colors.primary,
     padding: 15,
     borderRadius: 10,
     alignItems: "center",
@@ -365,14 +363,13 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   promptText: {
-    color: "#000",
-    fontSize: 17,
+    color: "#0b0b0b",
+    fontSize: 16,
     marginTop: 20,
   },
   switchText: {
-    color: "#3D90CF",
-    // color: "#4EA7FC",
-    fontSize: 17,
+    color: theme.colors.primary,
+    fontSize: 16,
     marginTop: 20,
     fontWeight: "bold",
   },

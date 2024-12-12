@@ -12,7 +12,7 @@ import {
 import {ArrowLeft} from 'lucide-react-native';
 import avatar from '../assets/avatar.jpg';
 import CameraHandler from '../components/CameraHandler';
-import { fetchProfile, fetchUpdateProfile } from '../request/DataRequest';
+import { fetchUpdateProfile } from '../request/DataRequest';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '@rneui/themed';
 import { th } from 'date-fns/locale';

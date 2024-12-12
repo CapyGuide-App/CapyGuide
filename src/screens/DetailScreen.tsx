@@ -38,6 +38,7 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import {googleMapRoute} from '../request/GoogleMapRequest';
 import {fetchPOI, reloadData} from '../request/DataRequest';
 import ModalComment from '../components/ModalComment';
+import BottomSheet, { BottomSheetFooter, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
 
 type DetailScreenRouteProp = RouteProp<
   {Detail: {poiID: string; initItem: any}},
@@ -115,152 +116,172 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
           <ChevronLeft size={24} color={theme.colors.white} />
         </TouchableOpacity>
       </View>
-      <ScrollView style={styles.container}>
-        <Pressable onPress={openModal}>
-          <Image source={{uri: initItem.picture}} style={styles.mainImage} />
-        </Pressable>
+      <Pressable onPress={openModal}>
+        <Image source={{uri: initItem.picture}} style={styles.mainImage} />
+      </Pressable>
 
-        <View style={styles.infoContainer}>
-          <Text style={styles.title}>{initItem.name}</Text>
-          <View style={styles.statsRow}>
-            <View style={styles.statItemContainer}>
-              <MessageSquare color="#4caf50" size={21} />
-              <Text style={styles.statNumber}>157</Text>
-              <Text style={styles.statLabel}>bình luận</Text>
-            </View>
-            <View style={styles.statItemContainer}>
-              <LucideImage color="#4caf50" size={21} />
-              <Text style={styles.statNumber}>421</Text>
-              <Text style={styles.statLabel}>hình ảnh</Text>
-            </View>
-            <View style={styles.statItemContainer}>
-              <Bookmark color="#4caf50" size={21} />
-              <Text style={styles.statNumber}>502</Text>
-              <Text style={styles.statLabel}>lưu lại</Text>
-            </View>
-            <View style={styles.ratingContainer}>
-              <Text style={styles.ratingText}>
-                {initItem.avg_rating?.toFixed(1)}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.sectionContainer}>
-          <View style={styles.row}>
-            <View style={{flex: 1}}>
-              <Text style={styles.sectionTitle}>Thông tin về địa điểm</Text>
-              <View style={styles.row}>
-                <MapPin
-                  size={21}
-                  color={theme.colors.black}
-                  style={styles.icon2}
-                />
-                <Text style={styles.text}>{initItem.address}</Text>
+      <BottomSheet
+        snapPoints={['80%']}
+        index={0}
+        animateOnMount={false}
+        overDragResistanceFactor={1}
+        backgroundStyle={{
+          borderRadius: 20,
+          backgroundColor: theme.colors.background,
+        }}
+        handleIndicatorStyle={{
+          backgroundColor: theme.colors.text,
+        }}
+        footerComponent={(props) => (
+          <BottomSheetFooter {...props}>
+            <BottomBar item={item} onComment={() => setCommentModalVisible(true)} />
+          </BottomSheetFooter>
+        )}
+      >
+        <BottomSheetScrollView style={styles.container}>
+          <View style={[styles.container, {paddingBottom: 70}]}>
+          <View style={styles.infoContainer}>
+            <Text style={styles.title}>{initItem.name}</Text>
+            <View style={styles.statsRow}>
+              <View style={styles.statItemContainer}>
+                <MessageSquare color="#4caf50" size={21} />
+                <Text style={styles.statNumber}>157</Text>
+                <Text style={styles.statLabel}>bình luận</Text>
               </View>
-
-              <View style={styles.row}>
-                <Map size={21} color="#4CAF50" style={styles.icon2} />
-                <Text style={styles.text}>
-                  <Text style={styles.distance}>
-                    {initItem.distance?.toFixed(2)}
-                  </Text>
-                  {' (Từ vị trí hiện tại)'}
+              <View style={styles.statItemContainer}>
+                <LucideImage color="#4caf50" size={21} />
+                <Text style={styles.statNumber}>421</Text>
+                <Text style={styles.statLabel}>hình ảnh</Text>
+              </View>
+              <View style={styles.statItemContainer}>
+                <Bookmark color="#4caf50" size={21} />
+                <Text style={styles.statNumber}>502</Text>
+                <Text style={styles.statLabel}>lưu lại</Text>
+              </View>
+              <View style={styles.ratingContainer}>
+                <Text style={styles.ratingText}>
+                  {initItem.avg_rating?.toFixed(1)}
                 </Text>
               </View>
+            </View>
+          </View>
 
-              <View style={styles.row}>
-                {initItem.type === 'place' ? (
-                  <BlocksIcon
+          <View style={styles.sectionContainer}>
+            <View style={styles.row}>
+              <View style={{flex: 1}}>
+                <Text style={styles.sectionTitle}>Thông tin về địa điểm</Text>
+                <View style={styles.row}>
+                  <MapPin
                     size={21}
                     color={theme.colors.black}
                     style={styles.icon2}
                   />
-                ) : (
-                  <Utensils
-                    size={21}
-                    color={theme.colors.black}
-                    style={styles.icon2}
+                  <Text style={styles.text}>{initItem.address}</Text>
+                </View>
+
+                <View style={styles.row}>
+                  <Map size={21} color="#4CAF50" style={styles.icon2} />
+                  <Text style={styles.text}>
+                    <Text style={styles.distance}>
+                      {initItem.distance?.toFixed(2)}km
+                    </Text>
+                    {' (Từ vị trí hiện tại)'}
+                  </Text>
+                </View>
+
+                <View style={styles.row}>
+                  {initItem.type === 'place' ? (
+                    <BlocksIcon
+                      size={21}
+                      color={theme.colors.black}
+                      style={styles.icon2}
+                    />
+                  ) : (
+                    <Utensils
+                      size={21}
+                      color={theme.colors.black}
+                      style={styles.icon2}
+                    />
+                  )}
+                  <Text style={styles.text}>
+                    Loại hình:{' '}
+                    {initItem.type === 'place' ? 'Địa điểm' : 'Ẩm thực'}
+                  </Text>
+                </View>
+              </View>
+              <TouchableOpacity
+                style={styles.navigationButton}
+                onPress={() => googleMapRoute(item)}>
+                <Navigation2 size={20} color="white" fill="white" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.mapContainer}>
+              <MapView
+                style={styles.map}
+                styleURL="mapbox://styles/mapbox/streets-v11"
+                localizeLabels={{locale: 'current'}}
+                logoEnabled={false}
+                attributionEnabled={false}
+                scrollEnabled={false}
+                zoomEnabled={false}
+                rotateEnabled={false}
+                pitchEnabled={false}
+                compassEnabled={false}
+                scaleBarEnabled={false}>
+                {initItem.longitude && initItem.latitude && (
+                  <Camera
+                    centerCoordinate={[initItem.longitude, initItem.latitude]}
+                    zoomLevel={15}
+                    animationDuration={0}
                   />
                 )}
-                <Text style={styles.text}>
-                  Loại hình:{' '}
-                  {initItem.type === 'place' ? 'Địa điểm' : 'Ẩm thực'}
-                </Text>
+                <MarkerView coordinate={[initItem.longitude, initItem.latitude]}>
+                  <Image source={markerIcon} style={styles.markerIcon} />
+                </MarkerView>
+              </MapView>
+            </View>
+          </View>
+
+          <View style={styles.reactionsRow}>
+            {reactions.map(reaction => (
+              <TouchableOpacity
+                key={reaction.id}
+                style={[
+                  styles.reactionItem,
+                  selectedReaction === reaction.id && styles.selectedReaction,
+                ]}
+                onPress={() => setSelectedReaction(reaction.id)}>
+                {reaction.icon}
+                <Text style={styles.reactionText}>{reaction.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <Comment poiId={item.id} data={item.reviews} />
+          </View>
+
+          <Modal visible={modalVisible} transparent={true} animationType="fade">
+            <TouchableWithoutFeedback onPress={closeModal}>
+              <View style={styles.modalContainer}>
+                <TouchableOpacity style={styles.closeModal} onPress={closeModal}>
+                  <ArrowLeft size={40} color="#fff" />
+                </TouchableOpacity>
+                <View style={styles.innerContainer}>
+                  <Image source={{uri: item.picture}} style={styles.fullImage} />
+                </View>
               </View>
-            </View>
-            <TouchableOpacity
-              style={styles.navigationButton}
-              onPress={() => googleMapRoute(item)}>
-              <Navigation2 size={20} color="white" fill="white" />
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.mapContainer}>
-            <MapView
-              style={styles.map}
-              styleURL="mapbox://styles/mapbox/streets-v11"
-              localizeLabels={{locale: 'current'}}
-              logoEnabled={false}
-              attributionEnabled={false}
-              scrollEnabled={false}
-              zoomEnabled={false}
-              rotateEnabled={false}
-              pitchEnabled={false}
-              compassEnabled={false}
-              scaleBarEnabled={false}>
-              {initItem.longitude && initItem.latitude && (
-                <Camera
-                  centerCoordinate={[initItem.longitude, initItem.latitude]}
-                  zoomLevel={15}
-                  animationDuration={0}
-                />
-              )}
-              <MarkerView coordinate={[initItem.longitude, initItem.latitude]}>
-                <Image source={markerIcon} style={styles.markerIcon} />
-              </MarkerView>
-            </MapView>
-          </View>
-        </View>
-
-        <View style={styles.reactionsRow}>
-          {reactions.map(reaction => (
-            <TouchableOpacity
-              key={reaction.id}
-              style={[
-                styles.reactionItem,
-                selectedReaction === reaction.id && styles.selectedReaction,
-              ]}
-              onPress={() => setSelectedReaction(reaction.id)}>
-              {reaction.icon}
-              <Text style={styles.reactionText}>{reaction.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-
-        <Comment poiId={item.id} data={item.reviews} />
-      </ScrollView>
-      <BottomBar item={item} onComment={() => setCommentModalVisible(true)} />
-      <Modal visible={modalVisible} transparent={true} animationType="fade">
-        <TouchableWithoutFeedback onPress={closeModal}>
-          <View style={styles.modalContainer}>
-            <TouchableOpacity style={styles.closeModal} onPress={closeModal}>
-              <ArrowLeft size={40} color="#fff" />
-            </TouchableOpacity>
-            <View style={styles.innerContainer}>
-              <Image source={{uri: item.picture}} style={styles.fullImage} />
-            </View>
-          </View>
-        </TouchableWithoutFeedback>
-      </Modal>
-      <ModalComment
-        visible={commentModalVisible}
-        onClose={() => setCommentModalVisible(false)}
-        onSubmit={comment => {
-          console.log('Bình luận:', comment);
-          setCommentModalVisible(false);
-        }}
-      />
+            </TouchableWithoutFeedback>
+          </Modal>
+          <ModalComment
+            visible={commentModalVisible}
+            onClose={() => setCommentModalVisible(false)}
+            onSubmit={comment => {
+              console.log('Bình luận:', comment);
+              setCommentModalVisible(false);
+            }}
+          />
+        </BottomSheetScrollView>
+      </BottomSheet>
     </View>
   );
 };
@@ -314,7 +335,6 @@ const dynamicStyles = (theme: any) =>
       backgroundColor: theme.colors.background,
       padding: 20,
       paddingBottom: 0,
-      marginTop: -30,
       borderTopLeftRadius: 20,
       borderTopRightRadius: 20,
       overflow: 'hidden',

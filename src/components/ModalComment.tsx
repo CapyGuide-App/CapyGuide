@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {ArrowLeft} from 'lucide-react-native';
 import {Slider, Icon, useTheme} from '@rneui/themed';
+import StarRating from 'react-native-star-rating-widget';
 
 type ModalCommentProps = {
   visible: boolean;
@@ -22,10 +23,10 @@ const ModalComment: React.FC<ModalCommentProps> = ({
   onClose,
   onSubmit,
 }) => {
-  const [rating, setRating] = useState(50);
+  const [rating, setRating] = useState(5);
   const [comment, setComment] = useState('');
-    const {theme} = useTheme();
-    const styles = dynamicStyles(theme);
+  const {theme} = useTheme();
+  const styles = dynamicStyles(theme);
 
   const interpolate = (start: number, end: number) => {
     let k = (rating - 0) / 100;
@@ -48,6 +49,11 @@ const ModalComment: React.FC<ModalCommentProps> = ({
     }
   };
 
+  useEffect(() => {
+    setRating(5);
+    setComment(''); 
+  }, [visible]);
+
   return (
     <Modal visible={visible} transparent={true} animationType="fade">
       <TouchableWithoutFeedback>
@@ -62,32 +68,10 @@ const ModalComment: React.FC<ModalCommentProps> = ({
 
             <Text style={styles.label}>Đánh giá</Text>
             <View style={styles.sliderRow}>
-              <Slider
-                style={{flex: 1}}
-                minimumValue={0}
-                maximumValue={100}
-                step={1}
-                value={rating}
-                allowTouchTrack        
-                onValueChange={setRating}
-                // minimumTrackTintColor="#4CAF50"
-                // maximumTrackTintColor="#ddd"
-                trackStyle={{ height: 5, backgroundColor: 'transparent' }}
-                thumbStyle={{ height: 10, width: 10, backgroundColor: 'transparent' }}
-                thumbProps={{
-                    children: (
-                      <Icon
-                        name="star"
-                        type="font-awesome"
-                        size={10}
-                        reverse
-                        containerStyle={{ bottom: 15, right: 20 }}
-                        color={color()}
-                      />
-                    ),
-                  }}
+              <StarRating
+                rating={rating}
+                onChange={setRating}
               />
-              <Text style={styles.ratingValue}>{(rating/10).toFixed(1)}</Text>
             </View>
 
             <Text style={styles.label}>Bình luận</Text>
@@ -155,6 +139,7 @@ const dynamicStyles = (theme: any) => StyleSheet.create({
   sliderRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   ratingValue: {
     fontSize: 16,

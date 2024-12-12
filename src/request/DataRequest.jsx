@@ -118,9 +118,22 @@ export const fetchRegister = async (displayname, username, password, email) => {
   }
 };
 
-export const fetchProfile = async () => {
+// export const fetchProfile = async () => {
+//   try {
+//     const response = await apiClient.get('/profile');
+//     return response.data;
+//   } catch (error) {
+//     const message = handleError(error);
+//     console.error('Failed to fetch profile:', message);
+//     throw new Error(message);
+//   }
+// };
+
+export const fetchProfile = async (userId, signal) => {
   try {
-    const response = await apiClient.get('/profile');
+    const response = await apiClient.get(`/profile${userId ? `/${userId}` : ''}`, {
+      signal: signal,
+    });
     return response.data;
   } catch (error) {
     const message = handleError(error);

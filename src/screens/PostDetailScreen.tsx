@@ -33,15 +33,17 @@ import {useFocusEffect, useNavigation} from '@react-navigation/native';
 import Video from 'react-native-video';
 import {useTheme} from '@rneui/themed';
 import ModalComment from '../components/ModalComment';
-const {width} = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 const PostContent: React.FC<{
   post: any;
   setCurrentImageUri: any;
   openModal: any;
-}> = ({post, setCurrentImageUri, openModal}) => {
+  navigation?: any;
+}> = ({post, setCurrentImageUri, openModal, navigation}) => {
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
+
   return (
     <View style={{paddingBottom: 90}}>
       <View style={styles.content}>
@@ -51,9 +53,13 @@ const PostContent: React.FC<{
         <Text style={styles.title}>{post.title}</Text>
 
         <View style={styles.metadataRow}>
-          <Image source={{uri: post.avatar}} style={styles.avatar} />
+          <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen', {user: post.author})}>
+            <Image source={{uri: post.author.avatar}} style={styles.avatar} />
+          </TouchableOpacity>
           <View>
-            <Text style={styles.author}>{post.displayname}</Text>
+            <TouchableOpacity onPress={() => navigation.navigate('ProfileScreen', {user: post.author})}>
+              <Text style={styles.author}>{post.author.displayname}</Text>
+            </TouchableOpacity>
             <Text style={styles.metadata}>
               {post && formatRelativeTime(post.created_at)} • {post.views} views
             </Text>
@@ -71,18 +77,18 @@ const PostContent: React.FC<{
           case 'image':
             console.log(element);
             return (
-              <View style={styles.inlineImageContainer} key={index}>
-                <TouchableOpacity
-                  onPress={() => {
-                    setCurrentImageUri(element.content_data);
-                    openModal();
-                  }}>
-                  <Image
-                    source={{uri: element.content_data}}
-                    style={styles.inlineImage}
-                  />
-                </TouchableOpacity>
-              </View>
+              <TouchableOpacity
+                onPress={() => {
+                  setCurrentImageUri(element.content_data);
+                  openModal();
+                }}>
+                  <View style={styles.inlineImageContainer} key={index}>
+                    <Image
+                      source={{uri: element.content_data}}
+                      style={styles.inlineImage}
+                    />
+                  </View>
+              </TouchableOpacity>
             );
           case 'link':
             return (
@@ -97,7 +103,7 @@ const PostContent: React.FC<{
             return (
               <View key={index}>
                 <Video
-                  source={{uri: element.content_data}}
+                  source={{uri: element?.content_data}}
                   style={{width: width - 40, height: 200}}
                   controls
                   paused
@@ -309,6 +315,7 @@ const PostDetailScreen: React.FC<any> = ({route}) => {
                 post={post}
                 setCurrentImageUri={setCurrentImageUri}
                 openModal={openModal}
+                navigation={navigation}
               />
             )}
           </View>
@@ -378,7 +385,7 @@ const dynamicStyles = (theme: any) =>
     },
     titleImage: {
       width: '100%',
-      height: 200,
+      height: height * 0.25,
       resizeMode: 'cover',
     },
     imageWrapper: {
@@ -485,7 +492,7 @@ const dynamicStyles = (theme: any) =>
       marginBottom: 10,
     },
     inlineImage: {
-      width: '80%',
+      width: '90%',
       height: 200,
       resizeMode: 'cover',
       borderRadius: 8,

@@ -33,7 +33,7 @@ const AppearanceScreen: React.FC = () => {
       <View style={styles.optionsContainer}>
         <TouchableOpacity
           style={[styles.option, styles.topOption]}
-          onPress={() => handlePress('Chế độ tối (Dark Mode)')}>
+          onPress={toggleTheme}>
           <View style={styles.optionContent}>
             <Text style={styles.optionText}>Chế độ tối (Dark Mode)</Text>
             <View style={styles.actionContainer}>

@@ -8,7 +8,6 @@ import {
 import { fetchReactionBlog } from '../request/DataRequest';
 import { formatRelativeTime } from '../styles/Methods';
 import {useTheme} from '@rneui/themed';
-import { print } from '@gorhom/portal/lib/typescript/utilities/logger';
 
 interface PostProps {
   item: any;
@@ -47,9 +46,14 @@ const Post: React.FC<PostProps> = ({item, onPress}) => {
           <Text style={styles.categoryLabel}>{item.category}</Text>
         </View> */}
 
-        <Text style={styles.title} numberOfLines={2}>
-          {item.title}
-        </Text>
+        <View style={{flex: 1}}>
+          <Text style={styles.title} numberOfLines={2}>
+            {item.title}
+          </Text>
+          <Text style={styles.commentText} numberOfLines={2}>
+            {item.short_description}
+          </Text>
+        </View>
 
         <View style={styles.infoRow}>
           <Image source={{uri: item.avatar}} style={styles.avatar} />
@@ -92,6 +96,7 @@ const dynamicStyles = (theme: any) =>
       margin: 10,
       marginBottom: 0,
       borderRadius: 12,
+      elevation: 4,
     },
     thumbnail: {
       width: 100,
@@ -101,6 +106,8 @@ const dynamicStyles = (theme: any) =>
     },
     textContainer: {
       flex: 1,
+      height: '100%',
+      flexDirection: 'column',
     },
     categoryContainer: {
       alignSelf: 'flex-start',
@@ -119,15 +126,13 @@ const dynamicStyles = (theme: any) =>
       fontSize: 16,
       fontWeight: 'bold',
       color: theme.colors.text,
-      marginBottom: 26,
       marginLeft: 2,
       lineHeight: 20,
-      height: 40,
     },
     infoRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 6,
+      marginTop: 'auto',
     },
     avatar: {
       width: 28,
@@ -161,7 +166,7 @@ const dynamicStyles = (theme: any) =>
       minWidth: 25,
     },
     commentText: {
-      fontSize: 12,
+      fontSize: 10,
       color: theme.colors.dimText,
       marginLeft: 4,
     },

@@ -7,6 +7,12 @@ import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {AuthProvider} from './src/context/AuthContext';
 import {PortalProvider} from '@gorhom/portal';
 import CustomThemeProvider from './src/context/ThemeContext';
+import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 function App() {
   const [settings, setSettings] = useState<{
