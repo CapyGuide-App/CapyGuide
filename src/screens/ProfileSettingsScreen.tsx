@@ -196,7 +196,7 @@ const dynamicStyles = (theme: any) =>
     editIconText: {
       fontSize: 20,
       fontWeight: 'bold',
-      color: theme.colors.text,
+      color: theme.colors.white,
     },
     formContainer: {
       width: '100%',

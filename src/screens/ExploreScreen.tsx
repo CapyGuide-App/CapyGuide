@@ -117,6 +117,26 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({route, navigation}) => {
     };
   });
 
+  const animatedSearchBarStyle = useAnimatedStyle(() => {
+    const min = screenHeight / 3;
+    const translateY = interpolate(
+      animatedPosition.value,
+      [0, min],
+      [-50, 0],
+      Extrapolation.CLAMP,
+    );
+    const opacity = interpolate(
+      animatedPosition.value,
+      [0, min],
+      [0, 1],
+      Extrapolation.CLAMP,
+    );
+    return {
+      transform: [{translateY}],
+      opacity,
+    };
+  });
+
   const CustomErrorContent = React.useMemo(
     () => () => {
       const handleRetry = () => {
@@ -131,26 +151,30 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({route, navigation}) => {
 
   const SearchBarMemo = React.useMemo(() => {
     return (
-      <SearchBar
-        style={{
-          position: 'absolute',
-          top: 20,
-          left: 20,
-          right: 20,
-          shadowColor: theme.colors.black,
-          elevation: 5,
-        }}
-        contentContainerStyle={{
-          padding: 20,
-        }}
-        backgroundColor={hexToRGBA(theme.colors.background, 1)}
-        clearOnClose={false}
-        ref={searchRef}
-        handleSearchData={handleSearch}
-        onSelected={handleMarkerPress}
-        type="poi"
-        data={placeData.concat(foodData)}
-      />
+      <Animated.View style={[{
+        position: 'absolute',
+        top: 20,
+        left: 20,
+        right: 20,
+        shadowColor: theme.colors.black,
+        elevation: 5,
+      }, animatedSearchBarStyle]}>
+        <SearchBar
+          style={{
+          }}
+          contentContainerStyle={{
+            padding: 20,
+            paddingTop: 20,
+          }}
+          backgroundColor={hexToRGBA(theme.colors.background, 1)}
+          clearOnClose={false}
+          ref={searchRef}
+          handleSearchData={handleSearch}
+          onSelected={handleMarkerPress}
+          type="poi"
+          data={placeData.concat(foodData)}
+        />
+      </Animated.View>
     );
   }, [placeData, foodData]);
 

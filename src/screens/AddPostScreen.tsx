@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Linking,
   Modal,
+  ActivityIndicator,
 } from 'react-native';
 import {
   Plus,
@@ -60,6 +61,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
   const [editContent, setEditContent] = useState('');
   const [editUrl, setEditUrl] = useState('');
   const [cntElements, setCntElements] = useState(0);
+  const [uploading, setUploading] = useState(false);
 
   React.useEffect(() => {
     if (post) {
@@ -145,6 +147,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
       return;
     }
 
+    setUploading(true);
     if (post) {
       fetchUpdatePost(
         post.id,
@@ -156,7 +159,8 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
       });
     } else {
       fetchCreatePost(postTitle, selectedTitleImage, postElements).then(() => {
-        navigation.goBack();
+        setUploading(false);
+        navigation.navigate('Post');
       });
     }
   };
@@ -207,7 +211,7 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
       <View style={styles.previewElement}>
         <TouchableOpacity
           style={styles.deleteButton}
-          onPress={() => handleDeleteElement(item)}>
+          onPress={() => handleDeleteElement(index)}>
           <X color={theme.colors.black} size={22} />
         </TouchableOpacity>
         <TouchableOpacity
@@ -281,16 +285,18 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
             styles.submitButton,
             {
               backgroundColor:
-                postElements.length > 0 && postTitle.trim()
+                postElements.length > 0 && postTitle.trim() && !uploading
                   ? theme.colors.primary
                   : theme.colors.disabled,
             },
           ]}
+          disabled={postElements.length === 0 || !postTitle.trim() || uploading}
           onPress={
             postElements.length > 0 && postTitle.trim()
               ? handlePostSubmit
               : undefined
           }>
+            {uploading ? <ActivityIndicator color={theme.colors.primary} /> :
           <Text
             style={[
               styles.headerButtonText,
@@ -299,8 +305,9 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
                   postElements.length > 0 && postTitle.trim() ? '#fff' : '#888',
               },
             ]}>
-            Đăng
-          </Text>
+            {post && 'Lưu'}
+            {!post && 'Đăng'}
+          </Text>}
         </TouchableOpacity>
       </View>
       <ScrollView contentContainerStyle={styles.previewContainer}>
