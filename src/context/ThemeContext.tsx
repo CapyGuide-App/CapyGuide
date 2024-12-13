@@ -95,6 +95,7 @@ const CustomThemeProvider: React.FC<{children: React.ReactNode}> = ({
       button2ActiveText: colors.white,
       button2: '#efefef',
       button2Text: colors.primary,
+      white: colors.white,
     },
     darkColors: {
       primary: '#027fff',
@@ -117,6 +118,7 @@ const CustomThemeProvider: React.FC<{children: React.ReactNode}> = ({
       comment: '#333334',
       indicatorBar: '#fff',
       button2Text: colors.white,
+      white: colors.white,
     },
     mode: isDarkMode ? 'dark' : 'light',
   });
