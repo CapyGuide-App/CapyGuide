@@ -36,9 +36,10 @@ import BottomBar from '../components/BottomBar';
 import {RouteProp} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {googleMapRoute} from '../request/GoogleMapRequest';
-import {fetchPOI, reloadData} from '../request/DataRequest';
+import {fetchPOI, fetchReviewPOI, reloadData} from '../request/DataRequest';
 import ModalComment from '../components/ModalComment';
 import BottomSheet, { BottomSheetFooter, BottomSheetScrollView, BottomSheetView } from '@gorhom/bottom-sheet';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 type DetailScreenRouteProp = RouteProp<
   {Detail: {poiID: string; initItem: any}},
@@ -61,15 +62,24 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
   );
   const [modalVisible, setModalVisible] = useState(false);
   const [commentModalVisible, setCommentModalVisible] = useState(false);
+  const [status, setStatus] = useState<'loading' | 'error' | 'success'>('loading');
 
   const openModal = () => setModalVisible(true);
   const closeModal = () => setModalVisible(false);
 
-  const markerIcon = item.type === 'travel' ? PlacePin : FoodPin;
+  const markerIcon = item.type === 'place' ? PlacePin : FoodPin;
 
   const reload = (poiID: string, setItem: any, controller: AbortController) => {
     const request = fetchPOI(poiID, controller.signal);
-    reloadData(request, setItem);
+    reloadData(request, setItem, setStatus);
+  };
+
+  const handleReload = () => {
+    const controller = new AbortController();
+    reload(poiID, setItem, controller);
+    return () => {
+      controller.abort();
+    };
   };
 
   const reactions = [
@@ -138,7 +148,9 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
           </BottomSheetFooter>
         )}
       >
-        <BottomSheetScrollView style={styles.container}>
+        <BottomSheetScrollView style={styles.container} refreshControl={
+          <RefreshControl refreshing={status === 'loading'} onRefresh={handleReload} />
+        }>
           <View style={[styles.container, {paddingBottom: 70}]}>
           <View style={styles.infoContainer}>
             <Text style={styles.title}>{initItem.name}</Text>
@@ -275,9 +287,12 @@ const DetailScreen: React.FC<Props> = ({route, navigation}) => {
           <ModalComment
             visible={commentModalVisible}
             onClose={() => setCommentModalVisible(false)}
-            onSubmit={comment => {
+            onSubmit={async comment => {
               console.log('Bình luận:', comment);
               setCommentModalVisible(false);
+              fetchReviewPOI(item.id, comment.rating, comment.text).then(() => {
+                handleReload();
+              });
             }}
           />
         </BottomSheetScrollView>

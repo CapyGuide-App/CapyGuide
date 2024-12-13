@@ -8,11 +8,14 @@ import {AuthProvider} from './src/context/AuthContext';
 import {PortalProvider} from '@gorhom/portal';
 import CustomThemeProvider from './src/context/ThemeContext';
 import { configureReanimatedLogger, ReanimatedLogLevel } from 'react-native-reanimated';
+import { LogBox } from 'react-native';
 
 configureReanimatedLogger({
   level: ReanimatedLogLevel.warn,
   strict: false,
 });
+
+LogBox.ignoreAllLogs();
 
 function App() {
   const [settings, setSettings] = useState<{

@@ -354,3 +354,14 @@ export const fetchReactionPOI = async (poiId, type, status) => {
     throw new Error(message);
   }
 };
+
+export const fetchReviewPOI = async (id, rating, comment) => {
+  try {
+    const response = await apiClient.post(`/poi/${id}/review`, {rating, comment});
+    return response.data;
+  } catch (error) {
+    const message = handleError(error);
+    console.error('Failed to comment:', message);
+    throw new Error(message);
+  }
+};

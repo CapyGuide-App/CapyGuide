@@ -43,8 +43,6 @@ const ModalComment: React.FC<ModalCommentProps> = ({
   const handleSend = () => {
     if (comment.trim().length > 0) {
       onSubmit({rating, text: comment});
-      setComment('');
-      setRating(5);
       onClose();
     }
   };
@@ -71,6 +69,7 @@ const ModalComment: React.FC<ModalCommentProps> = ({
               <StarRating
                 rating={rating}
                 onChange={setRating}
+                color='#f8d12d'
               />
             </View>
 
