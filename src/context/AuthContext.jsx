@@ -20,7 +20,6 @@ export const AuthProvider = ({ children }) => {
   const login = async () => {
     const tokens = await KeychainService.getTokens();
     if (tokens?.refreshToken) {
-      console.log(tokens);
       setIsUserLoggedIn(true);
     }
   };
@@ -49,28 +48,6 @@ export const AuthProvider = ({ children }) => {
     } else {
       setCurrentUser(null);
     }
-  }, [isUserLoggedIn]);
-
-  useEffect(() => {
-    const validateToken = async () => {
-      const tokens = await KeychainService.getTokens();
-      if (tokens?.accessToken) {
-        const decodedToken = JSON.parse(atob(tokens.accessToken.split('.')[1]));
-        const currentTime = Math.floor(Date.now() / 1000);
-  
-        if (decodedToken.exp < currentTime) {
-          logout(); // Log out the user
-        }
-      }
-    };
-  
-    const interval = setInterval(() => {
-      if (isUserLoggedIn) {
-        validateToken();
-      }
-    }, 60000); // Check every 60 seconds
-  
-    return () => clearInterval(interval);
   }, [isUserLoggedIn]);
 
   return (

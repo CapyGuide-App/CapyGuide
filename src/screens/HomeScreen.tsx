@@ -20,6 +20,7 @@ import DragList, {DragListRenderItemInfo} from 'react-native-draglist';
 import ErrorContent from '../components/ErrorContent';
 import { hexToRGBA } from '../styles/Methods';
 import { RefreshControl } from 'react-native-gesture-handler';
+import SuggestionsCollection from '../components/SuggestionsCollection';
 
 const HomeScreen: React.FC = ({navigation}: any) => {
   const {theme} = useTheme();
@@ -100,11 +101,19 @@ const HomeScreen: React.FC = ({navigation}: any) => {
       <SearchBar
         contentContainerStyle={[styles.container]}
         placeholder="Tìm kiếm..."
-        backgroundColor={hexToRGBA(theme.colors.primary, 0.15)}
+        backgroundColor={hexToRGBA(theme.colors.primary, 0.12)}
         data={placeData.concat(foodData)}
         type="poi"
         onSelected={navigateToDetail}
       />
+      {placeStatus !== 'error' && foodStatus !== 'error' && (
+        <SuggestionsCollection
+          data={placeData}
+          onPressItem={navigateToDetail}
+          status={placeStatus}
+          marginHorizontal={-15}
+        />
+      )}
       {placeStatus !== 'error' && foodStatus !== 'error' && (
         <NearByCollection
           title="Địa danh gần bạn"
@@ -117,6 +126,7 @@ const HomeScreen: React.FC = ({navigation}: any) => {
               title: 'Địa danh gần bạn',
             })
           }
+          marginHorizontal={-15}
         />
       )}
       {placeStatus !== 'error' && foodStatus !== 'error' && (
@@ -131,6 +141,7 @@ const HomeScreen: React.FC = ({navigation}: any) => {
               title: 'Đặc sản gần bạn',
             })
           }
+          marginHorizontal={-15}
         />
       )}
       {(placeStatus === 'error' || foodStatus === 'error') && (
@@ -153,7 +164,6 @@ const dynamicStyles = (theme: any) =>
       padding: 15,
       flexDirection: 'column',
       gap: 10,
-      height: '100%',
       backgroundColor: theme.colors.background2,
     },
   });

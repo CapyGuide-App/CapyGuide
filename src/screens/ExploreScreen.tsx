@@ -137,11 +137,13 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({route, navigation}) => {
           top: 20,
           left: 20,
           right: 20,
+          shadowColor: theme.colors.black,
+          elevation: 5,
         }}
         contentContainerStyle={{
           padding: 20,
         }}
-        backgroundColor={hexToRGBA(theme.colors.background, 0.75)}
+        backgroundColor={hexToRGBA(theme.colors.background, 1)}
         clearOnClose={false}
         ref={searchRef}
         handleSearchData={handleSearch}
@@ -178,35 +180,60 @@ const ExploreScreen: React.FC<ExploreScreenProps> = ({route, navigation}) => {
         }}
         backgroundStyle={{borderRadius: 20, backgroundColor: theme.colors.background}}
         handleIndicatorStyle={{
-          backgroundColor: theme.colors.text,
+          backgroundColor: theme.colors.dimText,
+          width: 40,
+        }}
+        handleStyle={{
+          marginBottom: 10,
         }}
         {...useBottomSheetIOSReduceMotionOverride()}>
+          
+        <Tab
+          value={indexTab}
+          onChange={setIndexTab}
+          disableIndicator
+          variant="default"
+          titleStyle={ (active) => ({
+            fontSize: 15, fontWeight: 'bold', 
+            color: active ? theme.colors.button2ActiveText : theme.colors.button2Text,
+          })}
+          style={{marginBottom: 10}}
+          iconPosition='left'
+        >
+          {/* To-do: sửa lại UI cho nổi bật hơn */}
+          <Tab.Item
+            id='place'
+            key={0}
+            title="Địa điểm"
+            icon={{ name: 'camera', type: 'entypo', 
+              color: indexTab === 0 ? theme.colors.button2ActiveText : theme.colors.button2Text 
+            }}
+            containerStyle={(active) => ({
+              backgroundColor: active ? theme.colors.button2Active : theme.colors.button2,
+              borderRadius: 10,
+              margin: 0,
+              marginLeft: 15,
+              marginRight: 7.5,
+            })}
+          />
+          <Tab.Item
+            id='food'
+            key={1}
+            title="Đặc sản"
+            icon={{ name: 'food', type: 'material-community',
+              color: indexTab === 1 ? theme.colors.button2ActiveText : theme.colors.button2Text 
+            }}
+            containerStyle={(active) => ({
+              backgroundColor: active ? theme.colors.button2Active : theme.colors.button2,
+              borderRadius: 10,
+              margin: 0,
+              marginRight: 15,
+              marginLeft: 7.5,
+            })}
+          />
+        </Tab>
         <BottomSheetView
           style={{flex: 1, backgroundColor: theme.colors.background}}>
-          <Tab
-            value={indexTab}
-            onChange={setIndexTab}
-            indicatorStyle={{
-              backgroundColor: theme.colors.indicatorBar,
-              height: 2.2,
-            }}
-            variant="primary">
-            {/* To-do: sửa lại UI cho nổi bật hơn */}
-            <Tab.Item
-              title="Địa điểm"
-              titleStyle={{fontSize: 15, fontWeight: 'bold'}}
-              containerStyle={{
-                backgroundColor: indexTab === 0 ? '#3D90CF' : '#6FADE0', // Xanh nhạt khi được chọn
-              }}
-            />
-            <Tab.Item
-              title="Đặc sản"
-              titleStyle={{fontSize: 15, fontWeight: 'bold'}}
-              containerStyle={{
-                backgroundColor: indexTab === 1 ? '#3D90CF' : '#6FADE0', // Xanh nhạt khi được chọn
-              }}
-            />
-          </Tab>
           <TabView value={indexTab} onChange={setIndexTab} disableSwipe={true}>
             <TabView.Item style={{flex: 1}}>
               <View
@@ -270,10 +297,11 @@ const dynamicStyles = (theme: any) =>
     floatingButton: {
       position: 'absolute',
       right: 20,
+      height: 60,
     },
     focusButton: {
       borderRadius: 50,
-      backgroundColor: hexToRGBA(theme.colors.background, 0.75),
+      backgroundColor: hexToRGBA(theme.colors.background, 1),
       elevation: 2,
       height: 50,
       width: 50,

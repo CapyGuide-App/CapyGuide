@@ -14,6 +14,7 @@ import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { InfoIcon, NavigationIcon, Star } from "lucide-react-native";
 import Svg, { Polygon } from "react-native-svg";
 import { googleMapRoute } from "../request/GoogleMapRequest";
+import { useTheme } from "@rneui/themed";
 
 interface CustomShapeSourceProps {
   type: string;
@@ -125,18 +126,24 @@ const Mapbox: React.FC<MapboxProps> = React.forwardRef(({ indexTab, placeData, f
     );
   }, [selectedFeature]);
 
+  const {theme} = useTheme();
+  const mapStyles: string[] = [
+    "mapbox://styles/suzueyume/cm3yjge2z00jj01sd81ge3ni3", 
+    "mapbox://styles/suzueyume/cm4gyl9fa004t01sf03wm4vz1"
+  ]
+
   return (
   <MapView
-      styleURL="mapbox://styles/suzueyume/cm3yjge2z00jj01sd81ge3ni3"
-      style={styles.map}
-      localizeLabels={{ locale: "vi" }}
-      onTouchMove={() => {
-          setIsFocused(false);
-          setSelectedFeature(null);
-      }}
-      logoEnabled={false}
-      attributionEnabled={false}
-      scaleBarEnabled={false}
+    styleURL={mapStyles[theme.mode === "dark" ? 1 : 0]}
+    style={styles.map}
+    localizeLabels={{ locale: "vi" }}
+    onTouchMove={() => {
+        setIsFocused(false);
+        setSelectedFeature(null);
+    }}
+    logoEnabled={false}
+    attributionEnabled={false}
+    scaleBarEnabled={false}
   >
     <Camera
       ref={cameraRef}

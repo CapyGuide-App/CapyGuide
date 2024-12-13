@@ -96,9 +96,6 @@ const CommentItem: React.FC<CommentItemProps> = ({item}) => {
           <TouchableOpacity style={styles.actionButton} onPress={() => setIsLoved(!isLoved)}>
             <Text style={[styles.actionText, isLoved && {color:  '#FF5A5F'}]}>Thích</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButton}>
-            <Text style={styles.actionText}>Phản hồi</Text>
-          </TouchableOpacity>
         </View>
         <TouchableOpacity style={styles.actionButton}>
           <Heart size={16} color="#FF5A5F" fill="#FF5A5F"/>

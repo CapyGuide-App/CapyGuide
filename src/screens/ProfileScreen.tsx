@@ -1,16 +1,45 @@
-import React from 'react';
-import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
-import {useAuth} from '../context/AuthContext';
-import {Tab, useTheme} from '@rneui/themed';
-import {useNavigation} from '@react-navigation/native';
+import React, { useEffect } from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Tab, TabView, useTheme } from '@rneui/themed';
+import { fetchProfile } from '../request/DataRequest';
+import { FlashList } from '@shopify/flash-list';
+import Video from 'react-native-video';
+
+interface ProfileScreenProps {
+  navigation: any;
+  route: {
+    params: {
+      user: {
+        id: string;
+        avatar: string;
+        displayname: string;
+        username: string;
+      };
+    };
+  };
+}
 import {ChevronLeft} from 'lucide-react-native';
 
-const ProfileScreen: React.FC = () => {
-  const {currentUser} = useAuth();
+const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation, route}) => {
+  const {user} = route.params;
+  const [data, setData] = React.useState();
   const [indexTab, setIndexTab] = React.useState(0);
+  const [gallery, setGallery] = React.useState([]);
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
-  const navigation = useNavigation();
+
+  useEffect(() => {
+    fetchProfile(user.id).then((data) => {
+      setData(data);
+    });
+  }, []);
+  
+  useEffect(() => {
+    if (data) {
+      console.log(data);
+      setGallery(data.collection);
+    }
+  }, [data]);
 
   return (
     <View style={styles.container}>
@@ -21,9 +50,9 @@ const ProfileScreen: React.FC = () => {
       </View>
 
       <View style={styles.avatarContainer}>
-        <Image style={styles.avatar} source={{uri: currentUser?.avatar}} />
-        <Text style={styles.displayname}>{currentUser?.displayname}</Text>
-        <Text style={styles.username}>@{currentUser?.username}</Text>
+        <Image style={styles.avatar} source={{uri: user?.avatar}} />
+        <Text style={styles.displayname}>{user?.displayname}</Text>
+        <Text style={styles.username}>@{user?.username}</Text>
       </View>
 
       <Tab
@@ -40,6 +69,49 @@ const ProfileScreen: React.FC = () => {
         <Tab.Item title="Đã lưu" />
         <Tab.Item title="Bộ sưu tập" />
       </Tab>
+
+      <TabView value={indexTab}>
+        <TabView.Item>
+          <Text>Tab 1</Text>
+        </TabView.Item>
+
+        <TabView.Item>
+          <Text>Tab 2</Text>
+        </TabView.Item>
+        <TabView.Item style={{padding: 20, flex: 1, overflow: 'hidden'}}>
+          <FlashList
+            numColumns={3}
+            horizontal={false}
+            data={gallery}
+            renderItem={({item}) => (
+              item.type === 'image' ? (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Gallery', {gallery})}
+                >
+                  <Image
+                    source={{uri: item.uri}}
+                    style={{width: '100%', aspectRatio: 1}}
+                    resizeMode='cover'
+                  />
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('Gallery', {gallery})}
+                >
+                  <Video
+                    source={{uri: item.uri}}
+                    style={{width: '100%', aspectRatio: 1}}
+                    resizeMode="cover"
+                    paused={true}
+                  />
+                </TouchableOpacity>
+              )
+            )}
+            keyExtractor={(item) => item.id}
+            estimatedItemSize={120}
+          />
+        </TabView.Item>
+      </TabView>
     </View>
   );
 };
@@ -48,8 +120,7 @@ const dynamicStyles = (theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: 20,
-      backgroundColor: theme.colors.background,
+        backgroundColor: theme.colors.background,
     },
     titleContainer: {
       flexDirection: 'row',
@@ -75,6 +146,7 @@ const dynamicStyles = (theme: any) =>
       width: '100%',
       fontSize: 20,
       fontWeight: 'bold',
+    color: theme.colors.text,
       textAlign: 'center',
     },
     username: {
