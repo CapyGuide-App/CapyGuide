@@ -22,6 +22,7 @@ interface NearByCollectionProps {
   onPressItem?: (item: any) => void;
   status?: 'loading' | 'error' | 'success';
   onShowAll?: () => void;
+  marginHorizontal?: number;
 }
 
 const NearByCollection: React.FC<NearByCollectionProps> = ({
@@ -31,6 +32,7 @@ const NearByCollection: React.FC<NearByCollectionProps> = ({
   onPressItem,
   status = 'loading',
   onShowAll,
+  marginHorizontal
 }) => {
   const {theme} = useTheme();
   const styles = dynamicStyles(theme);
@@ -54,15 +56,17 @@ const NearByCollection: React.FC<NearByCollectionProps> = ({
         <ActivityIndicator color={theme.colors.primary} size="large" />
       )}
       {status === 'success' && (
-        <View style={{maxHeight: 180}}>
+        <View style={{maxHeight: 190, marginHorizontal}}>
           <FlashList
+            contentContainerStyle={{paddingHorizontal: -(marginHorizontal ?? 0)}}
             horizontal={true}
             data={geoData.slice(0, 10)}
-            renderItem={({item}) => (
+            renderItem={({item, index}) => (
               <Pressable
                 onPress={() => onPressItem(item)}
                 style={{
                   flex: 1,
+                  marginLeft: index === 0 ? 0 : 10,
                 }}>
                 <Card theme={theme} containerStyle={styles.cardContent}>
                   <Image source={{uri: item.picture}} style={styles.image} />
@@ -97,6 +101,7 @@ const NearByCollection: React.FC<NearByCollectionProps> = ({
             keyExtractor={item => item.id.toString()}
             estimatedItemSize={180}
             removeClippedSubviews={true}
+            showsHorizontalScrollIndicator={false}
           />
         </View>
       )}
@@ -109,7 +114,6 @@ const cardStyle = {
   width: 180,
   borderRadius: 20,
   marginLeft: 0,
-  marginRight: 10,
   margin: 0,
 };
 
@@ -131,8 +135,9 @@ const dynamicStyles = (theme: any) =>
     },
     cardContent: {
       ...cardStyle,
-      shadowColor: 'transparent',
+      shadowColor: theme.colors.black,
       overflow: 'hidden',
+      elevation: theme.mode === 'dark' ? 0 : 5,
     },
     image: {
       width: '100%',

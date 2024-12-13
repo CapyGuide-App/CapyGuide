@@ -21,7 +21,6 @@ import {
   LucideEdit3,
 } from 'lucide-react-native';
 import {useAuth} from '../context/AuthContext';
-import {fetchProfile} from '../request/DataRequest';
 import {useTheme} from '@rneui/themed';
 
 type SettingsScreenNavigationProp = {
@@ -49,7 +48,7 @@ const SettingsScreen: React.FC = () => {
   const {logout} = useAuth();
 
   const navigateToProfile = () => {
-    navigation.navigate('ProfileScreen');
+    navigation.navigate('ProfileScreen', {user: currentUser});
   };
 
   const navigateToAvatar = () => {
@@ -203,8 +202,8 @@ const dynamicStyles = (theme: any) =>
       shadowColor: '#000',
       shadowOpacity: 0.1,
       shadowRadius: 5,
-      elevation: 2,
       marginBottom: 20,
+      elevation: 5,
     },
 
     profileHeader: {
@@ -264,7 +263,7 @@ const dynamicStyles = (theme: any) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       borderTopWidth: 1,
-      borderTopColor: '#e5e5e5',
+      borderTopColor: theme.colors.black,
       paddingTop: 10,
     },
 
@@ -301,7 +300,7 @@ const dynamicStyles = (theme: any) =>
       shadowColor: '#000',
       shadowOpacity: 0.1,
       shadowRadius: 5,
-      elevation: 2,
+      elevation: 5,
       paddingHorizontal: 15,
     },
     option: {

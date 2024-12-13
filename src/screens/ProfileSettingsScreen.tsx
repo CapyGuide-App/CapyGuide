@@ -12,10 +12,10 @@ import {
 import {ArrowLeft, ChevronLeft} from 'lucide-react-native';
 import avatar from '../assets/avatar.jpg';
 import CameraHandler from '../components/CameraHandler';
-import {fetchUpdateProfile} from '../request/DataRequest';
-import {useAuth} from '../context/AuthContext';
-import {useTheme} from '@rneui/themed';
-import {useNavigation} from '@react-navigation/native';
+import { fetchUpdateProfile } from '../request/DataRequest';
+import { useAuth } from '../context/AuthContext';
+import { useTheme } from '@rneui/themed';
+import { useNavigation } from '@react-navigation/native';
 
 const ProfileSettingsScreen = () => {
   const {theme} = useTheme();

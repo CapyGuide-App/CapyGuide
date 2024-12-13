@@ -117,7 +117,7 @@ const MainTabNavigator: React.FC = () => {
         },
         headerShown: false,
         tabBarShowIcon: true,
-        tabBarInactiveTintColor: 'gray',
+        tabBarInactiveTintColor: theme.colors.tabBarIcon,
         tabBarActiveTintColor: theme.colors.primary,
         tabBarShowLabel: false,
         tabBarStyle: {

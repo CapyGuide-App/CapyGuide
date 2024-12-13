@@ -63,7 +63,6 @@ const AddPostScreen: React.FC<AddPostScreenProps> = ({route, navigation}) => {
 
   React.useEffect(() => {
     if (post) {
-      console.log(post);
       setPostTitle(post.title);
       post.picture && setSelectedTitleImage({uri: post.picture});
       const elements = post.content.map((element: any) => {

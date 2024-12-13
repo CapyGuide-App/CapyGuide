@@ -52,7 +52,7 @@ const BlogScreen: React.FC = () => {
   return (
       <View style={styles.container}>
         <SearchBar
-          backgroundColor={hexToRGBA(theme.colors.searchBar, 0.2)}
+          backgroundColor={hexToRGBA(theme.colors.primary, 0.12)}
           contentContainerStyle={styles.container}
           placeholder="Tìm kiếm bài viết..."
           type="article"

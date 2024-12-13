@@ -16,7 +16,7 @@ import {
     BackHandler,
 } from "react-native";
 import { Portal, PortalHost } from "@gorhom/portal";
-import { formatNumber, normalizeString } from "../styles/Methods";
+import { formatNumber, hexToRGBA, normalizeString } from "../styles/Methods";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { FlashList } from "@shopify/flash-list";
 
@@ -242,6 +242,8 @@ const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentCo
             margin: 0,
             backgroundColor: backgroundColor || "white",
             borderRadius: 20,
+            borderColor: isFocused ? theme.colors.primary : 'transparent',
+            borderWidth: 1,
         },
         inputContainer: {
             flexDirection: "row",
@@ -302,7 +304,7 @@ const SearchBar: React.FC<SearchBarProps> = React.forwardRef(({ style, contentCo
                             <TextInput
                                 style={searchBarStyles.input}
                                 placeholder={placeholder}
-                                placeholderTextColor={theme.colors.primary}
+                                placeholderTextColor={hexToRGBA(theme.colors.primary, 0.5)}
                                 autoFocus
                                 onChangeText={search}
                                 ref={searchInputRef}
