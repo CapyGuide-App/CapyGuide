@@ -131,10 +131,15 @@ const Mapbox: React.FC<MapboxProps> = React.forwardRef(({ indexTab, placeData, f
     "mapbox://styles/suzueyume/cm3yjge2z00jj01sd81ge3ni3", 
     "mapbox://styles/suzueyume/cm4gyl9fa004t01sf03wm4vz1"
   ]
+  const [mapStyle, setMapStyle] = React.useState(mapStyles[0]);
+
+  React.useEffect(() => {
+    setMapStyle(mapStyles[theme.mode === "dark" ? 1 : 0]);
+  }, [theme]);
 
   return (
   <MapView
-    styleURL={mapStyles[theme.mode === "dark" ? 1 : 0]}
+    styleURL={mapStyle}
     style={styles.map}
     localizeLabels={{ locale: "vi" }}
     onTouchMove={() => {
