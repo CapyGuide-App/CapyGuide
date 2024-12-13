@@ -135,7 +135,7 @@ const Mapbox: React.FC<MapboxProps> = React.forwardRef(({ indexTab, placeData, f
 
   React.useEffect(() => {
     setMapStyle(mapStyles[theme.mode === "dark" ? 1 : 0]);
-  }, [theme]);
+  }, [theme, theme.mode]);
 
   return (
   <MapView

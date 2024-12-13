@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
-import { Tab, TabView, useTheme } from '@rneui/themed';
-import { fetchProfile } from '../request/DataRequest';
-import { FlashList } from '@shopify/flash-list';
+import React, {useEffect} from 'react';
+import {View, Text, Image, StyleSheet, TouchableOpacity} from 'react-native';
+import {Tab, TabView, useTheme} from '@rneui/themed';
+import {fetchProfile} from '../request/DataRequest';
+import {FlashList} from '@shopify/flash-list';
 import Video from 'react-native-video';
 
 interface ProfileScreenProps {
@@ -29,11 +29,11 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation, route}) => {
   const styles = dynamicStyles(theme);
 
   useEffect(() => {
-    fetchProfile(user.id).then((data) => {
+    fetchProfile(user.id).then(data => {
       setData(data);
     });
   }, []);
-  
+
   useEffect(() => {
     if (data) {
       console.log(data);
@@ -47,6 +47,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation, route}) => {
         <TouchableOpacity onPress={navigation.goBack}>
           <ChevronLeft size={24} color={theme.colors.primary} />
         </TouchableOpacity>
+        <Text style={styles.title}></Text>
       </View>
 
       <View style={styles.avatarContainer}>
@@ -65,39 +66,30 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation, route}) => {
           color: theme.colors.primary,
         }}
         dense>
+        <Tab.Item title="Bộ sưu tập" />
         <Tab.Item title="Hoạt động" />
         <Tab.Item title="Đã lưu" />
-        <Tab.Item title="Bộ sưu tập" />
       </Tab>
 
       <TabView value={indexTab}>
-        <TabView.Item>
-          <Text>Tab 1</Text>
-        </TabView.Item>
-
-        <TabView.Item>
-          <Text>Tab 2</Text>
-        </TabView.Item>
         <TabView.Item style={{padding: 20, flex: 1, overflow: 'hidden'}}>
           <FlashList
             numColumns={3}
             horizontal={false}
             data={gallery}
-            renderItem={({item}) => (
+            renderItem={({item}) =>
               item.type === 'image' ? (
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('Gallery', {gallery})}
-                >
+                  onPress={() => navigation.navigate('Gallery', {gallery})}>
                   <Image
                     source={{uri: item.uri}}
                     style={{width: '100%', aspectRatio: 1}}
-                    resizeMode='cover'
+                    resizeMode="cover"
                   />
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity
-                  onPress={() => navigation.navigate('Gallery', {gallery})}
-                >
+                  onPress={() => navigation.navigate('Gallery', {gallery})}>
                   <Video
                     source={{uri: item.uri}}
                     style={{width: '100%', aspectRatio: 1}}
@@ -106,10 +98,17 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({navigation, route}) => {
                   />
                 </TouchableOpacity>
               )
-            )}
-            keyExtractor={(item) => item.id}
+            }
+            keyExtractor={item => item.id}
             estimatedItemSize={120}
           />
+        </TabView.Item>
+        <TabView.Item>
+          <Text></Text>
+        </TabView.Item>
+
+        <TabView.Item>
+          <Text></Text>
         </TabView.Item>
       </TabView>
     </View>
@@ -120,13 +119,20 @@ const dynamicStyles = (theme: any) =>
   StyleSheet.create({
     container: {
       flex: 1,
-        backgroundColor: theme.colors.background,
+      padding: 20,
+      backgroundColor: theme.colors.background,
     },
     titleContainer: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       marginBottom: 15,
+    },
+    title: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: theme.colors.primary,
+      width: '90%',
     },
     header: {
       flexDirection: 'row',
@@ -146,7 +152,7 @@ const dynamicStyles = (theme: any) =>
       width: '100%',
       fontSize: 20,
       fontWeight: 'bold',
-    color: theme.colors.text,
+      color: theme.colors.text,
       textAlign: 'center',
     },
     username: {
